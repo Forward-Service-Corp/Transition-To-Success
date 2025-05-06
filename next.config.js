@@ -8,12 +8,6 @@ const nextConfig = {
     includePaths: ['./styles/**/*.scss'],
   },
   images: {
-    localPatterns: [
-      {
-        pathname: '/img/**',
-        search: '',
-      }
-    ],
     remotePatterns: [
       {
         protocol: "https",
