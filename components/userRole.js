@@ -18,7 +18,7 @@ function UserRole({terminationPattern, role, setRole, viewingUser, clients, setC
                 <RoleUpdateButton role={role} title={'client'} id={viewingUser._id} setRole={setRole} />
                 <RoleUpdateButton role={role} title={'coach'} id={viewingUser._id} setRole={setRole} />
                 <RoleUpdateButton role={role} title={'admin'} id={viewingUser._id} setRole={setRole} />
-                <RoleUpdateButton role={null} title={'inactive client'} id={viewingUser._id} setRole={null} />
+                <RoleUpdateButton role={role} title={'inactive client'} id={viewingUser._id} setRole={setRole} />
                 <RoleUpdateButton role={role} title={'terminated coach'} id={viewingUser._id} setRole={setRole} />
 
             </div>
