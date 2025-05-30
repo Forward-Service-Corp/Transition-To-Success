@@ -379,7 +379,7 @@ export default function Layout({children, title, session, loadingState, version,
                 <div className={"text-center"}>
                     <a href={"https://fsc-support.zendesk.com/hc/en-us/requests/new?ticket_form_id=9189050108308"}
                        target={"_blank"}
-                       rel={"no-referrer"}
+                       rel={"no-referrer noreferrer"}
                        className={"text-orange-300 underline"}>
                         Feedback: Let us know how we&apos;re doing!
                     </a>
