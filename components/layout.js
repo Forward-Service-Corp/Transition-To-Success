@@ -25,7 +25,7 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-styles.darkTheme = undefined;
+styles["darkTheme"] = undefined;
 export default function Layout({children, title, session, loadingState, version, simpleModalTitle, simpleModalMessage, simpleModalLabel, simpleModal, background}) {
     const router = useRouter()
     const [environment, setEnvironment] = useState("production")
@@ -83,7 +83,7 @@ export default function Layout({children, title, session, loadingState, version,
                 </div>
             </div>
 
-            <div id={`layoutBannerContainer`} className={`min-h-full ${darkMode === 'darkTheme' ? styles.darkTheme : styles.lightTheme}`}>
+            <div id={`layoutBannerContainer`} className={`min-h-full ${darkMode === 'darkTheme' ? styles["darkTheme"] : styles.lightTheme}`}>
                 <div
                     className={`${session?.isYouth || version ? styles.youthVersion : styles.adultVersion} pb-32 print:hidden`}>
                     <Disclosure as="nav" className="bg-[#db5839] shadow-lg">
@@ -378,8 +378,7 @@ export default function Layout({children, title, session, loadingState, version,
                 </div>
                 <div className={"text-center"}>
                     <a href={"https://fsc-support.zendesk.com/hc/en-us/requests/new?ticket_form_id=9189050108308"}
-                       target={"_blank"}
-                       rel={"no-referrer noreferrer"}
+                       rel={"referrer"}
                        className={"text-orange-300 underline"}>
                         Feedback: Let us know how we&apos;re doing!
                     </a>
