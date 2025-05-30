@@ -25,6 +25,7 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
+styles.darkTheme = undefined;
 export default function Layout({children, title, session, loadingState, version, simpleModalTitle, simpleModalMessage, simpleModalLabel, simpleModal, background}) {
     const router = useRouter()
     const [environment, setEnvironment] = useState("production")
@@ -34,17 +35,7 @@ export default function Layout({children, title, session, loadingState, version,
         await signOut().then()
         await router.push('/login')
     }
-
-    const handleDeleteUser = async () => {
-        const makeSure = confirm("Are you sure you want to delete this user?")
-        if (makeSure) {
-            const deletingUser = await fetch(`/api/delete-user?userId=${session?._id}`)
-                .then(res => res.json())
-            await signOut().then()
-            await console.log(deletingUser)
-        }
-    }
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     async function updateLastLogin() {
         await fetch(`/api/save-last-login?userId=${session?._id}`)
             .then(res => res.json())
@@ -66,7 +57,7 @@ export default function Layout({children, title, session, loadingState, version,
         }
 
         updateLastLogin().then()
-    }, [updateLastLogin])
+    }, [session?.lastLogin, updateLastLogin])
 
     useEffect(() => {
         const location = window.location.host
@@ -380,7 +371,7 @@ export default function Layout({children, title, session, loadingState, version,
                 <div className={"text-center"}>
                     <a href={"/disclaimer"}
                        target={"_self"}
-                       rel={"noreferrer"}
+                       rel={"referrer"}
                        className={"text-orange-300 underline"}>
                         Data Usage Disclaimer
                     </a>
@@ -388,7 +379,7 @@ export default function Layout({children, title, session, loadingState, version,
                 <div className={"text-center"}>
                     <a href={"https://fsc-support.zendesk.com/hc/en-us/requests/new?ticket_form_id=9189050108308"}
                        target={"_blank"}
-                       rel={"noreferrer"}
+                       rel={"no-referrer"}
                        className={"text-orange-300 underline"}>
                         Feedback: Let us know how we&apos;re doing!
                     </a>
