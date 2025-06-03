@@ -56,7 +56,6 @@ export default function Layout({children, title, session, loadingState, version,
         }
         updateLastLogin().then()
     }, [session?.lastLogin, updateLastLogin])
-    }, [])
 
     useEffect(() => {
         const location = window.location.host
