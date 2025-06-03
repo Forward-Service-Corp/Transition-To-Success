@@ -105,9 +105,11 @@ export default NextAuth({
     events: {
         signIn: async ({user, isNewUser}) => {
             const {db} = await connectToDatabase()
+            console.log(user, isNewUser)
             if (isNewUser) {
                 const userEmail = user.email
                 const isFSCEmail = user.email.indexOf("fsc-corp.org") > -1
+                console.log(userEmail, isFSCEmail)
 
                 await db.collection("users").updateOne({"email": userEmail}, {
                     $set: {

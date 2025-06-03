@@ -4,7 +4,11 @@ import {connectToDatabase} from "../../lib/dbConnect";
 export default async(req, res) => {
 
     const {userData} = req.body;
-    const {first_name, last_name, isYouth} = userData;
+    const {first_name, last_name, isYouth, email} = userData;
+    const isFSC = email.indexOf("fsc") > -1
+    if (isFSC) {
+        userData.level = "coach"
+    }
     userData.name = `${first_name} ${last_name}`;
     userData.isYouth = isYouth === "Youth";
 

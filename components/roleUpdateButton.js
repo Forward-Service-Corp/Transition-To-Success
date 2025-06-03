@@ -21,6 +21,8 @@ function RoleUpdateButton({title, id, role, setRole}) {
                 return 'bg-green-100 shadow cursor-pointer'
             case 'admin':
                 return 'bg-amber-100 shadow cursor-pointer'
+            case 'inactive client':
+                return 'bg-purple-100 shadow cursor-pointer'
             case 'terminated coach':
                 return 'bg-red-100 shadow cursor-pointer'
         }
@@ -34,6 +36,8 @@ function RoleUpdateButton({title, id, role, setRole}) {
                 return ' bg-green-300 border border-green-700 font-bold'
             case 'admin':
                 return ' bg-amber-300 border border-amber-700 font-bold'
+            case 'inactive client':
+                return ' bg-purple-300 border border-purple-700 font-bold'
             case 'terminated coach':
                 return ' bg-red-300 border border-red-700 font-bold'
         }
