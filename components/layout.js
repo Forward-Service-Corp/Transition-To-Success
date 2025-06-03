@@ -30,22 +30,11 @@ export default function Layout({children, title, session, loadingState, version,
     const [environment, setEnvironment] = useState("production")
     const [darkMode] = useState(null)
 
-    // console.log(session)
     const handleLogout = async () => {
         await signOut().then()
         await router.push('/login')
     }
-
-    const handleDeleteUser = async () => {
-        const makeSure = confirm("Are you sure you want to delete this user?")
-        if (makeSure) {
-            const deletingUser = await fetch(`/api/delete-user?userId=${session.user._id}`)
-                .then(res => res.json())
-            await signOut().then()
-            await console.log(deletingUser)
-        }
-    }
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     async function updateLastLogin() {
         await fetch(`/api/save-last-login?userId=${session?._id}`)
             .then(res => res.json())
@@ -66,6 +55,7 @@ export default function Layout({children, title, session, loadingState, version,
             return;
         }
         updateLastLogin().then()
+    }, [session?.lastLogin, updateLastLogin])
     }, [])
 
     useEffect(() => {
@@ -92,7 +82,7 @@ export default function Layout({children, title, session, loadingState, version,
                 </div>
             </div>
 
-            <div id={`layoutBannerContainer`} className={`min-h-full ${darkMode === 'darkTheme' ? styles.darkTheme : styles.lightTheme}`}>
+            <div id={`layoutBannerContainer`} className={`min-h-full ${darkMode === 'darkTheme' ? styles["darkTheme"] : styles.lightTheme}`}>
                 <div
                     className={`${session?.isYouth || version ? styles.youthVersion : styles.adultVersion} pb-32 print:hidden`}>
                     <Disclosure as="nav" className="bg-[#db5839] shadow-lg">

@@ -4,6 +4,11 @@ import {ObjectId} from "mongodb";
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req, res) => {
     const {db} = await connectToDatabase()
+    const roleEntry = {
+        role: req.query.role,
+        date: new Date()
+    };
+
     const record = await db
         .collection("users")
         .updateOne(
@@ -11,6 +16,9 @@ export default async (req, res) => {
             {
                 $set: {
                     level: req.query.role
+                },
+                $push: {
+                    roles: roleEntry
                 }
             }
         )
