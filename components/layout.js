@@ -59,7 +59,7 @@ export default function Layout({children, title, session, loadingState, version,
 
     return (
         <>
-            <div className={`${process.env.NODE_ENV === "development" || process.env.NODE_ENV === "testing" ? "visible" : "hidden"} ${process.env.NODE_ENV === "testing" ? "bg-indigo-600" : "bg-pink-600"} p-4 text-center text-xs text-white font-light`}>
+            <div className={`${process.env.NODE_ENV === "development" || process.env.NODE_ENV === "preview" ? "visible" : "hidden"} ${process.env.NODE_ENV === "testing" ? "bg-indigo-600" : "bg-pink-600"} p-4 text-center text-xs text-white font-light`}>
                 You are currently in the <strong className={`uppercase font-black`}>{environment}</strong> environment.
             </div>
             {simpleModal ? <SimpleModal title={simpleModalTitle} message={simpleModalMessage} label={simpleModalLabel}
