@@ -9,6 +9,7 @@ export default async(req, res) => {
 
     console.log(user)
 
+    // const directoryCursor = await db.collection("services").find().limit(60)
     const directoryCursor = await db.collection("services").find()
     const directory = await directoryCursor.toArray()
     await directoryCursor.close()

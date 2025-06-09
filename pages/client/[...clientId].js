@@ -22,7 +22,7 @@ export default function User({viewingUserData, pageDataJson}) {
                 simpleModalMessage={`You have now updated this user to the ${version ? "youth" : "adult"} version of the workbook.`} simpleModalLabel={`I understand.`} simpleModal={simpleModal}>
 
             <Head>
-                <title>{viewingUser.name !== "" ? `TTS / User / ${viewingUser.name}` : `TTS / User / ${viewingUser.email}`}</title>
+                <title>{viewingUser.name !== "" ? `TTS / Client / ${viewingUser.name}` : `TTS / User / ${viewingUser.email}`}</title>
             </Head>
 
             <div className={`mt-8`}>
@@ -50,7 +50,7 @@ export async function getServerSideProps(context) {
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
     // page data
-    const pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.sub
+    const pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id
     const getPageData = await fetch(pageDataUrl)
     const pageDataJson = await getPageData.json()
 

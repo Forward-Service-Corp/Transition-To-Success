@@ -1,22 +1,29 @@
-/** @type {import('next').NextConfig} */
-const path = require('path')
+/**
+ * @type {import('next').NextConfig}
+ */
 const nextConfig = {
   reactStrictMode: true,
-  webpack: (config) => {
-    config.resolve.fallback = { fs: false };
-    return config;
-  },
+  basePath: '',
   sassOptions: {
-    includePaths: [path.join(__dirname, 'styles')],
+    includePaths: ['./styles/**/*.scss'],
   },
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: 'lh3.googleusercontent.com'
+        hostname: 'lh3.googleusercontent.com',
+      },
+      // {
+      //   protocol: "https",
+      //   hostname: 'fsc-corp-tts.org',
+      // },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: '3000'
       }
     ]
   }
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

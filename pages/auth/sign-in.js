@@ -17,7 +17,7 @@ export default function SignIn() {
     };
 
     const handleEmailChange = (e) => {
-        const newEmail = e.target.value;
+        const newEmail = e.target.value.toLowerCase();
         setEmail(newEmail);
         setIsEmailValid(validateEmail(newEmail));
     };

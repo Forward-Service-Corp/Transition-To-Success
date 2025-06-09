@@ -1,20 +1,20 @@
-/* This example requires Tailwind CSS v2.0+ */
 import {useEffect, useState} from 'react'
 import {Switch} from '@headlessui/react'
+
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
 export default function WorkbookToggle({user, setVersion, setSimpleModal}) {
 
-    const [checked, setChecked] = useState(user.isYouth)
+    const [checked, setChecked] = useState(user?.isYouth)
     async function handleToggle(){
        await setChecked((current) => !current)
        await setSimpleModal(true)
     }
 
     async function updateWorkbookExperience (){
-        await fetch(`/api/update-workbook-experience?userId=${user._id}&setTo=${checked}`)
+        await fetch(`/api/update-workbook-experience?userId=${user?._id}&setTo=${checked}`)
         await setVersion(checked)
     }
 

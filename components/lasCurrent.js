@@ -69,17 +69,17 @@ function LasCurrent({surveys, user, isClientSurvey, clientId}) {
 
                                     }}>Map your priorities
                                 </div>
-                                {
-                                    (new Date() - new Date(survey.datestamp)) / (1000 * 60 * 60) < 12 ?
-                                        <div
-                                            title={"Edit this life area survey"}
-                                            className={"bg-gray-500 hover:bg-gray-600 p-2 flex-1 cursor-pointer max-w-[40px] flex justify-center"}
-                                            onClick={() => {
-                                                router.push("/new-life-area-survey?dreamName=" + survey.dream + "&dreamId=" + survey.dreamId + "&surveyId=" + survey._id).then()
-                                            }}>
-                                            <div><NotePencil size={15}/></div>
-                                        </div> : null
-                                }
+                                {/*{*/}
+                                {/*    (new Date() - new Date(survey.datestamp)) / (1000 * 60 * 60) < 12 ?*/}
+                                {/*        <div*/}
+                                {/*            title={"Edit this life area survey"}*/}
+                                {/*            className={"bg-gray-500 hover:bg-gray-600 p-2 flex-1 cursor-pointer max-w-[40px] flex justify-center"}*/}
+                                {/*            onClick={() => {*/}
+                                {/*                router.push("/new-life-area-survey?dreamName=" + survey.dream + "&dreamId=" + survey.dreamId + "&surveyId=" + survey._id).then()*/}
+                                {/*            }}>*/}
+                                {/*            <div><NotePencil size={15}/></div>*/}
+                                {/*        </div> : null*/}
+                                {/*}*/}
                                 <div
                                     title={"Review this life area survey"}
                                     className={"p-2 flex-1 cursor-pointer bg-green-500 hover:bg-green-600 max-w-[40px] flex justify-center items-center"}

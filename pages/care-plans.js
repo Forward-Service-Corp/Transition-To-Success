@@ -8,7 +8,7 @@ import CarePlansInstructions from "../components/carePlansInstructions";
 
 export default function CarePlans({pageJson}) {
 
-    const [tasks, setTasks] = useState(pageJson.todos || [])
+    const [tasks, setTasks] = useState(pageJson.todos)
     const [userReferrals, setUserReferrals] = useState(pageJson.referrals)
     const [sort] = useState('priority')
 
@@ -92,18 +92,19 @@ export async function getServerSideProps(context) {
     const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
     const {req} = context;
+    // const {sub} = session;
 
     const protocol = req.headers['x-forwarded-proto'] || 'http'
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
     // page data
-    const pageDataUrl = baseUrl + "/api/pages/carePlansPageData?userId=" + session.sub
+    const pageDataUrl = baseUrl + "/api/pages/carePlansPageData?userId=" + session.user._id
     const getPageData = await fetch(pageDataUrl)
     const pageJson = await getPageData.json()
 
     // redirect to profile page if required fields are not complete
     const {user} = pageJson
-    if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
+    // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
 
     return {
         props: {pageJson, user}

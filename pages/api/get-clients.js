@@ -8,11 +8,15 @@ export default async (req, res) => {
     const coachObjectId = new ObjectId(coachId);
     const cursor = await db.collection("users").find({
         coach: {
-            $elemMatch: { key: coachObjectId }
-        },
-        terminationDate: { $exists: false },
-        removalDate: { $exists: false },
-    })
+            $elemMatch: {
+                key: coachObjectId,
+                $and: [
+                    { $or: [{ terminationDate: { $exists: false } }, { terminationDate: null }] },
+                    { $or: [{ removalDate: { $exists: false } }, { removalDate: null }] }
+                ]
+            }
+        }
+    });
     const records = await cursor.toArray()
     await cursor.close()
 

@@ -39,6 +39,22 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
             .catch(e => console.log(e))
     },[item._id, setTasks, user._id])
 
+    // async function getTasks() {
+    //     fetch("/api/get-tasks?userId=" + user._id + "&referralId=" + item._id)
+    //         .then(res => res.json())
+    //         .then(res => setTasks(res))
+    //         .then(() => setSaving(false))
+    //         .catch(e => console.log(e))
+    // }
+
+    // const getTasks = async () => {
+    //     fetch("/api/get-tasks?userId=" + user._id + "&referralId=" + item._id)
+    //         .then(res => res.json())
+    //         .then(res => setTasks(res))
+    //         .then(() => setSaving(false))
+    //         .catch(e => console.log(e))
+    // }
+
     async function deleteReferral(referralId) {
         await fetch("/api/delete-referral?referralId=" + referralId)
     }

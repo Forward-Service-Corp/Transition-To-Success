@@ -36,10 +36,10 @@ function Journey({pageDataJson}) {
                 </div>
             </div>
             <div className={currentTab === 1 ? "visible" : "hidden"}>
-                { !user.isYouth || user.isYouth === false  ? <Journey1/> : <JourneyYouth1/>}
+                { !user?.isYouth || user?.isYouth === false  ? <Journey1/> : <JourneyYouth1/>}
             </div>
             <div className={currentTab === 2 ? "visible" : "hidden"}>
-                { !user.isYouth || user.isYouth === false  ? <Journey2/> : <JourneyYouth2/>}
+                { !user?.isYouth || user?.isYouth === false  ? <Journey2/> : <JourneyYouth2/>}
             </div>
         </Layout>
     );
@@ -51,18 +51,18 @@ export async function getServerSideProps(context) {
     const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
     const {req} = context;
-
+    const {sub} = session;
     const protocol = req.headers['x-forwarded-proto'] || 'http'
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
     // page data
-    const pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.sub
+    const pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id
     const getPageData = await fetch(pageDataUrl)
     const pageDataJson = await getPageData.json()
 
     // redirect to profile page if required fields are not complete
-    const {county, name, homeCounty, programs} = pageDataJson.user
-    if(!county.length || !homeCounty || !programs.length || !name) return  {redirect: {destination: "/profile", permanent: false}}
+    // const {county, name, homeCounty, programs} = pageDataJson.user
+    // if(!county.length || !homeCounty || !programs.length || !name) return  {redirect: {destination: "/profile", permanent: false}}
 
     return {
         props: {pageDataJson}

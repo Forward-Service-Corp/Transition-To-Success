@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {CaretDoubleDown, CaretDoubleUp} from "phosphor-react";
 import DreamSingle from "./dreamSingle";
 
@@ -39,6 +39,10 @@ function ClientDreams({viewingUser}) {
             .then(res => { setDreams(res) })
             .catch(err => console.warn(err.json()))
     }
+
+    useEffect(() => {
+        getDreams().then()
+    },[])
 
 
     return (
@@ -94,7 +98,7 @@ function ClientDreams({viewingUser}) {
                 {dreams?.map(dream => (
                     <DreamSingle key={dream._id} dream={dream} deleteDream={deleteDream} isClientDream={true}
                                  getDreams={getDreams}
-                                 clientId={viewingUser.email} setSavedDreams={setDreams}/>
+                                 clientId={viewingUser._id} setSavedDreams={setDreams}/>
                 ))}
             </div>
         </div>

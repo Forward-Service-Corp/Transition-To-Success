@@ -1,13 +1,15 @@
 import {useState} from "react";
-import {useRouter} from "next/router";
+// import {useRouter} from "next/router";
 
-function DreamForm({user, setSimpleModal}) {
+function DreamForm({user, setSimpleModal, getDreams}) {
+
     const [dream, setDream] = useState("")
     const [dreamNeed, setDreamNeed] = useState("")
     const [dreamHelp, setDreamHelp] = useState("")
-    const router = useRouter()
+    // const router = useRouter()
 
     async function saveDream() {
+
         await fetch("/api/post-dream", {
             method: "POST",
             headers: {
@@ -21,6 +23,7 @@ function DreamForm({user, setSimpleModal}) {
                 status: "active"
             })
         })
+        await getDreams()
     }
 
     return (
@@ -69,7 +72,7 @@ function DreamForm({user, setSimpleModal}) {
                         setDream("")
                         setDreamNeed("")
                         setDreamHelp("")
-                        router.reload()
+                        // router.reload()
                     }}>Save dream
                 </button>
             </div>

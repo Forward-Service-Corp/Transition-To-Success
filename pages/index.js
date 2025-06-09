@@ -9,6 +9,8 @@ import WelcomeGroupYouth from "../components/pages/welcomeGroupYouth";
 
 export default function Home({user, dreams, surveys, referrals, tasks}) {
 
+    // console.log(user)
+
     const router = useRouter()
     tasks.filter(task => eval(task.completed) === true).length;
     const [currentTab, setCurrentTab] = useState(1)
@@ -52,7 +54,7 @@ export default function Home({user, dreams, surveys, referrals, tasks}) {
                     </button>
                 </div>
             </div>
-            { !user.isYouth || user.isYouth === false  ? <WelcomeGroupAdult currentTab={currentTab}/> : <WelcomeGroupYouth currentTab={currentTab}/>}
+            { !user?.isYouth || user?.isYouth === false  ? <WelcomeGroupAdult currentTab={currentTab}/> : <WelcomeGroupYouth currentTab={currentTab}/>}
             <div className={`p-4 text-xs border-t-[1px] border-gray-400 mt-8 dark:border-blue-900 dark:text-white`}>
                 <p className={`text-lg uppercase`}>Disclaimer</p>
                 <p className={`pb-4`}>
@@ -76,7 +78,8 @@ export async function getServerSideProps(context) {
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
     // page data
-    const dataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.sub;
+    // console.log("log", session.user._id)
+    const dataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id;
     const getData = await fetch(dataUrl);
     const {user, dreams, surveys, referrals, tasks} = await getData.json();
 

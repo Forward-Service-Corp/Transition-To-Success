@@ -27,7 +27,7 @@ export async function getServerSideProps(context) {
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
     // user data
-    const url =  baseUrl + "/api/get-user?userId=" + session.sub
+    const url =  baseUrl + "/api/get-user?userId=" + session.user._id
     const getUser = await fetch(url)
     const userJson = await getUser.json()
 

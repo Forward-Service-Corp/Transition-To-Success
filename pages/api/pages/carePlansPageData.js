@@ -16,9 +16,11 @@ export default async(req, res) => {
     const notes = await notesCursor.toArray()
     await notesCursor.close()
 
-    const todosCursor = await db.collection("notes").find( query )
+    const todosCursor = await db.collection("todos").find( query )
     const todos = await todosCursor.toArray()
     await todosCursor.close()
+
+    // console.log(req.body)
 
     res.json({user, referrals, notes, todos})
 

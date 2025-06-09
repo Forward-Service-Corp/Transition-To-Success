@@ -12,17 +12,17 @@ import ProfilePhoneMessage from "../components/profilePhoneMessage";
 
 export default function Profile({user}) {
 
-    const [version, setVersion] = useState(user.isYouth)
-    const [name, setName] = useState(user.name ? user.name : "")
-    const [street, setStreet] = useState(user.street ? user.street : "")
-    const [city, setCity] = useState(user.city ? user.city : "")
-    const [state, setState] = useState(user.state ? user.state : "")
-    const [homeCounty, setHomeCounty] = useState(user.homeCounty ? user.homeCounty : "")
-    const [zip, setZip] = useState(user.zip ? user.zip : "")
-    const [programs, setPrograms] = useState(user.programs ? user.programs : [])
-    const [counties, setCounties] = useState(user.county ? user.county : [])
-    const [email] = useState(user.email)
-    const [phone, setPhone] = useState(user.phone ? user.phone : "")
+    const [version, setVersion] = useState(user?.isYouth)
+    const [name, setName] = useState(user?.name ? user?.name : "")
+    const [street, setStreet] = useState(user?.street ? user?.street : "")
+    const [city, setCity] = useState(user?.city ? user?.city : "")
+    const [state, setState] = useState(user?.state ? user?.state : "")
+    const [homeCounty, setHomeCounty] = useState(user?.homeCounty ? user?.homeCounty : "")
+    const [zip, setZip] = useState(user?.zip ? user?.zip : "")
+    const [programs, setPrograms] = useState(user?.programs ? user?.programs : [])
+    const [counties, setCounties] = useState(user?.county ? user?.county : [])
+    const [email] = useState(user?.email)
+    const [phone, setPhone] = useState(user?.phone ? user?.phone : "")
     const [formattedNumber, setFormattedNumber] = useState("");
     const [simpleModal, setSimpleModal] = useState(false)
     const [isButtonEnabled, setIsButtonEnabled] = useState(false);
@@ -122,12 +122,13 @@ export async function getServerSideProps(context) {
     const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
     const {req} = context;
+    // const {sub} = session;
 
     const protocol = req.headers['x-forwarded-proto'] || 'http'
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
-
+    console.log("130: ", context)
     // set up variables
-    const url = baseUrl + "/api/get-user?userId=" + session.sub
+    const url = baseUrl + "/api/get-user?userId=" + session.user._id
 
     // fetch data
     const getUser = await fetch(url)

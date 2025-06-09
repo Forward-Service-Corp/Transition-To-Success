@@ -7,8 +7,7 @@ export default async (req, res) => {
     const {db} = await connectToDatabase()
     const referral = await db
         .collection("services")
-        .findOne({_id: ObjectId(req.query.referralId)})
-
+        .findOne({_id: new ObjectId(req.query.referralId)})
 
     res.json(referral)
 

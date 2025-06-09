@@ -3,7 +3,7 @@ import {ObjectId} from "mongodb";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req, res) => {
-    console.log(req)
+    // console.log(req)
     const survey = {
         dream: req.body.dream,
         dreamId: req.body.dreamId,
@@ -31,7 +31,7 @@ export default async (req, res) => {
         education: req.body.education,
         parenting: req.body.parenting,
         childrensEducation: req.body.childrensEducation,
-        userId: req.body.userId,
+        userId: ObjectId(req.body.userId),
         datestamp: new Date(),
         surprise: req.body.surprise,
         concern: req.body.concern,

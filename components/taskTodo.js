@@ -35,6 +35,7 @@ function TaskTodo({task, setTasks, user, item, setAllNotes, loggedInUser, setSav
     async function getTasks() {
         const fetchedTasks = await fetch("/api/get-tasks?userId=" + user._id + "&referralId=" + item._id)
             .then(res => res.json())
+        console.log(fetchedTasks)
         await setTasks(fetchedTasks)
         await setSaving(false)
     }

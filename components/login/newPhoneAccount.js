@@ -189,7 +189,8 @@ function NewPhoneAccount({loginValue, setStep}) {
             .then(res => res.json())
     }
 
-    const checkUsedEmail = async () => {
+    const checkUsedEmail = async (e) => {
+        e.preventDefault()
         const loginCheck = await fetch("/api/check-new-account", {
             method: "POST",
             headers: {
@@ -200,14 +201,13 @@ function NewPhoneAccount({loginValue, setStep}) {
             })
         })
         const data = await loginCheck.json()
-        if (data) {
-            setUsedEmail(true)
-            // updateFormData({ ["email"]: "" })
-            // updateFormValidationData("email", false)
-        } else {
+        if (data.code === 777) {
             setUsedEmail(false)
             sendAccount().then()
+        } else {
+            setUsedEmail(true)
         }
+        await console.log(data)
     }
 
     const sendAccount = async () => {
@@ -236,37 +236,74 @@ function NewPhoneAccount({loginValue, setStep}) {
                 <div className={`text-xl mt-3 mb-2`}>
                     Personal Details
                 </div>
-                <div className={`grid grid-cols-2 gap-x-8`}>
-                    {inputJSX('First Name', 'first_name', userData.first_name, handleFormChange, false, true)}
-                    {inputJSX('Last Name', 'last_name', userData.last_name, handleFormChange, false, true)}
-                    {inputJSX('Email', 'email', userData.email, handleFormChange, false, true)}
-                    {inputJSX('Phone', 'phone', loginValue, handleFormChange, true, false)}
-                    {selectJSX("County of Residence", 'homeCounty', userData.homeCounty, handleFormChange, false, true, WICountiesList)}
-                    {selectJSX("Workbook Version", 'isYouth', userData.state, handleFormChange, false, true, ["Adult", "Youth"])}
-                </div>
-                <div className={``}>
-                    <div className={`text-xl mt-3 mb-2`}>
-                        Programs
-                    </div>
+                <form className={``} onSubmit={checkUsedEmail}>
                     <div className={`grid grid-cols-2 gap-x-8`}>
-                        {multipleSelectJSX("Service Counties", 'county', userData.county, handleCountyChange, false, true, WICountiesList)}
-                        {multipleSelectJSX("Programs", 'programs', userData.programs, handleProgramsChange, false, true, ProgramsList)}
+                        {inputJSX('First Name', 'first_name', userData.first_name, handleFormChange, false, true)}
+                        {inputJSX('Last Name', 'last_name', userData.last_name, handleFormChange, false, true)}
+                        {inputJSX('Email', 'email', userData.email, handleFormChange, false, true)}
+                        {inputJSX('Phone', 'phone', loginValue, handleFormChange, true, false)}
+                        {selectJSX("County of Residence", 'homeCounty', userData.homeCounty, handleFormChange, false, true, WICountiesList)}
+                        {selectJSX("Workbook Version", 'isYouth', userData.state, handleFormChange, false, true, ["Adult", "Youth"])}
                     </div>
-                </div>
-                <div className={`${usedEmail ? 'visible' : 'hidden'} bg-red-200 p-2 text-center mt-4 rounded`}>
-                    There is already an account associated with <span className={'font-bold'}>{userData.email}</span>. Please use a different email address, or sign in with that email address.
-                </div>
-                <div className={`text-center`}>
-                    <div className={'w-full p-8'}>
-                        <button
-                            className={"rounded bg-indigo-600 text-white font-extralight p-2 disabled:bg-gray-300 w-1/2 text-lg"}
-                            disabled={!formValid}
-                            onClick={checkUsedEmail}>Create Account
-                        </button>
-                        <Link href="/login" className={`text-red-600 underline mt-5 text-sm block m-auto`}>Go
-                            Back</Link>
+                    <div className={``}>
+                        <div className={`text-xl mt-3 mb-2`}>
+                            Programs
+                        </div>
+                        <div className={`grid grid-cols-2 gap-x-8`}>
+                            {multipleSelectJSX("Service Counties", 'county', userData.county, handleCountyChange, false, true, WICountiesList)}
+                            {multipleSelectJSX("Programs", 'programs', userData.programs, handleProgramsChange, false, true, ProgramsList)}
+                        </div>
                     </div>
-                </div>
+                    <div className={`${usedEmail ? 'visible' : 'hidden'} bg-red-200 p-2 text-center mt-4 rounded`}>
+                        There is already an account associated with <span
+                        className={'font-bold'}>{userData.email}</span>.
+                        Please use a different email address, or sign in with that email address.
+                    </div>
+                    <div className={`text-center`}>
+                        <div className={'w-full p-8'}>
+                            <button
+                                className={"rounded bg-indigo-600 text-white font-extralight p-2 disabled:bg-gray-300 w-1/2 text-lg"}
+                                disabled={!formValid}
+                                type={`submit`}>Create Account
+                            </button>
+                            <Link href="/login" className={`text-red-600 underline mt-5 text-sm block m-auto`}>Go
+                                Back</Link>
+                        </div>
+                    </div>
+                </form>
+                {/*<div className={`grid grid-cols-2 gap-x-8`}>*/}
+                {/*    {inputJSX('First Name', 'first_name', userData.first_name, handleFormChange, false, true)}*/}
+                {/*    {inputJSX('Last Name', 'last_name', userData.last_name, handleFormChange, false, true)}*/}
+                {/*    {inputJSX('Email', 'email', userData.email, handleFormChange, false, true)}*/}
+                {/*    {inputJSX('Phone', 'phone', loginValue, handleFormChange, true, false)}*/}
+                {/*    {selectJSX("County of Residence", 'homeCounty', userData.homeCounty, handleFormChange, false, true, WICountiesList)}*/}
+                {/*    {selectJSX("Workbook Version", 'isYouth', userData.state, handleFormChange, false, true, ["Adult", "Youth"])}*/}
+                {/*</div>*/}
+                {/*<div className={``}>*/}
+                {/*    <div className={`text-xl mt-3 mb-2`}>*/}
+                {/*        Programs*/}
+                {/*    </div>*/}
+                {/*    <div className={`grid grid-cols-2 gap-x-8`}>*/}
+                {/*        {multipleSelectJSX("Service Counties", 'county', userData.county, handleCountyChange, false, true, WICountiesList)}*/}
+                {/*        {multipleSelectJSX("Programs", 'programs', userData.programs, handleProgramsChange, false, true, ProgramsList)}*/}
+                {/*    </div>*/}
+                {/*</div>*/}
+                {/*<div className={`${usedEmail ? 'visible' : 'hidden'} bg-red-200 p-2 text-center mt-4 rounded`}>*/}
+                {/*    There is already an account associated with <span className={'font-bold'}>{userData.email}</span>. Please use a different email address, or sign in with that email address.*/}
+                {/*</div>*/}
+                {/*<div className={`text-center`}>*/}
+                {/*    <div className={'w-full p-8'}>*/}
+                {/*        <button*/}
+                {/*            className={"rounded bg-indigo-600 text-white font-extralight p-2 disabled:bg-gray-300 w-1/2 text-lg"}*/}
+                {/*            disabled={!formValid}*/}
+                {/*            onClick={checkUsedEmail}>Create Account*/}
+                {/*        </button>*/}
+                {/*        <Link href="/login" className={`text-red-600 underline mt-5 text-sm block m-auto`}>Go*/}
+                {/*            Back</Link>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
+
+
             </div>
         </div>
     )

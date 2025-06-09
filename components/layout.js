@@ -25,7 +25,6 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-styles["darkTheme"] = undefined;
 export default function Layout({children, title, session, loadingState, version, simpleModalTitle, simpleModalMessage, simpleModalLabel, simpleModal, background}) {
     const router = useRouter()
     const [environment] = useState("production")
@@ -55,7 +54,6 @@ export default function Layout({children, title, session, loadingState, version,
         if (hoursDifference < 12) {
             return;
         }
-
         updateLastLogin().then()
     }, [session?.lastLogin, updateLastLogin])
 
@@ -118,138 +116,11 @@ export default function Layout({children, title, session, loadingState, version,
                                                                 {item.name}
                                                             </a>
                                                         ))}
-                                                        {/*Conditional Navigation*/}
-                                                        {/*{session?.level === "client" ?*/}
-                                                        {/*    <a*/}
-                                                        {/*        onClick={() => signOut()}*/}
-                                                        {/*        className={classNames(*/}
-                                                        {/*            router.pathname === "/clients"*/}
-                                                        {/*                ? 'bg-orange-700 text-white dark:bg-gray-800'*/}
-                                                        {/*                : 'text-white hover:bg-orange-400 hover:text-white dark:hover:bg-gray-600',*/}
-                                                        {/*            'px-3 py-2 rounded-md text-sm font-medium cursor-pointer dark:font-extralight'*/}
-                                                        {/*        )}*/}
-                                                        {/*        aria-current={router.pathname === "/clients" ? 'page' : undefined}*/}
-                                                        {/*    >*/}
-                                                        {/*        Logout*/}
-                                                        {/*    </a> : null*/}
-                                                        {/*}*/}
-                                                        {/*{session?.level === "coach" || session?.level === "admin" ?*/}
-                                                        {/*    <a*/}
-                                                        {/*        href={"/clients"}*/}
-                                                        {/*        className={classNames(*/}
-                                                        {/*            router.pathname === "/clients"*/}
-                                                        {/*                ? 'bg-orange-700 text-white dark:bg-gray-800'*/}
-                                                        {/*                : 'text-white hover:bg-orange-400 hover:text-white dark:hover:bg-gray-600',*/}
-                                                        {/*            'px-3 py-2 rounded-md text-sm font-medium dark:font-extralight'*/}
-                                                        {/*        )}*/}
-                                                        {/*        aria-current={router.pathname === "/clients" ? 'page' : undefined}*/}
-                                                        {/*    >*/}
-                                                        {/*        My Clients*/}
-                                                        {/*    </a> : null*/}
-                                                        {/*}*/}
 
-                                                        {/*{session?.level === "admin" ?*/}
-                                                        {/*    <a*/}
-                                                        {/*        href={"/users"}*/}
-                                                        {/*        className={classNames(*/}
-                                                        {/*            router.pathname === "/users"*/}
-                                                        {/*                ? 'bg-orange-700 text-white dark:bg-gray-800'*/}
-                                                        {/*                : 'text-white hover:bg-orange-400 hover:text-white dark:hover:bg-gray-600',*/}
-                                                        {/*            'px-3 py-2 rounded-md text-sm font-medium dark:font-extralight'*/}
-                                                        {/*        )}*/}
-                                                        {/*        aria-current={router.pathname === "/users" ? 'page' : undefined}*/}
-                                                        {/*    >*/}
-                                                        {/*        Users*/}
-                                                        {/*    </a> : null*/}
-                                                        {/*}*/}
                                                     </div>
                                                 </div>
                                             </div>
-                                            {/*<div className="hidden md:block">*/}
-                                            {/*    <div className="ml-4 flex items-center md:ml-6">*/}
-                                            {/*        <Menu as="div" className="ml-3 relative">*/}
-                                            {/*            <div>*/}
-                                            {/*                <Menu.Button*/}
-                                            {/*                    className="w-[45px] h-[45px] relative max-w-xs bg-orange-600 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">*/}
-                                            {/*                    <span className="sr-only">Open user menu</span>*/}
-                                            {/*                    {session?.image ? <Image className="rounded-full"*/}
-                                            {/*                                             sizes="(max-width:45px) 3vw, (max-width: 45px) 10vw, 5vw"*/}
-                                            {/*                                             fill*/}
-                                            {/*                                             src={session.image}*/}
-                                            {/*                                             alt="User avatar"/> :*/}
-                                            {/*                        <UserCircleGear size={32} weight="thin"*/}
-                                            {/*                                        color={"white"}/>}*/}
-                                            {/*                    `*/}
-                                            {/*                </Menu.Button>*/}
-                                            {/*            </div>*/}
-                                            {/*            <Transition*/}
-                                            {/*                as={Fragment}*/}
-                                            {/*                enter="transition ease-out duration-100"*/}
-                                            {/*                enterFrom="transform opacity-0 scale-95"*/}
-                                            {/*                enterTo="transform opacity-100 scale-100"*/}
-                                            {/*                leave="transition ease-in duration-75"*/}
-                                            {/*                leaveFrom="transform opacity-100 scale-100"*/}
-                                            {/*                leaveTo="transform opacity-0 scale-95"*/}
-                                            {/*            >*/}
-                                            {/*                <Menu.Items*/}
-                                            {/*                    className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-900 ring-1 ring-black dark:ring-purple-900 ring-opacity-5 dark:ring-opacity-40 dark:shadow-2xl focus:outline-none">*/}
-                                            {/*                    {userNavigation.map((item) => (*/}
-                                            {/*                        <Menu.Item key={item.name}>*/}
-                                            {/*                            {({active}) => (*/}
-                                            {/*                                <a*/}
-                                            {/*                                    href={item.href}*/}
-                                            {/*                                    className={classNames(*/}
-                                            {/*                                        active ? 'bg-gray-100 dark:hover:bg-gray-800' : '',*/}
-                                            {/*                                        'block px-4 py-2 text-sm text-black dark:text-white dark:font-extralight'*/}
-                                            {/*                                    )}*/}
-                                            {/*                                >*/}
-                                            {/*                                    {item.name}*/}
-                                            {/*                                </a>*/}
-                                            {/*                            )}*/}
-                                            {/*                        </Menu.Item>*/}
-                                            {/*                    ))}*/}
-                                            {/*                    {session?.level === "admin" ?*/}
-                                            {/*                        <Menu.Item>*/}
-                                            {/*                            <a href={"/reports"}*/}
-                                            {/*                               className={'block px-4 py-2 text-sm text-black dark:text-white cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 dark:font-extralight'}*/}
-                                            {/*                            >Reports</a></Menu.Item> : null}*/}
-                                            {/*                    {session?.level === "admin" ?*/}
-                                            {/*                        <Menu.Item>*/}
-                                            {/*                            <div*/}
-                                            {/*                                className={`ml-4 mt-[3px] flex items-center`}>*/}
-                                            {/*                                <div*/}
-                                            {/*                                    className={`mr-3 text-black dark:text-white dark:font-extralight text-sm`}>Dark*/}
-                                            {/*                                    Mode*/}
-                                            {/*                                </div>*/}
-                                            {/*                                <DarkModeToggle setDarkMode={setDarkMode}*/}
-                                            {/*                                                session={session}/>*/}
-                                            {/*                            </div>*/}
-                                            {/*                        </Menu.Item>*/}
-                                            {/*                        : null}*/}
-                                            {/*                    <Menu.Item>*/}
-                                            {/*                        {({active}) => (*/}
-                                            {/*                            <a*/}
-                                            {/*                                onClick={() => {*/}
-                                            {/*                                    signOut()*/}
-                                            {/*                                        .then(() => {*/}
-                                            {/*                                            router.reload()*/}
-                                            {/*                                        })*/}
-                                            {/*                                }}*/}
-                                            {/*                                className={classNames(*/}
-                                            {/*                                    active ? 'bg-gray-100 dark:hover:bg-gray-800' : '',*/}
-                                            {/*                                    'block px-4 py-2 text-sm text-black dark:text-white cursor-pointer dark:font-extralight'*/}
-                                            {/*                                )}*/}
-                                            {/*                            >*/}
-                                            {/*                                Sign Out*/}
-                                            {/*                            </a>*/}
-                                            {/*                        )}*/}
-                                            {/*                    </Menu.Item>*/}
 
-                                            {/*                </Menu.Items>*/}
-                                            {/*            </Transition>*/}
-                                            {/*        </Menu>*/}
-                                            {/*    </div>*/}
-                                            {/*</div>*/}
                                             <div className="-mr-2 flex md:hidden">
                                                 {/* Mobile menu button */}
                                                 <Disclosure.Button
@@ -310,14 +181,7 @@ export default function Layout({children, title, session, loadingState, version,
                                                     {item.name}
                                                 </Disclosure.Button>
                                             ))}
-                                            {/*<Disclosure.Button*/}
-                                            {/*{session?.level === "admin" ?*/}
-                                            {/*    <div className={`ml-3 mt-[3px] flex items-center`}>*/}
-                                            {/*        <div className={`mr-3 text-white `}>Dark Mode</div>*/}
-                                            {/*        <DarkModeToggle setDarkMode={setDarkMode} session={session}/>*/}
-                                            {/*    </div>*/}
-                                            {/*    : null}*/}
-                                            {/*</Disclosure.Button>*/}
+
                                             <Disclosure.Button
                                                 className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-white hover:bg-gray-700"
                                                 onClick={() => {
@@ -360,14 +224,15 @@ export default function Layout({children, title, session, loadingState, version,
                 <div className={"text-center"}>
                     <a href={"/disclaimer"}
                        target={"_self"}
-                       rel={"referrer"}
+                       rel={"noreferrer"}
                        className={"text-orange-300 underline"}>
                         Data Usage Disclaimer
                     </a>
                 </div>
                 <div className={"text-center"}>
                     <a href={"https://fsc-support.zendesk.com/hc/en-us/requests/new?ticket_form_id=9189050108308"}
-                       rel={"referrer"}
+                       target={"_blank"}
+                       rel={"noreferrer"}
                        className={"text-orange-300 underline"}>
                         Feedback: Let us know how we&apos;re doing!
                     </a>

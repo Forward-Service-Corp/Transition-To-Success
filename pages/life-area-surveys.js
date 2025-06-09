@@ -29,7 +29,7 @@ export default function LifeAreaSurveys({user, surveys, incomingDream}) {
             </Head>
             <div className={"w-full border-b-[1px] pb-2 mb-5"}>
                 <h2 className={"uppercase text-orange-600 "}>Active Life Area Survey</h2>
-                <div className={"text-xs dark:text-gray-400"}>Note: You may edit your life area survey for up to 12 hours after it is initially completed.</div>
+                {/*<div className={"text-xs dark:text-gray-400"}>Note: You may edit your life area survey for up to 12 hours after it is initially completed.</div>*/}
             </div>
             <LasCurrent user={user} surveys={surveysList} setSurveys={setSurveysList}
                         dreamId={currentDreamId} dream={currentDream}/>
@@ -59,16 +59,18 @@ export async function getServerSideProps(context) {
 
     // dynamic url setup
     const {req} = context;
+    const {sub} = session;
+
     const protocol = req.headers['x-forwarded-proto'] || 'http'
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
     // page data
-    const dataUrl = baseUrl + "/api/pages/surveysPageData?userId=" + session.sub
+    const dataUrl = baseUrl + "/api/pages/surveysPageData?userId=" + session.user._id
     const getData = await fetch(dataUrl)
     const {user, surveys} = await getData.json()
 
     // redirect to profile page if required fields are not complete
-    if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
+    // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
 
     return {
         props: {

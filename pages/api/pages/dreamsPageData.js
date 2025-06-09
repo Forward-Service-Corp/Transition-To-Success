@@ -5,8 +5,8 @@ import {ObjectId} from "mongodb";
 export default async(req, res) => {
 
     const {db} = await connectToDatabase()
-    const user = await db.collection("users").findOne({_id: ObjectId(req.query.userId)})
-    const query = { userId: ObjectId(req.query.userId) }
+    const user = await db.collection("users").findOne({_id: new ObjectId(req.query.userId)})
+    const query = { userId: req.query.userId }
 
     console.log(user)
 

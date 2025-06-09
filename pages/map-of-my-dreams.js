@@ -110,9 +110,9 @@ export async function getServerSideProps(context) {
     // page data
     let pageDataUrl;
     if (context.query.clientId === undefined) {
-        pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.sub;
+        pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id;
     } else {
-        pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.sub + "&clientId=" + context.query.clientId;
+        pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id + "&clientId=" + context.query.clientId;
     }
 
     const getPageData = await fetch(pageDataUrl);
@@ -127,8 +127,9 @@ export async function getServerSideProps(context) {
     const surveyUrl = baseUrl + "/api/get-survey-by-id?surveyId=" + context.query.surveyId;
     const getSurvey = await fetch(surveyUrl);
     const surveyJson = await getSurvey.json();
-    const {user} = pageDataJson
-    if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}};
+
+    // const {user} = pageDataJson
+    // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}};
 
     return {
         props: {

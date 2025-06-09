@@ -44,6 +44,21 @@ export default function UsersTable({users}) {
             return <span className={`text-gray-500`}>{moment(date).calendar()}</span>
         }
     }
+
+    const lastCoachUpdate = (person) => {
+
+        if(person.coach){
+            return moment(person.coach[person.coach.length-1]?.timestamp).calendar()
+        }
+
+        if(person.coachUpdate){
+            return moment(person.coachUpdate).calendar()
+        }
+
+        return <span className={`text-red-600`}>Missing</span>
+    }
+
+
     return (
         <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row items-center lg:justify-between lg:items-center">
@@ -58,7 +73,7 @@ export default function UsersTable({users}) {
                               className={"border-gray-300 text-xs col-span-3"}
                               value={searchTerm}
                                autoComplete="false"
-                              placeholder={"Search users by email..."}
+                              placeholder={"Search users by email or phone number..."}
                               onChange={(e) => {
                                   setSearchTerm(e.target.value)
                               }}/>
@@ -127,11 +142,10 @@ export default function UsersTable({users}) {
                                         <td className="whitespace-nowrap px-3 py-4 text-xs text-gray-500 dark:text-white dark:font-extralight">{person.email}</td>
                                         <td className="whitespace-nowrap px-3 py-4 text-xs text-gray-500 dark:text-white dark:font-extralight">{person.level}</td>
                                         <td className="whitespace-nowrap px-3 py-4 text-xs text-gray-500 dark:text-white dark:font-extralight">
-                                            {person.coach?.toString().split('').length > 0 ? person.coach.toString().split(',').length : ''}
+                                            {person.coach?.filter(coach => !coach.removalDate && !coach.terminationDate).length}
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-xs text-gray-500 dark:text-white">
-                                            {person.coachUpdate ? evaluateDate(person.coachUpdate) :
-                                                <span className={`text-red-600 dark:text-yellow-400`}>Missing</span>}
+                                            {lastCoachUpdate(person)}
                                         </td>
                                         {/*<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-xs font-medium sm:pr-6">*/}
                                         {/*    <a onClick={() => setModalState(true)} className="text-orange-600 hover:text-orange-900 dark:text-blue-600 dark:hover:text-blue-400" about={`Send this profile to a teammate.`} title={`Send this profile to a teammate.`} >*/}

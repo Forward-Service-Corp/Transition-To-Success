@@ -54,20 +54,21 @@ export default NextAuth({
         secret: process.env.JWT_SECRET,
     },
     secret: process.env.NEXTAUTH_SECRET,
-    url: process.env.NEXTAUTH_URL,
+    // url: process.env.NEXTAUTH_URL,
     callbacks: {
         async session({ session, token }) {
+            // console.log("session", session)
             try {
                 const {db} = await connectToDatabase();
-                const dbUser = await db.collection("users").findOne({_id: token.sub})
+                const dbUser = await db.collection("users").findOne({email: session.user.email})
                     .catch(er => console.error(er));
                 if(dbUser){
-                    session.user._id = dbUser._id.toString();
+                    session.user._id = dbUser._id;
                 }
             } catch (error){
                 console.error('Error fetching user from database:', error);
             }
-            session.sub = token.sub;
+            session.custom = token.sub;
             return session
         },
         async signIn({ user, account, credentials }){
@@ -94,8 +95,6 @@ export default NextAuth({
                     return "/auth/no-account"
                 }
             }
-
-
         },
         async jwt({ token, user }) {
             if (user) {
@@ -106,6 +105,7 @@ export default NextAuth({
     },
     events: {
         signIn: async ({user, isNewUser}) => {
+            console.log("isNewUser", isNewUser)
             const {db} = await connectToDatabase()
             console.log(user, isNewUser)
             if (isNewUser) {

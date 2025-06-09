@@ -11,7 +11,7 @@ function ClientSurveys({viewingUser, viewingUserData}) {
     return (
         <div className={"mt-5 p-6 border rounded dark:border-none dark:bg-black dark:bg-opacity-70 dark:text-white dark:rounded-lg dark:shadow-xl"}>
             <h2 className={"uppercase text-gray-500 mb-6"}>Current Life Area Survey</h2>
-            <LasCurrent user={viewingUser} surveys={surveys} isClientSurvey={true} clientId={viewingUser.email}/>
+            <LasCurrent user={viewingUser} surveys={surveys} isClientSurvey={true} clientId={viewingUser._id}/>
 
             <div className={"flex justify-between mt-6 mb-6"}>
                 <div className={"uppercase text-gray-500 flex items-center"}>Life Area Survey History<span
