@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     try {
         const { userId, coachObject } = req.body;
         const userSearchId = new ObjectId(userId);
-        const coachObjectId = new ObjectId(coachObject.key);
+        const coachObjectId = new ObjectId(coachObject.key); // Using key from coachObject as it's still set that way in assignedCoach.js
         console.log(userId, coachObject)
 
         if (!userId || !coachObject) {
@@ -23,13 +23,13 @@ export default async function handler(req, res) {
         const result = await collection.updateOne(
             {
                 _id: userSearchId,
-                coach: {$elemMatch: {key: coachObjectId}},
+                coach: {$elemMatch: {_id: coachObjectId}},
             },
             {
                 $set: { 'coach.$[elem].removalDate': new Date() }
             },
             {
-                arrayFilters: [{ 'elem.key': coachObjectId }]
+                arrayFilters: [{ 'elem._id': coachObjectId }]
             }
         );
 

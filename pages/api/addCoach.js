@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
         const result = await collection.updateOne(
             { _id: ObjectId(userId) },
-            { $push: { coach: {key: ObjectId(coachObject.key), email: coachObject.email, name: coachObject.name, timestamp: new Date() } } },
+            { $push: { coach: {_id: ObjectId(coachObject.key), email: coachObject.email, name: coachObject.name, timestamp: new Date() } } },
         );
 
         const user = await collection.findOne({ _id: ObjectId(userId) })

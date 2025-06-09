@@ -14,7 +14,7 @@ function ProfileCoaches({user}) {
             </div>
             <div className={"grid grid-cols-4 gap-4"}>
                 {coach && coach.filter(c => c.terminationDate === undefined && c.removalDate === undefined).map(coach => (
-                    <ProfileCoachSingle key={coach.key} coach={coach} />
+                    <ProfileCoachSingle key={coach._id} coach={coach} />
                 ))}
             </div>
 
