@@ -48,6 +48,8 @@ export default function Layout({children, title, session, loadingState, version,
             setEnvironment("development")
         }else if(location.indexOf("training") > -1){
             setEnvironment("training")
+        }else if(location.indexOf("test") > -1){
+            setEnvironment("staging")
         }else if(location.indexOf("production") > -1){
             setEnvironment("production")
         }

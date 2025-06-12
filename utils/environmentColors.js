@@ -6,13 +6,13 @@
 export function getEnvironmentBgColor(environment) {
   switch (environment) {
     case 'development':
-      return 'visible bg-green-600';
+      return 'visible bg-gray-600';
     case 'testing':
       return 'visible bg-red-600';
     case 'training':
       return 'visible bg-indigo-600';
-    case 'preview':
-      return 'visible bg-indigo-600';
+    case 'staging':
+      return 'visible bg-green-600';
     case 'production':
     default:
       return 'hidden';
