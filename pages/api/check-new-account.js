@@ -30,8 +30,6 @@ export default async(req, res) => {
     const {db} = await connectToDatabase();
     const user = await db.collection("users").findOne(term);
 
-    console.log('CHECK NEW ACCOUNT: ', user);
-
     if (loginFrom === 'existing-account') {
         if (user) {
             res.json({code: 666, message: "SCENARIO 0: Success."})

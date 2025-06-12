@@ -10,8 +10,6 @@ export default async function handler(req, res) {
     try {
         const { clientId, userId } = req.body;
 
-        console.log(userId, clientId)
-
         if (!userId || !clientId) {
             return res.status(400).json({ message: 'User ID and Coach Object are required' });
         }
