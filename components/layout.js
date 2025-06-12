@@ -70,7 +70,7 @@ export default function Layout({children, title, session, loadingState, version,
 
     return (
         <>
-            <div className={`${environment === "development" || environment === "testing" || environment === "dev" ? "visible" : "hidden"} ${environment === "testing" ? "bg-indigo-600" : "bg-pink-600"} p-4 text-center text-xs text-white font-light`}>
+            <div className={`${environment === "training" || environment === "testing" || environment === "dev" ? "visible" : "hidden"} ${environment === "testing" ? "bg-indigo-600" : "bg-pink-600"} p-4 text-center text-xs text-white font-light`}>
                 You are currently in the <strong className={`uppercase font-black`}>{environment}</strong> environment.
             </div>
             {simpleModal ? <SimpleModal title={simpleModalTitle} message={simpleModalMessage} label={simpleModalLabel}
