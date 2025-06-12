@@ -4,7 +4,7 @@ import Head from "next/head";
 import ClientsTable from "../components/clientsTable";
 
 export default function Clients({userJson, usersJson}) {
-
+    console.log(usersJson)
     return (
         <Layout title={"My Clients"} session={userJson}>
             <Head>

@@ -27,7 +27,7 @@ function classNames(...classes) {
 
 export default function Layout({children, title, session, loadingState, version, simpleModalTitle, simpleModalMessage, simpleModalLabel, simpleModal, background}) {
     const router = useRouter()
-    const [environment] = useState("production")
+    const [environment, setEnvironment] = useState("production")
     const [darkMode] = useState(null)
 
     const handleLogout = async () => {
@@ -39,6 +39,17 @@ export default function Layout({children, title, session, loadingState, version,
         await fetch(`/api/save-last-login?userId=${session?._id}`)
             .then(res => res.json())
     }
+
+    useEffect(() => {
+        const location = window.location.host
+        if(location.indexOf("localhost") > -1){
+            setEnvironment("dev")
+        }else if(location.indexOf("-test") > -1){
+            setEnvironment("testing")
+        }else if(location.indexOf("-training")){
+            setEnvironment("training")
+        }
+    }, [environment])
 
     useEffect(() => {
         const now = new Date();
@@ -59,7 +70,7 @@ export default function Layout({children, title, session, loadingState, version,
 
     return (
         <>
-            <div className={`${process.env.NODE_ENV === "development" || process.env.NODE_ENV === "preview" ? "visible" : "hidden"} ${process.env.NODE_ENV === "testing" ? "bg-indigo-600" : "bg-pink-600"} p-4 text-center text-xs text-white font-light`}>
+            <div className={`${environment === "development" || environment === "testing" || environment === "dev" ? "visible" : "hidden"} ${environment === "testing" ? "bg-indigo-600" : "bg-pink-600"} p-4 text-center text-xs text-white font-light`}>
                 You are currently in the <strong className={`uppercase font-black`}>{environment}</strong> environment.
             </div>
             {simpleModal ? <SimpleModal title={simpleModalTitle} message={simpleModalMessage} label={simpleModalLabel}

@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     try {
         const { userId, coachObject } = req.body;
         const userSearchId = new ObjectId(userId);
-        const coachObjectId = new ObjectId(coachObject.key); // Using key from coachObject as it's still set that way in assignedCoach.js
+        const coachObjectId = new ObjectId(coachObject._id);
         console.log(userId, coachObject)
 
         if (!userId || !coachObject) {
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         }
 
         const client = await clientPromise;
-        const db = client.db(); // Replace with your DB name if necessary
+        const db = client.db(); // Replace it with your DB name if necessary
         const collection = db.collection('users');
 
         const result = await collection.updateOne(

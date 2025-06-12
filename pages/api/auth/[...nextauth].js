@@ -57,7 +57,6 @@ export default NextAuth({
     // url: process.env.NEXTAUTH_URL,
     callbacks: {
         async session({ session, token }) {
-            // console.log("session", session)
             try {
                 const {db} = await connectToDatabase();
                 const dbUser = await db.collection("users").findOne({email: session.user.email})
@@ -105,13 +104,10 @@ export default NextAuth({
     },
     events: {
         signIn: async ({user, isNewUser}) => {
-            console.log("isNewUser", isNewUser)
             const {db} = await connectToDatabase()
-            console.log(user, isNewUser)
             if (isNewUser) {
                 const userEmail = user.email
                 const isFSCEmail = user.email.indexOf("fsc-corp.org") > -1
-                console.log(userEmail, isFSCEmail)
 
                 await db.collection("users").updateOne({"email": userEmail}, {
                     $set: {

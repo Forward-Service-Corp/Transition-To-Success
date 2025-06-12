@@ -8,7 +8,7 @@ function AddCoach({coach, searchTerm, addCoachFunc, setCoachObject}) {
         setEdit(prevState => !prevState);
         if (!edit){
             setCoachObject(prevState => {
-                return { ...prevState, email: coach.email, name: coach.name, key: coach._id };
+                return { ...prevState, email: coach.email, name: coach.name, _id: coach._id };
             })
 
         } else {

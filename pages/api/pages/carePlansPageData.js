@@ -18,9 +18,7 @@ export default async(req, res) => {
 
     const todosCursor = await db.collection("todos").find( query )
     const todos = await todosCursor.toArray()
-    await todosCursor.close()
-
-    // console.log(req.body)
+    await todosCursor.close();
 
     res.json({user, referrals, notes, todos})
 

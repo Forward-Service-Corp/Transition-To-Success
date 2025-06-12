@@ -10,14 +10,12 @@ export default async function handler(req, res) {
     try {
         const { userId, coachObject } = req.body;
 
-        console.log(userId, coachObject)
-
         if (!userId || !coachObject) {
             return res.status(400).json({ message: 'User ID and Coach Object are required' });
         }
 
         const client = await clientPromise;
-        const db = client.db(); // Replace with your DB name if necessary
+        const db = client.db(); // Replace it with your DB name if necessary
         const collection = db.collection('users');
 
         const result = await collection.updateOne(

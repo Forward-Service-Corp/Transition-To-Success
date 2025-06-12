@@ -3,7 +3,6 @@ import {ObjectId} from "mongodb";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req, res) => {
-    // console.log(req)
     const survey = {
         dream: req.body.dream,
         dreamId: req.body.dreamId,
