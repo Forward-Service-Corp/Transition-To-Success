@@ -25,6 +25,7 @@ function ClientCarePlans({user, viewingUser, viewingUserData}) {
                 return (
                     <ReferralContainer key={item._id} item={item} user={viewingUser} notes={viewingUserData.notes}
                                        loggedInUser={user}
+                                       tasks={viewingUserData.tasks}
                                        modifier={user.email}
                                        setUserReferrals={setUserReferrals}/>
                 )
@@ -37,6 +38,7 @@ function ClientCarePlans({user, viewingUser, viewingUserData}) {
                 return (
                     <ReferralContainer key={item._id} item={item} user={viewingUser} notes={viewingUserData.notes}
                                        loggedInUser={user}
+                                       tasks={viewingUserData.tasks}
                                        modifier={user.email}
                                        setUserReferrals={setUserReferrals}/>
                 )
