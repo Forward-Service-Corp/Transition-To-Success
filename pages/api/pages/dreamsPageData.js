@@ -8,8 +8,6 @@ export default async(req, res) => {
     const user = await db.collection("users").findOne({_id: new ObjectId(req.query.userId)})
     const query = { userId: req.query.userId }
 
-    console.log(user)
-
     const dreamsCursor = await db.collection("dreams").find( query )
     const dreams = await dreamsCursor.toArray()
     await dreamsCursor.close()
