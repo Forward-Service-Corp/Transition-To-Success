@@ -5,7 +5,7 @@ import {ObjectId} from "mongodb";
 export default async (req, res) => {
     const record = {
         referralId: req.body.referralId,
-        userId: ObjectId(req.body.userId),
+        userId: new ObjectId(req.body.userId),
         task: req.body.task,
         timestamp: req.body.timestamp,
         surveyId: req.body.surveyId,
