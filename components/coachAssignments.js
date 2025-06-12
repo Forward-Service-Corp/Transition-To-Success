@@ -13,6 +13,12 @@ function CoachAssignments({coachesJson, viewingUser}) {
     const [coachObject, setCoachObject] = React.useState({});
     const [fullHistory, setFullHistory] = React.useState(false);
 
+    // At component level, derive active coaches
+    const activeCoaches = newCoaches.filter(c =>
+        !c.terminationDate && !c.removalDate
+    );
+
+    console.log('Active coaches:', activeCoaches);
 
     const addCoachFunc = async () => {
         try {
@@ -21,7 +27,7 @@ function CoachAssignments({coachesJson, viewingUser}) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userId: viewingUser._id, coachObject }),
+                body: JSON.stringify({userId: viewingUser._id, coachObject}),
             });
 
             const data = await response.json();
@@ -43,7 +49,7 @@ function CoachAssignments({coachesJson, viewingUser}) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userId: viewingUser._id, coachObject: lastRemoved }),
+                body: JSON.stringify({userId: viewingUser._id, coachObject: lastRemoved}),
             });
 
             const data = await response.json();
@@ -68,7 +74,8 @@ function CoachAssignments({coachesJson, viewingUser}) {
                 <div>
                     <h2 className={"uppercase text-gray-500"}>Assigned Coaches</h2>
                 </div>
-                <div className={`${undo ? 'visible' : 'hidden'} flex text-sm text-gray-400 items-center`} onClick={undoCoachFunc}>
+                <div className={`${undo ? 'visible' : 'hidden'} flex text-sm text-gray-400 items-center`}
+                     onClick={undoCoachFunc}>
                     <ArrowCounterClockwise size={20} color={'red'}/><span className={`mx-2`}>Undo remove coach:</span>
                     <span className={`text-black`}> {lastRemoved.email}</span>.
                 </div>
@@ -76,17 +83,18 @@ function CoachAssignments({coachesJson, viewingUser}) {
                     className={`${addCoach ? 'bg-red-500' : 'bg-indigo-500'} text-xs rounded-full text-white px-4 py-2`}
                     onClick={handleAddCoach}>{addCoach ? '- Cancel add coach' : '+ Add coach'}</button>
             </div>
-            <div className={"grid grid-cols-4 gap-4"}>
+            <div id={`current-coaches-div`} className={"grid grid-cols-4 gap-4"}>
                 {newCoaches?.filter(c => c.terminationDate === undefined && c.removalDate === undefined).map((coach, i) => (
                     <AssignedCoach key={i} coach={coach} viewingUser={viewingUser}
-                                   setUndo={setUndo} setLastRemoved={setLastRemoved}  setNewCoaches={setNewCoaches}/>
+                                   setUndo={setUndo} setLastRemoved={setLastRemoved} setNewCoaches={setNewCoaches}/>
                 ))}
             </div>
             <div className={`mt-8 ${addCoach ? "visible" : "hidden"}`}>
                 <div className={"flex justify-between items-center border-0 border-y py-2 mb-4"}>
                     <div>
                         <span className={"uppercase text-gray-500"}>Add New Coach</span>
-                        <span className={`${searchTerm === "" ? 'hidden' : 'visible'} text-xs text-gray-800`}>
+                        <span id={`add-coaches-span`}
+                              className={`${searchTerm === "" ? 'hidden' : 'visible'} text-xs text-gray-800`}>
                             - {coachesJson.filter(coach =>
                             coach.email.includes(searchTerm) && !newCoaches.coach?.some(userCoach => userCoach.email === coach.email)).length} {coachesJson.filter(coach =>
                             coach.email.includes(searchTerm) && !newCoaches.coach?.some(userCoach => userCoach.email === coach.email)).length === 1 ? 'result' : 'results'}</span>
@@ -106,18 +114,24 @@ function CoachAssignments({coachesJson, viewingUser}) {
                 </div>
                 <div className={"grid grid-cols-4 gap-4"}>
                     {
-                        searchTerm !== "" && coachesJson
-                            .filter( coach => coach.email.includes(searchTerm) )
-                            .map(coach => (
-                                <AddCoach coach={coach} key={coach._id} viewingUser={viewingUser} setNewCoaches={setNewCoaches}
-                                      searchTerm={searchTerm} addCoachFunc={addCoachFunc} setCoachObject={setCoachObject}/>
+                        searchTerm !== "" && coachesJson.filter(coach =>
+                            coach.email.includes(searchTerm) &&
+                            !activeCoaches.some(userCoach => userCoach.email === coach.email)
+                        ).map(coach => (
+                                <AddCoach coach={coach} key={coach._id} viewingUser={viewingUser}
+                                          setNewCoaches={setNewCoaches}
+                                          searchTerm={searchTerm} addCoachFunc={addCoachFunc}
+                                          setCoachObject={setCoachObject}/>
                             ))
                     }
                 </div>
             </div>
             <div className={`flex justify-end mt-6`}>
                 <div>
-                    <button onClick={() => {setFullHistory(prevState => !prevState)}} className={`${fullHistory ? "text-red-600" : "text-indigo-600"} text-xs font-extralight`}>{fullHistory ? "- Hide full coach history" : "+ View full coach history"}</button>
+                    <button onClick={() => {
+                        setFullHistory(prevState => !prevState)
+                    }}
+                            className={`${fullHistory ? "text-red-600" : "text-indigo-600"} text-xs font-extralight`}>{fullHistory ? "- Hide full coach history" : "+ View full coach history"}</button>
                 </div>
             </div>
             <div className={`${!fullHistory ? 'hidden' : 'visible'}`}>
