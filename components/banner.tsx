@@ -1,17 +1,14 @@
 import React from 'react';
+import { getEnvironmentBgColor } from '../utils/environmentColors';
 
 function Banner() {
+    const env = process.env.NEXT_PUBLIC_APP_ENV;
+
     return (
         <div>
-            {process.env.NEXT_PUBLIC_APP_ENV === 'development' && (
-                <div className="bg-indigo-600 p-4 text-center text-xs text-white font-light">
-                    You are currently in the <strong>Development</strong> environment.
-                </div>
-            )}
-
-            {process.env.NEXT_PUBLIC_APP_ENV === 'preview' && (
-                <div className="bg-pink-600 p-4 text-center text-xs text-white font-light">
-                    You are currently in the <strong>Production</strong> environment.
+            {(env === 'development' || env === 'preview') && (
+                <div className={`${getEnvironmentBgColor(env)} p-4 text-center text-xs text-white font-light`}>
+                    You are currently in the <strong>{env === 'development' ? 'Development' : 'Production'}</strong> environment.
                 </div>
             )}
         </div>
