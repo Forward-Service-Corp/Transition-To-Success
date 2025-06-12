@@ -4,7 +4,7 @@ import {ObjectId} from 'mongodb'
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req, res) => {
     let q = {
-        userId: ObjectId(req.query.userId),
+        userId: new ObjectId(req.query.userId),
         // referralId: req.query.referralId
     }
 
