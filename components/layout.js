@@ -42,14 +42,15 @@ export default function Layout({children, title, session, loadingState, version,
 
     useEffect(() => {
         const location = window.location.host
-        if(location.indexOf("localhost") > -1){
-            setEnvironment("dev")
-        }else if(location.indexOf("-test") > -1){
-            setEnvironment("testing")
-        }else if(location.indexOf("-training")){
+
+        if(location.indexOf("localhost") > -1 || location.indexOf("dev") > -1){
+            setEnvironment("development")
+        }else if(location.indexOf("training") > -1){
             setEnvironment("training")
+        }else if(location.indexOf("production") > -1){
+            setEnvironment("production")
         }
-    }, [environment])
+    }, [])
 
     useEffect(() => {
         const now = new Date();
@@ -70,7 +71,7 @@ export default function Layout({children, title, session, loadingState, version,
 
     return (
         <>
-            <div className={`${environment === "training" || environment === "testing" || environment === "dev" ? "visible" : "hidden"} ${environment === "testing" ? "bg-indigo-600" : "bg-pink-600"} p-4 text-center text-xs text-white font-light`}>
+            <div className={`${environment === "training" || environment === "testing" || environment === "development" ? "visible" : "hidden"} ${environment === "testing" ? "bg-indigo-600" : "bg-pink-600"} p-4 text-center text-xs text-white font-light`}>
                 You are currently in the <strong className={`uppercase font-black`}>{environment}</strong> environment.
             </div>
             {simpleModal ? <SimpleModal title={simpleModalTitle} message={simpleModalMessage} label={simpleModalLabel}
