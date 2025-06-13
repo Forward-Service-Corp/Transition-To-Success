@@ -5,11 +5,12 @@ import TaskTodo from "./taskTodo";
 import {labelMap} from "../lib/serviceLabelsMap";
 import {useRouter} from "next/router";
 
-function ReferralContainer({item, user, notes, setUserReferrals, modifier, loggedInUser, tasks, setTasks}) {
+function ReferralContainer({item, user, notes, setUserReferrals, modifier, loggedInUser, tasks}) {
 
     const router = useRouter()
     const [open, setOpen] = useState(false)
     const [task, setTask] = useState("")
+    const [taskArr, setTasks] = useState(tasks)
     const [allNotes, setAllNotes] = useState(notes)
     const [saving, setSaving] = useState("false")
 
@@ -29,7 +30,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
         };
 
         // Immediately update the tasks state with the new task
-        setTasks(prevTasks => [...prevTasks, newTask]);
+        // setTasks(prevTasks => [...prevTasks, newTask]);
 
         const data = await fetch("/api/save-task", {
             method: "POST",
@@ -96,7 +97,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
                 <div className={"truncate max-w-[200px]"}>{item.name}</div>
                 <div
                     className={"absolute right-[0px] min-w-[130px] flex items-center justify-between h-full  bg-gray-700"}>
-                    <div className={`ml-8 text-white`}>Tasks: {tasks?.filter(task => task.referralId === item._id && eval(task.completed) === false).length}</div>
+                    <div className={`ml-8 text-white`}>Tasks: {taskArr?.filter(task => task.referralId === item._id && eval(task.completed) === false).length}</div>
                     <div className={"p-3 cursor-pointer text-xs"} onClick={() => {
                         setOpen(!open)
                     }}>{open ? <CaretDoubleUp size={20} weight="thin" color={"white"}/> :
@@ -179,7 +180,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
                     </div>
                     <div className={`${saving === "saving" || saving === "error" ? "visible" : "hidden"} p-2 rounded ${saving === "saving" ? 'bg-green-100' : 'bg-red-100'} text-xs mb-4`}>{saving === "saving" ? 'Saving...' : 'Save error. Refresh page.'}</div>
                     <div className={"uppercase text-orange-600 text-sm mb-1"}>Tasks</div>
-                    {tasks && tasks.filter(item => eval(item.completed) === false).map((task, i) => {
+                    {taskArr && taskArr.filter(item => eval(item.completed) === false).map((task, i) => {
                         return (
                             <div className={"border-l-[1px]"} key={i}>
 
@@ -194,10 +195,10 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
                         )
                     })}
 
-                    {tasks && tasks.filter(item => eval(item.completed) === true).length > 0 ?
+                    {taskArr && taskArr.filter(item => eval(item.completed) === true).length > 0 ?
                         <div className={"uppercase text-orange-600 text-sm mt-4"}>Completed</div> : null}
 
-                    {tasks && tasks.filter(item => eval(item.completed) === true).map((task, i) => {
+                    {taskArr && taskArr.filter(item => eval(item.completed) === true).map((task, i) => {
                         return (
                             <div className={"border-l-[1px]"} key={i}>
                                 <TaskTodo item={item} task={task} user={user}

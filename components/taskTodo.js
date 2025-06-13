@@ -4,7 +4,6 @@ import moment from "moment";
 import NoteItem from "./noteItem";
 
 function TaskTodo({task, setTasks, user, item, setAllNotes, loggedInUser, setSaving, allNotes, i}) {
-
     const [note, setNote] = useState("")
     const [noteOpen, setNoteOpen] = useState(false)
 
@@ -40,17 +39,18 @@ function TaskTodo({task, setTasks, user, item, setAllNotes, loggedInUser, setSav
     // };
 
     async function deleteTask(taskId) {
-        setSaving(true)
+        await setSaving(true)
 
         // Immediately update the tasks state by removing the deleted task
-        setTasks(prevTasks => prevTasks.filter(t => t._id !== taskId));
-
+       await setTasks(prevTasks => prevTasks.filter(t => t._id !== taskId));
         const response = await fetch("/api/delete-task?taskId=" + taskId)
         if(response.ok){
             // After deleting the task, get the updated tasks list from the server to ensure sync
             await getTasks()
         }
     }
+
+
 
     async function getTasks() {
         const data = await fetch("/api/get-tasks?userId=" + user._id + "&referralId=" + item._id)
