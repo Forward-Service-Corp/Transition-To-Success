@@ -4,6 +4,7 @@ import ReferralContainer from "./referralContainer";
 function ClientCarePlans({user, viewingUser, viewingUserData}) {
 
     const [userReferrals, setUserReferrals] = useState(viewingUserData.referrals)
+    const [tasks, setTasks] = useState(viewingUserData.tasks)
 
     async function getUserReferrals() {
         // const id = clientId === undefined ? user.email : clientId
@@ -25,8 +26,9 @@ function ClientCarePlans({user, viewingUser, viewingUserData}) {
                 return (
                     <ReferralContainer key={item._id} item={item} user={viewingUser} notes={viewingUserData.notes}
                                        loggedInUser={user}
-                                       tasks={viewingUserData.tasks}
+                                       tasks={tasks}
                                        modifier={user.email}
+                                       setTasks={setTasks}
                                        setUserReferrals={setUserReferrals}/>
                 )
             })}
@@ -38,7 +40,8 @@ function ClientCarePlans({user, viewingUser, viewingUserData}) {
                 return (
                     <ReferralContainer key={item._id} item={item} user={viewingUser} notes={viewingUserData.notes}
                                        loggedInUser={user}
-                                       tasks={viewingUserData.tasks}
+                                       tasks={tasks}
+                                       setTasks={setTasks}
                                        modifier={user.email}
                                        setUserReferrals={setUserReferrals}/>
                 )

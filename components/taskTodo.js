@@ -9,35 +9,57 @@ function TaskTodo({task, setTasks, user, item, setAllNotes, loggedInUser, setSav
     const [noteOpen, setNoteOpen] = useState(false)
 
     async function setTaskStatus(taskId, setTo) {
-        await toggleTaskCompletion(taskId)
+        // Immediately update the task status in the UI
+        setTasks(prevTasks => 
+            prevTasks.map(t => 
+                t._id === taskId 
+                    ? { ...t, completed: setTo.toString() } 
+                    : t
+            )
+        );
+
+        // Update the task status in the database
         const response = await fetch("/api/update-task-status?taskId=" + taskId + "&setTo=" + setTo)
         const data = await response.json();
         if(response.ok){
             console.log(data)
+            // After updating the task status, get the updated tasks list to ensure sync
+            await getTasks()
         }
     }
 
-    const toggleTaskCompletion = (taskId) => {
-        setTasks((prevTasks) =>
-            prevTasks.map((task) =>
-                task.id === taskId
-                    ? { ...task, completed: !task.completed }
-                    : task
-            )
-        );
-    };
+    // This function is no longer needed as we're getting the updated tasks from the server
+    // const toggleTaskCompletion = (taskId) => {
+    //     setTasks((prevTasks) =>
+    //         prevTasks.map((task) =>
+    //             task.id === taskId
+    //                 ? { ...task, completed: !task.completed }
+    //                 : task
+    //         )
+    //     );
+    // };
 
     async function deleteTask(taskId) {
         setSaving(true)
-        await fetch("/api/delete-task?taskId=" + taskId)
+
+        // Immediately update the tasks state by removing the deleted task
+        setTasks(prevTasks => prevTasks.filter(t => t._id !== taskId));
+
+        const response = await fetch("/api/delete-task?taskId=" + taskId)
+        if(response.ok){
+            // After deleting the task, get the updated tasks list from the server to ensure sync
+            await getTasks()
+        }
     }
 
     async function getTasks() {
-        const fetchedTasks = await fetch("/api/get-tasks?userId=" + user._id + "&referralId=" + item._id)
-            .then(res => res.json())
-        console.log(fetchedTasks)
-        await setTasks(fetchedTasks)
-        await setSaving(false)
+        const data = await fetch("/api/get-tasks?userId=" + user._id + "&referralId=" + item._id)
+        const res = await data.json()
+        if (res.success) {
+            console.log(res)
+            await setTasks(res)
+            await setSaving(false)
+        }
     }
 
     async function getNotes() {
@@ -48,8 +70,8 @@ function TaskTodo({task, setTasks, user, item, setAllNotes, loggedInUser, setSav
     }
 
     async function saveNote() {
-        setSaving(true)
-        await fetch("/api/save-note", {
+        await setSaving(true)
+        const data = await fetch("/api/save-note", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -64,7 +86,11 @@ function TaskTodo({task, setTasks, user, item, setAllNotes, loggedInUser, setSav
                 modifiedBy: loggedInUser.email
             })
         })
-        setNote("")
+        const res = await data.json()
+        // After saving the note, get the updated notes list
+        await getNotes()
+        await setSaving(false)
+        await setNote("")
     }
 
     function evaluateEmail (modifiedEmail) {

@@ -8,7 +8,7 @@ import styles from "../styles/layout.module.css"
 import SimpleModal from "./simpleModal";
 import Image from "next/image";
 import SubNav from "./subNav";
-import { getEnvironmentBgColor } from "../utils/environmentColors";
+import {getEnvironmentBgColor} from "../utils/environmentColors";
 
 const navigation = [
     {name: 'Dashboard', href: '/', current: true},
@@ -26,7 +26,18 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Layout({children, title, session, loadingState, version, simpleModalTitle, simpleModalMessage, simpleModalLabel, simpleModal, background}) {
+export default function Layout({
+                                   children,
+                                   title,
+                                   session,
+                                   loadingState,
+                                   version,
+                                   simpleModalTitle,
+                                   simpleModalMessage,
+                                   simpleModalLabel,
+                                   simpleModal,
+                                   background
+                               }) {
     const router = useRouter()
     const [environment, setEnvironment] = useState("production")
     const [darkMode] = useState(null)
@@ -35,6 +46,7 @@ export default function Layout({children, title, session, loadingState, version,
         await signOut().then()
         await router.push('/login')
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     async function updateLastLogin() {
         await fetch(`/api/save-last-login?userId=${session?._id}`)
@@ -43,14 +55,13 @@ export default function Layout({children, title, session, loadingState, version,
 
     useEffect(() => {
         const location = window.location.host
-
-        if(location.indexOf("localhost") > -1 || location.indexOf("dev") > -1){
+        if (location.indexOf("localhost") > -1 || location.indexOf("dev") > -1) {
             setEnvironment("development")
-        }else if(location.indexOf("training") > -1){
+        } else if (location.indexOf("training") > -1) {
             setEnvironment("training")
-        }else if(location.indexOf("test") > -1){
+        } else if (location.indexOf("test") > -1) {
             setEnvironment("staging")
-        }else if(location.indexOf("production") > -1){
+        } else if (location.indexOf("production") > -1) {
             setEnvironment("production")
         }
     }, [])
@@ -78,77 +89,78 @@ export default function Layout({children, title, session, loadingState, version,
                 You are currently in the <strong className={`uppercase font-black`}>{environment}</strong> environment.
             </div>
             {simpleModal ? <SimpleModal title={simpleModalTitle} message={simpleModalMessage} label={simpleModalLabel}
-                          version={version}/> : null}
+                                        version={version}/> : null}
             <div
                 className={`fixed w-full h-full bg-gray-600 bg-opacity-50 flex align-middle justify-center ${loadingState ? "visible" : "hidden"}`}>
                 <div className={"uppercase text-white self-center rounded-full p-5 bg-orange-600 shadow"}>loading...
                 </div>
             </div>
 
-            <div id={`layoutBannerContainer`} className={`min-h-full ${darkMode === 'darkTheme' ? styles["darkTheme"] : styles.lightTheme}`}>
+            <div id={`layoutBannerContainer`}
+                 className={`min-h-full ${darkMode === 'darkTheme' ? styles["darkTheme"] : styles.lightTheme}`}>
                 <div
                     className={`${session?.isYouth || version ? styles.youthVersion : styles.adultVersion} pb-32 print:hidden`}>
                     <Disclosure as="nav" className="bg-[#db5839] shadow-lg">
                         {({open}) => (
                             <>
                                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                                        <div className="flex items-center h-16 px-4 sm:px-0">
-                                            <div className="flex items-center justify-between w-full">
-                                                <div className={'flex'}>
-                                                    <div className="w-[80px] h-[50px] relative">
-                                                        <Image
-                                                            sizes="(max-width:70px) 30vw, (max-width: 70px) 20vw, 10vw"
-                                                            fill
-                                                            src="/img/tts-logo.png"
-                                                            alt="Workflow"/>
-                                                    </div>
-                                                    <div className="w-[60px] h-[50px] relative ml-3">
-                                                        <Image
-                                                            sizes="(max-width:70px) 30vw, (max-width: 70px) 20vw, 10vw"
-                                                            fill
-                                                            src="/img/fsc-logo.png"
-                                                            alt="Workflow" priority={true}/>
-                                                    </div>
+                                    <div className="flex items-center h-16 px-4 sm:px-0">
+                                        <div className="flex items-center justify-between w-full">
+                                            <div className={'flex'}>
+                                                <div className="w-[80px] h-[50px] relative">
+                                                    <Image
+                                                        sizes="(max-width:70px) 30vw, (max-width: 70px) 20vw, 10vw"
+                                                        fill
+                                                        src="/img/tts-logo.png"
+                                                        alt="Workflow"/>
                                                 </div>
-                                                {/*<div className="flex-shrink-0 ml-3 visible md:hidden">*/}
-                                                {/*    <a onClick={() => signOut()}*/}
-                                                {/*       className={"ml-16 px-3 py-2 text-white rounded border"}>Logout</a>*/}
-                                                {/*</div>*/}
-                                                <div className="hidden md:block">
-                                                    <div className="flex items-right space-x-4">
-                                                        {navigation.map((item) => (
-                                                            <a
-                                                                key={item.name}
-                                                                href={item.href}
-                                                                className={classNames(
-                                                                    router.pathname === item.href
-                                                                        ? 'bg-black bg-opacity-10 text-white'
-                                                                        : 'text-white hover:bg-orange-400 hover:text-white',
-                                                                    'px-3 py-2 rounded text-sm font-extralight'
-                                                                )}
-                                                                aria-current={item.current ? 'page' : undefined}
-                                                            >
-                                                                {item.name}
-                                                            </a>
-                                                        ))}
-
-                                                    </div>
+                                                <div className="w-[60px] h-[50px] relative ml-3">
+                                                    <Image
+                                                        sizes="(max-width:70px) 30vw, (max-width: 70px) 20vw, 10vw"
+                                                        fill
+                                                        src="/img/fsc-logo.png"
+                                                        alt="Workflow" priority={true}/>
                                                 </div>
                                             </div>
+                                            {/*<div className="flex-shrink-0 ml-3 visible md:hidden">*/}
+                                            {/*    <a onClick={() => signOut()}*/}
+                                            {/*       className={"ml-16 px-3 py-2 text-white rounded border"}>Logout</a>*/}
+                                            {/*</div>*/}
+                                            <div className="hidden md:block">
+                                                <div className="flex items-right space-x-4">
+                                                    {navigation.map((item) => (
+                                                        <a
+                                                            key={item.name}
+                                                            href={item.href}
+                                                            className={classNames(
+                                                                router.pathname === item.href
+                                                                    ? 'bg-black bg-opacity-10 text-white'
+                                                                    : 'text-white hover:bg-orange-400 hover:text-white',
+                                                                'px-3 py-2 rounded text-sm font-extralight'
+                                                            )}
+                                                            aria-current={item.current ? 'page' : undefined}
+                                                        >
+                                                            {item.name}
+                                                        </a>
+                                                    ))}
 
-                                            <div className="-mr-2 flex md:hidden">
-                                                {/* Mobile menu button */}
-                                                <Disclosure.Button
-                                                    className="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                                                    <span className="sr-only">Open main menu</span>
-                                                    {open ? (
-                                                        <XIcon className="block h-6 w-6" aria-hidden="true"/>
-                                                    ) : (
-                                                        <MenuIcon className="block h-6 w-6" aria-hidden="true"/>
-                                                    )}
-                                                </Disclosure.Button>
+                                                </div>
                                             </div>
                                         </div>
+
+                                        <div className="-mr-2 flex md:hidden">
+                                            {/* Mobile menu button */}
+                                            <Disclosure.Button
+                                                className="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                                                <span className="sr-only">Open main menu</span>
+                                                {open ? (
+                                                    <XIcon className="block h-6 w-6" aria-hidden="true"/>
+                                                ) : (
+                                                    <MenuIcon className="block h-6 w-6" aria-hidden="true"/>
+                                                )}
+                                            </Disclosure.Button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <Disclosure.Panel className="border-b border-gray-700 md:hidden">
@@ -215,7 +227,7 @@ export default function Layout({children, title, session, loadingState, version,
                             </>
                         )}
                     </Disclosure>
-                    <SubNav session={session} environment={environment} handleLogout={handleLogout} />
+                    <SubNav session={session} environment={environment} handleLogout={handleLogout}/>
                     <header className="py-10">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <span className="text-4xl font-extralight text-white dark:text-gray-400">{title}</span>
@@ -228,12 +240,13 @@ export default function Layout({children, title, session, loadingState, version,
                     <div className="max-w-7xl mx-auto pb-12 px-4 sm:px-6 lg:px-8">
                         <div
                             className={`${background === false ? '' : 'bg-white shadow px-5 py-6 sm:px-6'} print:px-0 print:py-0 print:shadow-none`}>
-                                {children}
-                            </div>
+                            {children}
+                        </div>
                     </div>
                 </main>
             </div>
-            <div className={"p-4 bg-gray-600 dark:bg-gray-900 grid grid-cols-1 md:grid-cols-4 text-white text-sm  font-light"}>
+            <div
+                className={"p-4 bg-gray-600 dark:bg-gray-900 grid grid-cols-1 md:grid-cols-4 text-white text-sm  font-light"}>
                 <div className={"text-center"}>Map of My Dreams Web Application</div>
                 <div className={"text-center"}>Forward Service Corporation &copy; 2024</div>
                 <div className={"text-center"}>

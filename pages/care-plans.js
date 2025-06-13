@@ -77,10 +77,14 @@ export default function CarePlans({pageJson}) {
                 }
             }).map(item => {
                 return (
-                    <ReferralContainer key={item._id} item={item} user={pageJson.user} notes={pageJson.notes}
-                                       modifier={pageJson.email}
+                    <ReferralContainer key={item._id} 
+                                       item={item} 
+                                       user={pageJson.user} 
+                                       notes={pageJson.notes}
+                                       modifier={pageJson.user.email}
                                        tasks={tasks.filter((task) => task.referralId === item._id)}
-                                       loggedInUser={pageJson}
+                                       setTasks={setTasks}
+                                       loggedInUser={pageJson.user}
                                        setUserReferrals={setUserReferrals}/>
                 )
             })}
@@ -111,4 +115,3 @@ export async function getServerSideProps(context) {
     }
 
 }
-

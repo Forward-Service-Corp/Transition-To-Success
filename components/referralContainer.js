@@ -11,11 +11,27 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
     const [open, setOpen] = useState(false)
     const [task, setTask] = useState("")
     const [allNotes, setAllNotes] = useState(notes)
-    const [saving, setSaving] = useState(false)
+    const [saving, setSaving] = useState("false")
 
     async function saveTask() {
-        await setSaving(true);
-        await fetch("/api/save-task", {
+        await setSaving("saving");
+
+        // Create a new task object to immediately update the UI
+        const newTask = {
+            _id: Date.now().toString(), // Temporary ID until we get the real one from the server
+            referralId: item._id,
+            userId: user._id,
+            task: task,
+            surveyId: item.surveyId,
+            timestamp: new Date(),
+            modifiedBy: modifier,
+            completed: "false"
+        };
+
+        // Immediately update the tasks state with the new task
+        setTasks(prevTasks => [...prevTasks, newTask]);
+
+        const data = await fetch("/api/save-task", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -29,31 +45,20 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
                 modifiedBy: modifier
             })
         })
+        const res = await data.json()
+        console.log(res)
+        // After saving the task, get the updated tasks list to ensure we have the correct server-generated ID
+        await getTasks()
+        await setSaving("false")
     }
 
     const getTasks = useCallback( () => {
         fetch("/api/get-tasks?userId=" + user._id + "&referralId=" + item._id)
             .then(res => res.json())
             .then(res => setTasks(res))
-            .then(() => setSaving(false))
+            .then(() => setSaving("false"))
             .catch(e => console.log(e))
     },[item._id, setTasks, user._id])
-
-    // async function getTasks() {
-    //     fetch("/api/get-tasks?userId=" + user._id + "&referralId=" + item._id)
-    //         .then(res => res.json())
-    //         .then(res => setTasks(res))
-    //         .then(() => setSaving(false))
-    //         .catch(e => console.log(e))
-    // }
-
-    // const getTasks = async () => {
-    //     fetch("/api/get-tasks?userId=" + user._id + "&referralId=" + item._id)
-    //         .then(res => res.json())
-    //         .then(res => setTasks(res))
-    //         .then(() => setSaving(false))
-    //         .catch(e => console.log(e))
-    // }
 
     async function deleteReferral(referralId) {
         await fetch("/api/delete-referral?referralId=" + referralId)
@@ -72,9 +77,15 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
     }
 
     async function getReferrals() {
-        const fetchedReferrals = await fetch("/api/get-referrals?userId=" + user._id)
-            .then(res => res.json())
-        await setUserReferrals(fetchedReferrals)
+        const data = await fetch("/api/get-referrals?userId=" + user._id)
+        const res = await data.json()
+        if (res.success) {
+            await setUserReferrals(fetchedReferrals)
+            await setSaving("false")
+        }else {
+            await setSaving("error")
+        }
+
     }
 
     return (
@@ -166,7 +177,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
                             }} disabled={task === ""}>Save task
                         </button>
                     </div>
-                    <div className={`${saving ? "visible" : "hidden"} p-2 rounded bg-green-100 text-xs mb-4`}>Saving...</div>
+                    <div className={`${saving === "saving" || saving === "error" ? "visible" : "hidden"} p-2 rounded ${saving === "saving" ? 'bg-green-100' : 'bg-red-100'} text-xs mb-4`}>{saving === "saving" ? 'Saving...' : 'Save error. Refresh page.'}</div>
                     <div className={"uppercase text-orange-600 text-sm mb-1"}>Tasks</div>
                     {tasks && tasks.filter(item => eval(item.completed) === false).map((task, i) => {
                         return (
