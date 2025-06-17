@@ -5,7 +5,7 @@ import {ObjectId} from 'mongodb'
 export default async (req, res) => {
     let q = {
         userId: new ObjectId(req.query.userId),
-        // referralId: req.query.referralId
+        referralId: req.query.referralId
     }
 
     const {db} = await connectToDatabase()
