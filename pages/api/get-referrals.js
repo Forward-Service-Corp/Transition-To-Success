@@ -6,11 +6,11 @@ export default async (req, res) => {
     let q
     if (req.query.surveyId === undefined) {
         q = {
-            userId: ObjectId(req.query.userId),
+            userId: new ObjectId(req.query.userId),
         }
     } else {
         q = {
-            userId: ObjectId(req.query.userId),
+            userId: new ObjectId(req.query.userId),
             surveyId: req.query.surveyId
         }
     }
@@ -27,7 +27,7 @@ export default async (req, res) => {
 
 
 
-    const allRecords = await records.concat(customRecords)
+    const allRecords = records.concat(customRecords)
 
     res.json(allRecords)
 
