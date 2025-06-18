@@ -40,7 +40,12 @@ export default async function handler(req, res) {
                 $set: { 'coach.$[elem].removalDate': new Date() }
             },
             {
-                arrayFilters: [{ 'elem._id': coachObjectId }]
+                arrayFilters: [
+                    { $or: [
+                        {'elem._id': coachObjectId},
+                        {'elem.key': coachObjectId} 
+                    ]}
+                ]
             }
         );
 
