@@ -9,7 +9,7 @@ function AssignedCoach({coach, viewingUser, setNewCoaches, setUndo, setLastRemov
         setEdit(prevState => !prevState);
         if (!edit){
             setCoachObject(prevState => {
-                return { ...prevState, email: coach.email, name: coach.name, _id: coach._id };
+                return { ...prevState, email: coach.email, name: coach.name, _id: coach._id, key: coach.key };
             })
 
         } else {
