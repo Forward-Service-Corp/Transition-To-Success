@@ -10,7 +10,7 @@ export default async function handler(req, res) {
         const { userId, coachObject } = req.body;
         const userSearchId = new ObjectId(userId);
         const coachObjectId = new ObjectId(coachObject._id);
-        const coachObjectkey = new ObjectId(coachObject.key)
+        const coachObjectKey = new ObjectId(coachObject.key)
         console.log(userId, coachObject)
 
         if (!userId || !coachObject) {
