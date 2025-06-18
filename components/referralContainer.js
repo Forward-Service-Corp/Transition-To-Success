@@ -17,19 +17,19 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
     async function saveTask() {
         await setSaving("saving");
 
-        // Create a new task object to immediately update the UI
-        const newTask = {
-            _id: Date.now().toString(), // Temporary ID until we get the real one from the server
-            referralId: item._id,
-            userId: user._id,
-            task: task,
-            surveyId: item.surveyId,
-            timestamp: new Date(),
-            modifiedBy: modifier,
-            completed: "false"
-        };
+         //Create a new task object to immediately update the UI
+         const newTask = {
+             _id: Date.now().toString(), // Temporary ID until we get the real one from the server
+             referralId: item._id,
+             userId: user._id,
+             task: task,
+             surveyId: item.surveyId,
+             timestamp: new Date(),
+             modifiedBy: modifier,
+             completed: "false"
+         };
 
-        // Immediately update the tasks state with the new task
+        // Immediately update the task state with the new task
         // setTasks(prevTasks => [...prevTasks, newTask]);
 
         const data = await fetch("/api/save-task", {
@@ -81,7 +81,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
         const data = await fetch("/api/get-referrals?userId=" + user._id)
         const res = await data.json()
         if (res.success) {
-            await setUserReferrals(fetchedReferrals)
+            await setUserReferrals(res)
             await setSaving("false")
         }else {
             await setSaving("error")
