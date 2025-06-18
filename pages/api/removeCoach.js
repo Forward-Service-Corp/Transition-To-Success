@@ -10,6 +10,7 @@ export default async function handler(req, res) {
         const { userId, coachObject } = req.body;
         const userSearchId = new ObjectId(userId);
         const coachObjectId = new ObjectId(coachObject._id);
+        const coachObjectkey = new ObjectId(coachObject.key)
         console.log(userId, coachObject)
 
         if (!userId || !coachObject) {
@@ -30,7 +31,7 @@ export default async function handler(req, res) {
                                 _id: coachObjectId
                             },
                             {
-                                key: coachObjectId
+                                key: coachObjectKey
                             }
                         ]
                     }
@@ -43,7 +44,7 @@ export default async function handler(req, res) {
                 arrayFilters: [
                     { $or: [
                         {'elem._id': coachObjectId},
-                        {'elem.key': coachObjectId} 
+                        {'elem.key': coachObjectKey} 
                     ]}
                 ]
             }
