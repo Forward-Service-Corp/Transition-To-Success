@@ -23,7 +23,18 @@ export default async function handler(req, res) {
         const result = await collection.updateOne(
             {
                 _id: userSearchId,
-                coach: {$elemMatch: {_id: coachObjectId}},
+                coach: {
+                    $elemMatch: {
+                        $or: [
+                            {
+                                _id: coachObjectId
+                            },
+                            {
+                                key: coachObjectId
+                            }
+                        ]
+                    }
+                }
             },
             {
                 $set: { 'coach.$[elem].removalDate': new Date() }

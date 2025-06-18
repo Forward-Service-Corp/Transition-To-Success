@@ -9,10 +9,25 @@ export default async (req, res) => {
     const cursor = await db.collection("users").find({
         coach: {
             $elemMatch: {
-                _id: coachObjectId,
-                $and: [
-                    { $or: [{ terminationDate: { $exists: false } }, { terminationDate: null }] },
-                    { $or: [{ removalDate: { $exists: false } }, { removalDate: null }] }
+                $or: [
+                    {
+
+                
+                        _id: coachObjectId,
+                        $and: [
+                            { $or: [{ terminationDate: { $exists: false } }, { terminationDate: null }] },
+                            { $or: [{ removalDate: { $exists: false } }, { removalDate: null }] }
+                        ]
+                    },
+                    {
+
+                
+                        key: coachObjectId,
+                        $and: [
+                            { $or: [{ terminationDate: { $exists: false } }, { terminationDate: null }] },
+                            { $or: [{ removalDate: { $exists: false } }, { removalDate: null }] }
+                        ]
+                    }
                 ]
             }
         }

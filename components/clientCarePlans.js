@@ -25,7 +25,7 @@ function ClientCarePlans({user, viewingUser, viewingUserData}) {
                 return (
                     <ReferralContainer key={item._id} item={item} user={viewingUser} notes={viewingUserData.notes}
                                        loggedInUser={user}
-                                       tasks={viewingUserData.tasks}
+                                       tasks={viewingUserData.tasks.filter((task) => task.referralId === item._id)}
                                        modifier={user.email}
                                        setUserReferrals={setUserReferrals}/>
                 )
