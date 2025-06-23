@@ -35,7 +35,7 @@ function AssignedCoach({coach, viewingUser, setNewCoaches, setUndo, setLastRemov
 
             const data = await response.json();
             await setNewCoaches(data.user.coach);
-            await setEdit(false)
+            await setEdit(false);
 
             console.log('Coach removed:', data);
         } catch (error) {

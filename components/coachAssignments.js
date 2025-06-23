@@ -27,7 +27,7 @@ function CoachAssignments({coachesJson, viewingUser}) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({userId: viewingUser._id, coachObject}),
+                body: JSON.stringify({ userId: viewingUser._id, coachObject }),
             });
 
             const data = await response.json();
@@ -49,7 +49,7 @@ function CoachAssignments({coachesJson, viewingUser}) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({userId: viewingUser._id, coachObject: lastRemoved}),
+                body: JSON.stringify({ userId: viewingUser._id, coachObject: lastRemoved }),
             });
 
             const data = await response.json();
