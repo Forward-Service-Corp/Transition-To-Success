@@ -17,17 +17,17 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
     async function saveTask() {
         await setSaving("saving");
 
-        // Create a new task object to immediately update the UI
-        // const newTask = {
-        //     _id: Date.now().toString(), // Temporary ID until we get the real one from the server
-        //     referralId: item._id,
-        //     userId: user._id,
-        //     task: task,
-        //     surveyId: item.surveyId,
-        //     timestamp: new Date(),
-        //     modifiedBy: modifier,
-        //     completed: "false"
-        // };
+         //Create a new task object to immediately update the UI
+         const newTask = {
+             _id: Date.now().toString(), // Temporary ID until we get the real one from the server
+             referralId: item._id,
+             userId: user._id,
+             task: task,
+             surveyId: item.surveyId,
+             timestamp: new Date(),
+             modifiedBy: modifier,
+             completed: "false"
+         };
 
         // Immediately update the task state with the new task
         // setTasks(prevTasks => [...prevTasks, newTask]);
