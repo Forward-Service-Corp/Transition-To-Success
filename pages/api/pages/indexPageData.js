@@ -17,8 +17,14 @@ export default async(req, res) => {
     await surveysCursor.close()
 
     const referralsCursor = await db.collection("referrals").find(query).sort("domain")
-    const referrals = await referralsCursor.toArray()
+    const refs = await referralsCursor.toArray()
     await referralsCursor.close()
+
+    const customCursor = await db.collection("customReferrals").find(query).sort("domain")
+    const customRefs = await customCursor.toArray()
+    await customCursor.close()
+
+    const referrals = await refs.concat(customRefs)
 
     const tasksCursor = await db.collection("todos").find(query)
     const tasks = await tasksCursor.toArray()
@@ -29,8 +35,15 @@ export default async(req, res) => {
     await notesCursor.close()
 
     const clientReferralsCursor = await db.collection("referrals").find({ userId: req.query.clientId })
-    const clientReferrals = await clientReferralsCursor.toArray()
+    const clientRefs = await clientReferralsCursor.toArray()
     await clientReferralsCursor.close()
+
+    const customClientCursor = await db.collection("customReferrals").find({ userId: req.query.clientId })
+    const customClientRefs = await customClientCursor.toArray()
+    await customClientCursor.close()
+
+    const clientReferrals = await clientRefs.concat(customClientRefs)   
+
 
     res.json({user, dreams, surveys, referrals, tasks, notes, clientReferrals})
 
