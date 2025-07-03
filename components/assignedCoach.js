@@ -9,7 +9,7 @@ function AssignedCoach({coach, viewingUser, setNewCoaches, setUndo, setLastRemov
         setEdit(prevState => !prevState);
         if (!edit){
             setCoachObject(prevState => {
-                return { ...prevState, email: coach.email, name: coach.name, _id: coach._id, key: coach.key };
+                return { ...prevState, email: coach.email, name: coach.name, key: coach.key };
             })
 
         } else {
@@ -35,7 +35,7 @@ function AssignedCoach({coach, viewingUser, setNewCoaches, setUndo, setLastRemov
 
             const data = await response.json();
             await setNewCoaches(data.user.coach);
-            await setEdit(false)
+            await setEdit(false);
 
             console.log('Coach removed:', data);
         } catch (error) {

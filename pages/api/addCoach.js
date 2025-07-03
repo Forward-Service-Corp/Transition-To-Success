@@ -19,11 +19,11 @@ export default async function handler(req, res) {
         const collection = db.collection('users');
 
         const result = await collection.updateOne(
-            { _id: ObjectId(userId) },
-            { $push: { coach: {_id: ObjectId(coachObject._id), email: coachObject.email, name: coachObject.name, timestamp: new Date() } } },
+            { _id: new ObjectId(userId) },
+            { $push: { coach: {key: new ObjectId(coachObject._id), email: coachObject.email, name: coachObject.name, timestamp: new Date() } } },
         );
 
-        const user = await collection.findOne({ _id: ObjectId(userId) })
+        const user = await collection.findOne({ _id: new ObjectId(userId) })
 
         if (result.modifiedCount === 0) {
             return res.status(404).json({ message: 'User not found or coach not added' });
