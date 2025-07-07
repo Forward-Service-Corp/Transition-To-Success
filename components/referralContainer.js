@@ -80,7 +80,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
     async function getReferrals() {
         const data = await fetch("/api/get-referrals?userId=" + user._id)
         const res = await data.json()
-        if (res.success) {
+        if (res.ok) {
             await setUserReferrals(res)
             await setSaving("false")
         }else {
