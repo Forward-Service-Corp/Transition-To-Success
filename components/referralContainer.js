@@ -83,7 +83,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
         console.log(data.success)
         console.log(data.ok)
         console.log(res)
-        if (data.success) {
+        if (data.ok) {
             await setUserReferrals(res)
             await setSaving("false")
         }else {
