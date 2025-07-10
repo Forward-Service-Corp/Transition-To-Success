@@ -19,7 +19,7 @@ export default async(req, res) => {
         contactPhone: req.body.contactPhone,
         contactEmail: req.body.contactEmail,
         needs: req.body.needs,
-        createdDate: date
+        createdDate: date.toLocaleDateString("en-us")
     }
 
     const {db} = await connectToDatabase()
