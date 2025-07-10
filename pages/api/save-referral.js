@@ -17,7 +17,8 @@ export default async(req, res) => {
         contact: req.body.contact,
         contactPhone: req.body.contactPhone,
         contactEmail: req.body.contactEmail,
-        needs: req.body.needs
+        needs: req.body.needs,
+        createdDate: Date.now()
     }
 
     const {db} = await connectToDatabase()
