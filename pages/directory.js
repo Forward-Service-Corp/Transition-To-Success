@@ -69,18 +69,18 @@ export default function Directory({pageDataJson}) {
                     <div className={"flex items-center"}>
                         <button type={"submit"}
                                 className={"py-[8px] px-6 mr-2 text-white  text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 dark:rounded-lg"}
-                                disabled={keyword === "" && domain === "none" && county === ""}
+                                disabled={keyword === "" && domain === "none" && county === "none"}
                                 onClick={() => {
                                     setSearched(true)
                                 }}>Search
                         </button>
                         <button type={"reset"}
                                 className={"py-[8px] px-6 text-white  text-xs bg-red-500 hover:bg-red-600 disabled:bg-gray-400 rounded-lg"}
-                                disabled={keyword === "" && domain === "none" && county === ""}
+                                disabled={keyword === "" && domain === "none" && county === "none"}
                                 onClick={() => {
                                     setKeyword("")
                                     setDomain("none")
-                                    setCounty("")
+                                    setCounty("none")
                                     setLoadedServices([])
                                     setSearched(false)
                                     setSearching(false)
