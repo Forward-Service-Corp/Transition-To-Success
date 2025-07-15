@@ -50,7 +50,7 @@ export default function Directory({pageDataJson}) {
                         <p className={"text-xs text-gray-500 dark:text-white dark:pb-3"}>Search by domain</p>
                         <select defaultValue={"none"} id={"domainSelect"} className={"w-full rounded border-gray-300 text-xs dark:bg-black dark:text-white dark:border-0 dark:placeholder:text-gray-500 focus:border-0 focus:border-transparent focus:ring-transparent outline-none focus:outline-none dark:default:text-gray-500"}
                                 onChange={(e) => { 
-                                    setDomain(e.target.value)
+                                    setDomain(e)
                                 }}>
                             <option value={""}>Select a domain...</option>
                             {domains.map(domain => <option value={domain} key={domain}>{domain}</option>)}
@@ -60,7 +60,7 @@ export default function Directory({pageDataJson}) {
                         <p className={"text-xs text-gray-500 dark:text-white dark:pb-3"}>Search by county</p>
                         <select defaultValue={"none"} className={"w-full rounded border-gray-300 text-xs dark:bg-black dark:text-white dark:border-0 dark:placeholder:text-gray-500 focus:border-0 focus:border-transparent focus:ring-transparent outline-none focus:outline-none dark:default:text-gray-500"} id={"countySelect"}
                                 onChange={(e) => {
-                                    setCounty(e.target.value)
+                                    setCounty(e)
                                 }}>
                             <option value={""}>Select a county...</option>
                             {WICountiesList.map(county => <option value={county} key={county}>{county}</option>)}
