@@ -52,7 +52,7 @@ export default function Directory({pageDataJson}) {
                                 onChange={(e) => {
                                     setDomain(e.target.value)
                                 }}>
-                            <option className={`dark:placeholder:text-gray-500`} value={""}>Select a domain...</option>
+                            <option value={"none"}>Select a domain...</option>
                             {domains.map(domain => <option key={domain} value={domain}>{domain}</option>)}
                         </select>
                     </div>
