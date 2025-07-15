@@ -8,7 +8,7 @@ export default async (req, res) => {
         .collection("services")
         .find({
              "name": {
-                 $regex: req.body.keyword, $options: "-i"
+                 $regex: req.body.keyword, $options: "i"
              },
             "service": {
                 $regex: req.body.domain

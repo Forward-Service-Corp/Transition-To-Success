@@ -82,6 +82,7 @@ export default function Directory({pageDataJson}) {
                                     setCounty("")
                                     setLoadedServices([])
                                     setSearched(false)
+                                    setSearching(false)
                                 }}>Reset
                         </button>
                     </div>
