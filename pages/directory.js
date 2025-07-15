@@ -48,9 +48,9 @@ export default function Directory({pageDataJson}) {
                     </div>
                     <div className={""}>
                         <p className={"text-xs text-gray-500 dark:text-white dark:pb-3"}>Search by domain</p>
-                        <select defaultValue={"none"} id={"domainSelect"} className={"w-full rounded border-gray-300 text-xs dark:bg-black dark:text-white dark:border-0 dark:placeholder:text-gray-500 focus:border-0 focus:border-transparent focus:ring-transparent outline-none focus:outline-none dark:default:text-gray-500"}
+                        <select defaultValue={""} id={"domainSelect"} className={"w-full rounded border-gray-300 text-xs dark:bg-black dark:text-white dark:border-0 dark:placeholder:text-gray-500 focus:border-0 focus:border-transparent focus:ring-transparent outline-none focus:outline-none dark:default:text-gray-500"}
                                 onChange={(e) => { 
-                                    setDomain(e)
+                                    setDomain(e.target.value)
                                 }}>
                             <option value={""}>Select a domain...</option>
                             {domains.map(domain => <option value={domain} key={domain}>{domain}</option>)}
@@ -58,9 +58,9 @@ export default function Directory({pageDataJson}) {
                     </div>
                     <div className={""}>
                         <p className={"text-xs text-gray-500 dark:text-white dark:pb-3"}>Search by county</p>
-                        <select defaultValue={"none"} className={"w-full rounded border-gray-300 text-xs dark:bg-black dark:text-white dark:border-0 dark:placeholder:text-gray-500 focus:border-0 focus:border-transparent focus:ring-transparent outline-none focus:outline-none dark:default:text-gray-500"} id={"countySelect"}
+                        <select defaultValue={""} className={"w-full rounded border-gray-300 text-xs dark:bg-black dark:text-white dark:border-0 dark:placeholder:text-gray-500 focus:border-0 focus:border-transparent focus:ring-transparent outline-none focus:outline-none dark:default:text-gray-500"} id={"countySelect"}
                                 onChange={(e) => {
-                                    setCounty(e)
+                                    setCounty(e.target.value)
                                 }}>
                             <option value={""}>Select a county...</option>
                             {WICountiesList.map(county => <option value={county} key={county}>{county}</option>)}
@@ -69,7 +69,7 @@ export default function Directory({pageDataJson}) {
                     <div className={"flex items-center"}>
                         <button type={"submit"}
                                 className={"py-[8px] px-6 mr-2 text-white  text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 dark:rounded-lg"}
-                                disabled={keyword === "" && domain === "" && county === ""}
+                                disabled={keyword === "" && domain === "none" && county === ""}
                                 onClick={() => {
                                     setSearched(true)
                                 }}>Search
