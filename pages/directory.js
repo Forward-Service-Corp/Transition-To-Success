@@ -48,11 +48,11 @@ export default function Directory({pageDataJson}) {
                     </div>
                     <div className={""}>
                         <p className={"text-xs text-gray-500 dark:text-white dark:pb-3"}>Search by domain</p>
-                        <select defaultValue={"none"} id={"domainSelect"} className={"w-full rounded border-gray-300 text-xs dark:bg-black dark:text-white dark:border-0 dark:placeholder:text-gray-500 focus:border-0 focus:border-transparent focus:ring-transparent outline-none focus:outline-none"}
+                        <select defaultValue={""} id={"domainSelect"} className={"w-full rounded border-gray-300 text-xs dark:bg-black dark:text-white dark:border-0 dark:placeholder:text-gray-500 focus:border-0 focus:border-transparent focus:ring-transparent outline-none focus:outline-none"}
                                 onChange={(e) => {
                                     setDomain(e.target.value)
                                 }}>
-                            <option value={"none"}>Select a domain...</option>
+                            <option value={""}>Select a domain...</option>
                             {domains.map(domain => <option key={domain} value={domain}>{domain}</option>)}
                         </select>
                     </div>
