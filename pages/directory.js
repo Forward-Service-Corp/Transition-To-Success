@@ -26,7 +26,7 @@ export default function Directory({pageDataJson}) {
             body: JSON.stringify({keyword, domain, county})
             
         }).then(res => res.json())
-        print(domain, county)
+        console.log(domain, county)
         await setSearching(false)
         await setLoadedServices(fetchSearch)
     }
