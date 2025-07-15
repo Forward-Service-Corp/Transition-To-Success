@@ -102,7 +102,7 @@ export default function Directory({pageDataJson}) {
             <div className={`rounded bg-green-100 p-2 text-xs text-center mt-4 max-w-[95%] m-auto ${searching ? "visible" : "hidden"} dark:bg-purple-800 dark:text-white dark:font-extralight`}>
                 Searching...
             </div>
-            <div className={`text-center p-4 ${searched ? "visible" : (searching ? "hidden": "visible")} dark:text-white dark:font-extralight`}>
+            <div className={`text-center p-4 ${searched ? "visible" : "hidden"} dark:text-white dark:font-extralight`}>
                 {loadedServices.length === 0 ? "There were no results" : "There were " + loadedServices.length + " results found."}
             </div>
             <div className={`text-center p-4 ${!searched ? "visible" : "hidden"} dark:text-white font-thin`}>
