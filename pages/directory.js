@@ -18,6 +18,12 @@ export default function Directory({pageDataJson}) {
 
     async function search() {
         setSearching(true)
+        if (domain === 'none' ){
+            domain = ''
+        }
+        if (county === 'none'){
+            county = ''
+        }
         const fetchSearch = await fetch("/api/search-directory", {
             method: "POST",
             headers: {
@@ -54,7 +60,7 @@ export default function Directory({pageDataJson}) {
                                 onChange={(e) => { 
                                     setDomain(e.target.value)
                                 }}>
-                            <option value={""}>Select a domain...</option>
+                            <option value={"none"}>Select a domain...</option>
                             {domains.map(domain => <option value={domain} key={domain}>{domain}</option>)}
                         </select>
                     </div>
@@ -64,25 +70,25 @@ export default function Directory({pageDataJson}) {
                                 onChange={(e) => {
                                     setCounty(e.target.value)
                                 }}>
-                            <option value={""}>Select a county...</option>
+                            <option value={"none"}>Select a county...</option>
                             {WICountiesList.map(county => <option value={county} key={county}>{county}</option>)}
                         </select>
                     </div>
                     <div className={"flex items-center"}>
                         <button type={"submit"}
                                 className={"py-[8px] px-6 mr-2 text-white  text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 dark:rounded-lg"}
-                                disabled={keyword === "" && domain === "" && county === ""}
+                                disabled={keyword === "" && domain === "none" && county === "none"}
                                 onClick={() => {
                                     setSearched(true)
                                 }}>Search
                         </button>
                         <button type={"reset"}
                                 className={"py-[8px] px-6 text-white  text-xs bg-red-500 hover:bg-red-600 disabled:bg-gray-400 rounded-lg"}
-                                disabled={keyword === "" && domain === "" && county === ""}
+                                disabled={keyword === "" && domain === "none" && county === "none"}
                                 onClick={() => {
                                     setKeyword("")
-                                    setDomain("")
-                                    setCounty("")
+                                    setDomain("none")
+                                    setCounty("none")
                                     setLoadedServices([])
                                     setSearched(false)
                                     setSearching(false)
