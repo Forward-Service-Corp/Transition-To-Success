@@ -76,7 +76,7 @@ export default function Directory({pageDataJson}) {
                         </button>
                         <button type={"reset"}
                                 className={"py-[8px] px-6 text-white  text-xs bg-red-500 hover:bg-red-600 disabled:bg-gray-400 rounded-lg"}
-                                disabled={keyword !== "" && domain !== "" && county !== ""}
+                                disabled={keyword === "" && domain === "" && county === ""}
                                 onClick={() => {
                                     setKeyword("")
                                     setDomain("")
