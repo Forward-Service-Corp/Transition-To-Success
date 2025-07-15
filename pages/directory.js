@@ -44,9 +44,9 @@ export default function Directory({pageDataJson}) {
             </Head>
             <div className={"w-full max-w-[95%] m-auto p-3 bg-gray-100 rounded shadow dark:bg-transparent"}>
                 <form className={"grid grid-cols-1 md:grid-cols-4 gap-4 items-end"} onSubmit={(e) => {
-                    // e.preventDefault()
+                    e.preventDefault()
                     search().then()
-                    console.log(domain,county)
+                    // console.log(domain,county)
                 }}>
                     <div className={""}>
                         <p className={"text-xs text-gray-500 dark:text-white dark:pb-3"}>Search by keyword</p>
@@ -93,6 +93,7 @@ export default function Directory({pageDataJson}) {
                                     setLoadedServices([])
                                     setSearched(false)
                                     setSearching(false)
+                                    console.log(domain,county)
                                 }}>Reset
                         </button>
                     </div>
