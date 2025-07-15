@@ -79,7 +79,7 @@ export default function Directory({pageDataJson}) {
                                 disabled={keyword === "" && domain === "" && county === ""}
                                 onClick={() => {
                                     setKeyword("")
-                                    setDomain("")
+                                    setDomain("none")
                                     setCounty("")
                                     setLoadedServices([])
                                     setSearched(false)
