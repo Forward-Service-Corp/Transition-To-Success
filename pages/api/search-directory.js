@@ -7,9 +7,9 @@ export default async (req, res) => {
     const cursor = await db
         .collection("services")
         .find({
-            // "name": {
-            //     $regex: req.body.keyword, $options: "-i"
-            // },
+             "name": {
+                 $regex: req.body.keyword, $options: "-i"
+             },
             "service": {
                 $regex: req.body.domain
 
