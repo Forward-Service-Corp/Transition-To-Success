@@ -24,6 +24,7 @@ export default function Directory({pageDataJson}) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({keyword, domain, county})
+            print(domain, county)
         }).then(res => res.json())
         await setSearching(false)
         await setLoadedServices(fetchSearch)
