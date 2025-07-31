@@ -123,6 +123,7 @@ export default function SurveyId({pageDataJson}) {
     return (
         <Layout title={"Review Life Area Survey"} session={user}>
             {surveys.filter(survey => survey._id.toString() === surveyId.toString()).map(survey => {
+                console.log("found survey")
                 return (
                     <div key={survey._id} className={"dark:text-white"}>
                         <div className={"flex justify-between print:hidden"}>
