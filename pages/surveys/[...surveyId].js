@@ -15,6 +15,7 @@ export default function SurveyId({pageDataJson}) {
     const title = `TTS / Survey / ${user.name}`
 
     const getIsYouth = (survey) => {
+        console.log(surveys)
         if(isYouthSurvey === 'true'){
             return youthDomains.map((domain, domainIndex) => {
                 return (
