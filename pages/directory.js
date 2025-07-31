@@ -124,9 +124,9 @@ export async function getServerSideProps(context) {
     const protocol = req.headers['x-forwarded-proto'] || 'http'
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
-    const tempID = session ? session.user._id : 'guest'
+    //const tempID = session ? session.user._id : 'guest'
     // page data
-    const pageDataUrl = baseUrl + "/api/pages/directoryPageData?userId=" + tempID
+    const pageDataUrl = baseUrl + "/api/pages/directoryPageData?userId=" + session.user._id
     const getPageData = await fetch(pageDataUrl)
     const pageDataJson = await getPageData.json()
 

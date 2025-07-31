@@ -136,16 +136,16 @@ export default function ReferralId({pageDataJson, referralDataJson}) {
 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
-    //if (!session) return {redirect: {destination: "/login", permanent: false}}
+    if (!session) return {redirect: {destination: "/login", permanent: false}}
     const {req} = context;
 
     const protocol = req.headers['x-forwarded-proto'] || 'http'
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
-    const tempID = session ? session.user._id : 'guest'
+    //const tempID = session ? session.user._id : 'guest'
 
     // page data
-    const pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + tempID
+    const pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id
     const getPageData = await fetch(pageDataUrl)
     const pageDataJson = await getPageData.json()
 

@@ -6,7 +6,7 @@ export default async(req, res) => {
 
     const {db} = await connectToDatabase()
     
-    const query = req.query.userID == 'guest' ? {name: 'Guest'} : {_id: ObjectId(req.query.userId)}
+    const query = {_id: ObjectId(req.query.userId)}
 
 
     const user = await db.collection("users").findOne(query)

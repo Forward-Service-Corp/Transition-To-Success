@@ -10,7 +10,7 @@ export default async(req, res) => {
     const {db} = await connectToDatabase()
 
     //stores the userID of the user in query, to make searching the database easier
-    const query = req.query.userID == 'guest' ? {name: 'Guest'} : {_id: ObjectId(req.query.userId)}
+    const query = {_id: ObjectId(req.query.userId)}
 
     //stores the user object from the database in user
     const user = await db.collection("users").findOne(query)
