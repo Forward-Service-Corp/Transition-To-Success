@@ -142,14 +142,16 @@ export async function getServerSideProps(context) {
     const protocol = req.headers['x-forwarded-proto'] || 'http'
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
+    //const tempID = session ? session.user._id : 'guest'
+
     // page data
     const pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id
     const getPageData = await fetch(pageDataUrl)
     const pageDataJson = await getPageData.json()
 
     // redirect to profile page if required fields are not complete
-    const {county, name, homeCounty, programs} = pageDataJson.user
-    if(!county.length || !homeCounty || !programs.length || !name) return  {redirect: {destination: "/profile", permanent: false}}
+    //const {county, name, homeCounty, programs} = pageDataJson.user
+    //if(!county.length || !homeCounty || !programs.length || !name) return  {redirect: {destination: "/profile", permanent: false}}
 
     // single referral
     const referralDataUrl = baseUrl + "/api/get-single-referral?referralId=" + context.query.referralId

@@ -20,13 +20,8 @@
   }
 }
 
-@theme {
-  --color-*: initial;
-  --color-white: #fff;
-  --color-purple: #3f3cbb;
-  --color-midnight: #121063;
-  --color-tahiti: #3ab7bf;
-  --color-bermuda: #78dcca;
+body {
+  color: #000;
 }
 
 p {

@@ -9,8 +9,14 @@ export default async(req, res) => {
     const query = { userId: ObjectId(req.query.userId) }
 
     const carePlansCursor = await db.collection("referrals").find( query )
-    const referrals = await carePlansCursor.toArray()
+    const refs = await carePlansCursor.toArray()
     await carePlansCursor.close()
+
+    const customCursor = await db.collection("customReferrals").find( query )
+    const customrefs = await customCursor.toArray()
+    await customCursor.close()
+
+    const referrals = await refs.concat(customrefs)
 
     const notesCursor = await db.collection("notes").find( query )
     const notes = await notesCursor.toArray()
