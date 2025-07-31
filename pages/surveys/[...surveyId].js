@@ -10,6 +10,8 @@ export default function SurveyId({pageDataJson}) {
 
     const router = useRouter();
     const {user, surveys} = pageDataJson;
+    console.log(user);
+    console.log(surveys);
     const {surveyId} = router.query;
     const {isYouthSurvey} = router.query;
     const title = `TTS / Survey / ${user.name}`
@@ -196,7 +198,7 @@ export async function getServerSideProps(context) {
     const pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id
     const getPageData = await fetch(pageDataUrl)
     const pageDataJson = await getPageData.json()
-    console.log(pageDataJson)
+    //console.log(pageDataJson)
 
     // redirect to profile page if required fields are not complete
     const {county, name, homeCounty, programs} = pageDataJson.user
