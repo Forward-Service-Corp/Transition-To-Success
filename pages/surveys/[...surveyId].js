@@ -122,7 +122,7 @@ export default function SurveyId({pageDataJson}) {
 
     return (
         <Layout title={"Review Life Area Survey"} session={user}>
-            <p>Made it inside of Layout</p>
+            <p>Made it inside of Layout looking for survey {surveyId.toString()} for {user.name}</p>
             {surveys.filter(survey => survey._id.toString() === surveyId.toString()).map(survey => {
                 console.log("found survey")
                 return (
