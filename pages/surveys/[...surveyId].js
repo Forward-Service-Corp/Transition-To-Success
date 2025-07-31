@@ -10,15 +10,11 @@ export default function SurveyId({pageDataJson}) {
 
     const router = useRouter();
     const {user, surveys} = pageDataJson;
-    console.log(user);
-    console.log(surveys);
-    console.log(pageDataJson)
     const {surveyId} = router.query;
     const {isYouthSurvey} = router.query;
     const title = `TTS / Survey / ${user.name}`
 
     const getIsYouth = (survey) => {
-        console.log("surveys" + surveys)
         if(isYouthSurvey === 'true'){
             return youthDomains.map((domain, domainIndex) => {
                 return (
@@ -126,9 +122,7 @@ export default function SurveyId({pageDataJson}) {
 
     return (
         <Layout title={"Review Life Area Survey"} session={user}>
-            <p>Made it inside of Layout looking for survey {surveyId.toString()} for {user.name} in his list of surveys {surveys}</p>
             {surveys.filter(survey => survey._id.toString() === surveyId.toString()).map(survey => {
-                console.log("found survey")
                 return (
                     <div key={survey._id} className={"dark:text-white"}>
                         <div className={"flex justify-between print:hidden"}>
@@ -199,7 +193,6 @@ export async function getServerSideProps(context) {
     const pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id
     const getPageData = await fetch(pageDataUrl)
     const pageDataJson = await getPageData.json()
-    //console.log(pageDataJson)
 
     // redirect to profile page if required fields are not complete
     const {county, name, homeCounty, programs} = pageDataJson.user
