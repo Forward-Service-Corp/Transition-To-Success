@@ -13,7 +13,7 @@ export default async(req, res) => {
     const query = {_id: ObjectId(req.query.userId)}
 
     //stores the user object from the database in user
-    const user = await db.collection("users").findOne(query)
+    const user = await db.collection("users").findOne({_id: ObjectId(req.query.userId)})
     
     
     //Find all dreams in the collection "dreams" in the database that have the userid of our user on it.
