@@ -9,12 +9,13 @@ export default async(req, res) => {
     // connects to Mongo DB to be able to do queries
     const {db} = await connectToDatabase()
 
-    //stores the user object from the database in user
-    const user = await db.collection("users").findOne({_id: ObjectId(req.query.userId)})
-    
     //stores the userID of the user in query, to make searching the database easier
-    const query = {userId: ObjectId(req.query.userId) }
+    const query = req.query.userID == 'guest' ? {name: 'Guest'} : {_id: ObjectId(req.query.userId)}
 
+    //stores the user object from the database in user
+    const user = await db.collection("users").findOne(query)
+    
+    
     //Find all dreams in the collection "dreams" in the database that have the userid of our user on it.
     const dreamsCursor = await db.collection("dreams").find(query)
     const dreams = await dreamsCursor.toArray()
