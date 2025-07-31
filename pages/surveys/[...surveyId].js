@@ -12,6 +12,7 @@ export default function SurveyId({pageDataJson}) {
     const {user, surveys} = pageDataJson;
     console.log(user);
     console.log(surveys);
+    console.log(pageDataJson)
     const {surveyId} = router.query;
     const {isYouthSurvey} = router.query;
     const title = `TTS / Survey / ${user.name}`
