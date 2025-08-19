@@ -6,9 +6,8 @@ import { useState } from "react";
 export default function ClientsTable({ users, coach }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [usersData, setUsersData] = useState(users);
-  const [searched, setSearched] = useState(false); 
-  const d1 =
-    "A list of the 100 most recently added users to your client list.";
+  const [searched, setSearched] = useState(false);
+  const d1 = "A list of all of the clients you manage.";
   const d2 =
     "Your search should be based on the email address used to create the account";
   const d3 =
@@ -31,7 +30,6 @@ export default function ClientsTable({ users, coach }) {
     })
       .then((response) => response.json())
       .then((data) => setUsersData(data))
-      .then(() => console.log(usersData))
       .then(() => setSearched(true))
       .catch((error) => console.error("Error:", error));
   };
@@ -45,9 +43,6 @@ export default function ClientsTable({ users, coach }) {
       <div className="flex flex-col lg:flex-row items-center lg:justify-between lg:items-center">
         <div className="w-full mb-6 mr-0 lg:mr-6 lg:mb-0 lg:flex-1">
           <h1 className="text-xl font-semibold text-gray-900">Your Clients</h1>
-          <p className="mt-2 text-sm text-gray-700 dark:text-white dark:font-extralight">
-            A list of all the clients you manage.
-          </p>
           <p
             className="mt-2 text-sm text-gray-700"
             dangerouslySetInnerHTML={{
@@ -79,7 +74,6 @@ export default function ClientsTable({ users, coach }) {
           </button>
           <button
             type="reset"
-            disabled={searchTerm === ""}
             className={`bg-blue-500 disabled:bg-gray-300 text-white py-1 text-xs font-extralight rounded col-span-1`}
             onClick={resetSearch}
           >
@@ -122,28 +116,29 @@ export default function ClientsTable({ users, coach }) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white dark:bg-black dark:bg-opacity-10 dark:divide-opacity-[3%]">
-                  {usersData && usersData.map((person) => (
-                    <tr
-                      key={person.email}
-                      className={`dark:hover:bg-indigo-800 dark:hover:bg-opacity-10`}
-                    >
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 dark:text-white">
-                        {person.name}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300 dark:font-extralight">
-                        {person.phone}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300 dark:font-extralight">
-                        {person.email}
-                      </td>
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <Link href={"/client/" + person._id}>
-                          <ArrowCircleRight size={26} />
-                          <span className="sr-only">, {person.name}</span>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
+                  {usersData &&
+                    usersData.map((person) => (
+                      <tr
+                        key={person.email}
+                        className={`dark:hover:bg-indigo-800 dark:hover:bg-opacity-10`}
+                      >
+                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 dark:text-white">
+                          {person.name}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300 dark:font-extralight">
+                          {person.phone}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300 dark:font-extralight">
+                          {person.email}
+                        </td>
+                        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                          <Link href={"/client/" + person._id}>
+                            <ArrowCircleRight size={26} />
+                            <span className="sr-only">, {person.name}</span>
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>

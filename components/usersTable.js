@@ -78,6 +78,7 @@ export default function UsersTable({ users }) {
             }}
           />
         </div>
+        </div>
         <div className={"w-full lg:w-[350px] lg:justify-items-end"}>
           <form onSubmit={handleSearch} className={`grid grid-cols-5 gap-1`}>
             <input
@@ -100,7 +101,7 @@ export default function UsersTable({ users }) {
             </button>
             <button
               type="reset"
-              disabled={searchTerm === ""}
+              
               className={`bg-blue-500 disabled:bg-gray-300 text-white py-1 text-xs font-extralight rounded col-span-1`}
               onClick={resetSearch}
             >
@@ -108,7 +109,7 @@ export default function UsersTable({ users }) {
             </button>
           </form>
         </div>
-      </div>
+      
       <div className="mt-8 flex flex-col">
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
