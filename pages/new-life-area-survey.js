@@ -7,7 +7,7 @@ import {useRouter} from "next/router";
 import NewLifeAreaSurveyQuestions from "../components/newLifeAreaSurveyQuestions";
 import Head from "next/head";
 
-export default function NewLifeAreaSurvey({user}) {
+export default function NewLifeAreaSurvey({user, client}) {
 
     const router = useRouter()
     const [activeDomain, setActiveDomain] = useState("food")
@@ -105,6 +105,7 @@ export default function NewLifeAreaSurvey({user}) {
                 dream: router.query.dreamName,
                 county: user.county,
                 coach: user.coach,
+                user: user.name,
                 priority: domains,
                 food: [answered.food.selection, answered.food.statement],
                 money: [answered.money.selection, answered.money.statement],
@@ -206,6 +207,7 @@ export default function NewLifeAreaSurvey({user}) {
                 internetAccess: [answered.internetAccess.selection, answered.internetAccess.statement],
                 housing: [answered.housing.selection, answered.housing.statement],
                 userId: router.query.clientId === undefined ? user._id : router.query.clientId,
+                user: router.query.clientId === undefined ? user.name : client.name,
                 surprise, concern, family, health, income
             })
         })
@@ -334,6 +336,7 @@ export async function getServerSideProps(context) {
         dreamId = ""
     }
 
+    
     // session check and possible redirect
     const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
@@ -344,13 +347,22 @@ export async function getServerSideProps(context) {
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
     // page data
-    const dataUrl = baseUrl + "/api/pages/surveysPageData?userId=" + session.user._id
+    let dataUrl;
+    if (context.query.clientId){
+        dataUrl = baseUrl + "/api/pages/surveysPageData?userId=" + session.user._id + "&clientId=" + context.query.clientId
+    } else {
+    dataUrl = baseUrl + "/api/pages/surveysPageData?userId=" + session.user._id
+    }
     const getData = await fetch(dataUrl)
-    const {user} = await getData.json()
+    const {user, client} = await getData.json()
+
+    
+
 
     return {
         props: {
             user,
+            client,
             incomingDream: {
                 hasDream: context.query.dream !== undefined,
                 dream: dream,
