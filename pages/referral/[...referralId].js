@@ -2,6 +2,7 @@ import Layout from "../../components/layout";
 import {getSession} from "next-auth/react";
 import {useState} from "react";
 import Head from "next/head";
+import { Printer } from "phosphor-react";
 
 export default function ReferralId({pageDataJson, referralDataJson}) {
 
@@ -103,6 +104,11 @@ export default function ReferralId({pageDataJson, referralDataJson}) {
                         className={"py-2 px-6 text-white text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 dark:rounded-lg"}>
                         Add to my CARE Plan
                     </button>
+                    <button
+                                onClick={() => window.print()}
+                                className={"py-2 px-6 text-white text- text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 flex items-center max-w-[180px]"}>
+                                <span className={"inline-block mr-2"}><Printer size={22} /></span><span className={"inline-block"}>Print</span>
+                            </button>
                 </div>
             </div>
             <div className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"}>
