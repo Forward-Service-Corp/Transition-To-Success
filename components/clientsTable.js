@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { ArrowCircleRight } from "phosphor-react";
+import { useState } from "react";
 
+//Table for displaying the clients for the logged in user
 export default function ClientsTable({ users, coach }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [usersData, setUsersData] = useState(users);
-  const [searched, setSearched] = useState(false);
+  const [searched, setSearched] = useState(false); 
   const d1 =
     "A list of the 100 most recently added users to this TTS database.";
   const d2 =
