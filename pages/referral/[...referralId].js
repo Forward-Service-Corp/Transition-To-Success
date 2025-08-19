@@ -137,13 +137,6 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
         <title>{referralDataJson.name}</title>
       </Head>
       <div className={"flex justify-between items-center print:hidden"}>
-        <div className={"text-xs text-red-600 dark:accent-red-500"}>
-          {userReferrals.filter(
-            (referral) => referral.name === referralDataJson.name
-          ).length > 0
-            ? "This referral is currently in your CARE Plan."
-            : null}
-        </div>
         <div>
           <button
             disabled={
@@ -155,17 +148,25 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
               saveReferral().then(getReferrals);
             }}
             className={
-              "py-2 px-6 text-white text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 dark:rounded-lg"
+              "flex items-center my-3 py-2 px-6 text-white text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-800 rounded-lg shadow-xl dark:font-extralight dark:text-white dark:hover:bg-indigo-600"
             }
           >
             Add to my CARE Plan
           </button>
         </div>
+        <div className={"text-xs text-red-600 dark:accent-red-500"}>
+          {userReferrals.filter(
+            (referral) => referral.name === referralDataJson.name
+          ).length > 0
+            ? "This referral is currently in your CARE Plan."
+            : null}
+        </div>
+        
         <div>
           <button
             onClick={() => window.print()}
             className={
-              "py-2 px-6 text-white text- text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 flex items-center max-w-[180px]"
+              "flex items-center my-3 py-2 px-6 text-white text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-800 rounded-lg shadow-xl dark:font-extralight dark:text-white dark:hover:bg-indigo-600"
             }
           >
             <span className={"inline-block mr-2"}>
