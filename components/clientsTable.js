@@ -50,7 +50,7 @@ export default function ClientsTable({ users, coach }) {
             }}
           />
         </div>
-      </div>
+      
 
       <div className={"w-full lg:w-[350px] lg:justify-items-end"}>
         <form onSubmit={handleSearch} className={`grid grid-cols-5 gap-1`}>
@@ -80,6 +80,7 @@ export default function ClientsTable({ users, coach }) {
             Clear
           </button>
         </form>
+      </div>
       </div>
 
       <div className="mt-8 flex flex-col">
