@@ -114,14 +114,17 @@ export default function Directory({pageDataJson}) {
 }
 
 export async function getServerSideProps(context) {
+    
+
     const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
     const {req} = context;
-    const {sub} = session;
+    //const {sub} = session;
 
     const protocol = req.headers['x-forwarded-proto'] || 'http'
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
+    //const tempID = session ? session.user._id : 'guest'
     // page data
     const pageDataUrl = baseUrl + "/api/pages/directoryPageData?userId=" + session.user._id
     const getPageData = await fetch(pageDataUrl)
