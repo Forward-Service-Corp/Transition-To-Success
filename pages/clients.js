@@ -10,7 +10,7 @@ export default function Clients({userJson, usersJson}) {
             <Head>
                 <title>TTS / My Clients</title>
             </Head>
-            <ClientsTable users={usersJson}/>
+            <ClientsTable users={usersJson} coach={userJson._id}/> 
         </Layout>
     )
 }

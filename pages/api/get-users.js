@@ -12,5 +12,5 @@ export default async(req, res) => {
     await cursor.close()
 
     res.json(records)
-
+ 
 }

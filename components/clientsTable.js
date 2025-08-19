@@ -1,7 +1,39 @@
 import Link from "next/link";
 import {ArrowCircleRight} from "phosphor-react";
 
-export default function ClientsTable({users}) {
+export default function ClientsTable({users, coach}) {
+    const [searchTerm, setSearchTerm] = useState("")
+        const [usersData, setUsersData] = useState(users)
+        const [searched, setSearched] = useState(false)
+        const d1 = "A list of the 100 most recently added users to this TTS database."
+        const d2 = "Your search should be based on the email address used to create the account"
+        const d3 = ", because many of the other fields are not required for account creation."
+        const defaultMessage = `${d1} <strong>${d2}</strong>${d3}`
+        const s1 = `This is a list of all the users whose email address contains <strong>your searched criteria of ${searchTerm}</strong>.`
+        const s2 = `There were ${usersData.length} found.`
+        const searchedMessage = `${s1} ${s2}`
+        const handleSearch = async (e) => {
+            e.preventDefault()
+            await fetch('api/get-client-search', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    searchTerm: searchTerm,
+                    coach: coach
+                })
+            })
+                .then(response => response.json())
+                .then(data => setUsersData(data))
+                .then(() => setSearched(true))
+                .catch((error) => console.error('Error:', error));
+        }
+        const resetSearch = () => {
+            setSearchTerm("")
+            setUsersData(users)
+            setSearched(false)
+        }
     return (
         <div className="px-4 sm:px-6 lg:px-8">
             <div className="sm:flex sm:items-center">
@@ -10,6 +42,33 @@ export default function ClientsTable({users}) {
                     <p className="mt-2 text-sm text-gray-700 dark:text-white dark:font-extralight">
                         A list of all the clients you manage.
                     </p>
+                </div>
+            </div>
+            <div className="flex flex-col lg:flex-row items-center lg:justify-between lg:items-center">
+                <div className="w-full mb-6 mr-0 lg:mr-6 lg:mb-0 lg:flex-1">
+                    <h1 className="text-xl font-semibold text-gray-900">Users</h1>
+                    <p className="mt-2 text-sm text-gray-700" dangerouslySetInnerHTML={{__html: !searched ? defaultMessage : searchedMessage}}/>
+                </div>
+                <div className={"w-full lg:w-[350px] lg:justify-items-end"}>
+                    <form onSubmit={handleSearch} className={`grid grid-cols-5 gap-1`}>
+                        <input type="text"
+                              id={"search-users"}
+                              className={"border-gray-300 text-xs col-span-3"}
+                              value={searchTerm}
+                               autoComplete="false"
+                              placeholder={"Search users by email or phone number..."}
+                              onChange={(e) => {
+                                  setSearchTerm(e.target.value)
+                              }}/>
+                        <button type="submit" disabled={searchTerm === ""}
+                                className={`bg-green-500 disabled:bg-gray-300 text-white py-1 text-xs font-extralight rounded col-span-1`}>
+                            Submit
+                        </button>
+                        <button type="reset" disabled={searchTerm === ""}
+                                className={`bg-blue-500 disabled:bg-gray-300 text-white py-1 text-xs font-extralight rounded col-span-1`}
+                                onClick={resetSearch}>Clear
+                        </button>
+                    </form>
                 </div>
             </div>
             <div className="mt-8 flex flex-col">
