@@ -15,9 +15,11 @@ export default async function handler(req, res) {
 
       // Retrieve the search term from the request body
       const { searchTerm, coach } = req.body;
+      console.log(coach)
 
       //retrieve the coach from the request body
       const coachId = new ObjectId(coach);
+      console.log(coachId)
 
       // Ensure searchTerm is provided
       if (!searchTerm) {
