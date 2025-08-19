@@ -8,7 +8,7 @@ export default function ClientsTable({ users, coach }) {
   const [usersData, setUsersData] = useState(users);
   const [searched, setSearched] = useState(false); 
   const d1 =
-    "A list of the 100 most recently added users to this TTS database.";
+    "A list of the 100 most recently added users to your client list.";
   const d2 =
     "Your search should be based on the email address used to create the account";
   const d3 =
