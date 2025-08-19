@@ -39,7 +39,29 @@ export default async function handler(req, res) {
                 { name: new RegExp(searchTerm, "i") }, // Case-insensitive regex for phone
               ],
             },
-            { coach: coachId },
+            { coach: {
+            $elemMatch: {
+                $or: [
+                    {
+
+                
+                        _id: coachId,
+                        $and: [
+                            { $or: [{ terminationDate: { $exists: false } }, { terminationDate: null }] },
+                            { $or: [{ removalDate: { $exists: false } }, { removalDate: null }] }
+                        ]
+                    },
+                    {
+
+                
+                        key: coachId,
+                        $and: [
+                            { $or: [{ terminationDate: { $exists: false } }, { terminationDate: null }] },
+                            { $or: [{ removalDate: { $exists: false } }, { removalDate: null }] }
+                        ]
+                    }
+                ]
+            } }},
           ],
         })
         .toArray();

@@ -31,6 +31,7 @@ export default function ClientsTable({ users, coach }) {
     })
       .then((response) => response.json())
       .then((data) => setUsersData(data))
+      .then(() => console.log(usersData))
       .then(() => setSearched(true))
       .catch((error) => console.error("Error:", error));
   };
