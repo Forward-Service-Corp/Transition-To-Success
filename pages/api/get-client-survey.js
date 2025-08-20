@@ -5,9 +5,7 @@ import {ObjectId} from "mongodb";
 export default async (req, res) => {
 
     const {db} = await connectToDatabase()
-    const cursor = await db.collection("lifeAreaSurveys").find({_id: ObjectId(req.query.surveyId)})
-    const survey = await cursor.toArray()
-    await cursor.close()
+    const survey = await db.collection("lifeAreaSurveys").findOne({_id: ObjectId(req.query.surveyId)})
 
     let records;
     if (!survey.name) {
