@@ -10,6 +10,8 @@ export default function SurveyId({ pageDataJson, surveyJson }) {
   const { user } = pageDataJson;
   const { surveyId, isYouthSurvey } = router.query;
 
+  //console.log(surveyJson)
+
   const domains = [
     "adultEducation",
     "budgeting",
@@ -213,6 +215,7 @@ export async function getServerSideProps(context) {
 
   const surveyUrl =
     baseUrl + "/api/get-client-survey?surveyId=" + context.query.surveyId;
+  //console.log(surveyUrl);
   const getSurveyData = await fetch(surveyUrl);
   const surveyJson = await getSurveyData.json();
 
