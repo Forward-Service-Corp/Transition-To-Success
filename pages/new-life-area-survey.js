@@ -262,7 +262,9 @@ export default function NewLifeAreaSurvey({user, client}) {
             <Head>
                 <title>TTS / Life Area Survey</title>
             </Head>
+            {router.query.clientId === undefined ? "" : <div className={"text-xl text-center p-3 truncate dark:text-white"}>Client: {client.name}</div>}
             <div className={"text-xl text-center p-3 truncate dark:text-white"}>Dream: {router.query.dreamName}</div>
+
             <div className={"p-4 bg-gray-100 rounded text-sm mb-4 text-center dark:rounded-lg dark:shadow-xl dark:text-white dark:bg-black dark:bg-opacity-70"}>
                 <p>Where am I today?</p>
                 <p><strong>&quot;What I treasure most in life, is being able to dream. During my most difficult
