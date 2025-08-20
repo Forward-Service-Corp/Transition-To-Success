@@ -7,7 +7,7 @@ import { useState } from "react";
 
 export default function SurveyId({ pageDataJson, surveyJson }) {
   const router = useRouter();
-  const { user, client } = pageDataJson;
+  const { user } = pageDataJson;
   const { surveyId, isYouthSurvey } = router.query;
 
   const domains = [
@@ -118,7 +118,7 @@ export default function SurveyId({ pageDataJson, surveyJson }) {
               </div>
               <div className={"flex justify-between p-2"}>
                 <div>
-                  <p>Client Name: {client.name}</p>
+                  <p>Client Name: {survey.name}</p>
                   <p>Associated dream: {survey.dream}</p>
                 </div>
                 <div className={"text-right"}>
