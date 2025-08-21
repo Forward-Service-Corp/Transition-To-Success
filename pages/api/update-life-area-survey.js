@@ -33,6 +33,7 @@ export default async (req, res) => {
                     internetAccess: req.body.internetAccess,
                     housing: req.body.housing,
                     userId: req.body.userId,
+                    user: req.body.user,
                     surprise: req.body.surprise,
                     concern: req.body.concern,
                     family: req.body.family,
