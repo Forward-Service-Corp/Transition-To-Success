@@ -10,6 +10,8 @@ export default function SurveyId({ pageDataJson, surveyJson }) {
   const { user } = pageDataJson;
   const { surveyId, isYouthSurvey } = router.query;
 
+  //console.log(surveyJson)
+
   const domains = [
     "adultEducation",
     "budgeting",
@@ -92,11 +94,11 @@ export default function SurveyId({ pageDataJson, surveyJson }) {
         .map((survey) => {
           return (
             <div key={survey._id} className={""}>
-              <div className={"flex justify-between"}>
+              <div className={"flex justify-between print:hidden"}>
                 <button
                   onClick={() => router.back()}
                   className={
-                    "py-2 px-6 text-white text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 flex items-center"
+                    "flex items-center my-3 py-2 px-6 text-white text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-800 rounded-lg shadow-xl dark:font-extralight dark:text-white dark:hover:bg-indigo-600"
                   }
                 >
                   <span className={"inline-block mr-2"}>
@@ -107,7 +109,7 @@ export default function SurveyId({ pageDataJson, surveyJson }) {
                 <button
                   onClick={() => window.print()}
                   className={
-                    "py-2 px-6 text-white text- text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 flex items-center max-w-[180px]"
+                    "flex items-center my-3 py-2 px-6 text-white text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-800 rounded-lg shadow-xl dark:font-extralight dark:text-white dark:hover:bg-indigo-600"
                   }
                 >
                   <span className={"inline-block mr-2"}>
@@ -118,7 +120,7 @@ export default function SurveyId({ pageDataJson, surveyJson }) {
               </div>
               <div className={"flex justify-between p-2"}>
                 <div>
-                  <p>Client ID: {survey.userId}</p>
+                  <p>Client Name: {survey.name}</p>
                   <p>Associated dream: {survey.dream}</p>
                 </div>
                 <div className={"text-right"}>
@@ -213,6 +215,7 @@ export async function getServerSideProps(context) {
 
   const surveyUrl =
     baseUrl + "/api/get-client-survey?surveyId=" + context.query.surveyId;
+  //console.log(surveyUrl);
   const getSurveyData = await fetch(surveyUrl);
   const surveyJson = await getSurveyData.json();
 

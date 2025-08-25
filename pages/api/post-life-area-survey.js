@@ -31,6 +31,7 @@ export default async (req, res) => {
         internetAccess: req.body.internetAccess,
         housing: req.body.housing,
         userId: ObjectId(req.body.userId),
+        user: req.body.user,
         datestamp: new Date(),
         surprise: req.body.surprise,
         concern: req.body.concern,
