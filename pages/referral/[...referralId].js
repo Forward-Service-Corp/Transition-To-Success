@@ -138,7 +138,7 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
       </Head>
       <div className={"flex justify-between items-center print:hidden"}>
         <div>
-          <button
+          {user && <button
             disabled={
               userReferrals.filter(
                 (referral) => referral.name === referralDataJson.name
@@ -152,7 +152,7 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
             }
           >
             Add to my CARE Plan
-          </button>
+          </button>}
         </div>
         <div className={"text-xs text-red-600 dark:accent-red-500"}>
           {userReferrals.filter(
@@ -207,8 +207,8 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  if (!session)
-    return { redirect: { destination: "/login", permanent: false } };
+  // if (!session)
+  //   return { redirect: { destination: "/login", permanent: false } };
   const { req } = context;
 
   const protocol = req.headers["x-forwarded-proto"] || "http";
@@ -218,7 +218,7 @@ export async function getServerSideProps(context) {
 
   // page data
   const pageDataUrl =
-    baseUrl + "/api/pages/indexPageData?userId=" + session.user._id;
+    baseUrl + "/api/pages/indexPageData" + (session ? "?userId=" + session.user._id : "");
   const getPageData = await fetch(pageDataUrl);
   const pageDataJson = await getPageData.json();
 

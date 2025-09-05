@@ -43,14 +43,16 @@ export default function Layout({
     const [darkMode] = useState(null)
 
     const handleLogout = async () => {
-        await signOut().then()
+        if(session){
+        await signOut().then()}
         await router.push('/login')
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     async function updateLastLogin() {
+        if(session){
         await fetch(`/api/save-last-login?userId=${session?._id}`)
-            .then(res => res.json())
+            .then(res => res.json())}
     }
 
     useEffect(() => {
@@ -127,7 +129,7 @@ export default function Layout({
                                             {/*       className={"ml-16 px-3 py-2 text-white rounded border"}>Logout</a>*/}
                                             {/*</div>*/}
                                             <div className="hidden md:block">
-                                                <div className="flex items-right space-x-4">
+                                                {session && <div className="flex items-right space-x-4">
                                                     {navigation.map((item) => (
                                                         <a
                                                             key={item.name}
@@ -144,7 +146,7 @@ export default function Layout({
                                                         </a>
                                                     ))}
 
-                                                </div>
+                                                </div>}
                                             </div>
                                         </div>
 
