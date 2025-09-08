@@ -203,6 +203,7 @@ export async function getServerSideProps(context) {
      baseUrl + "/api/pages/directoryPageData" + (session ? "?userId=" + session.user._id : "");
    const getPageData = await fetch(pageDataUrl);
    const pageDataJson = await getPageData.json();
+   
 
   // redirect to profile page if required fields are not complete
   // const {county, name, homeCounty, programs} = pageDataJson.user

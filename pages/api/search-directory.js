@@ -18,7 +18,7 @@ export default async (req, res) => {
             "county": {
                 $regex: req.body.county
             }
-        })
+        }).limit(1000).sort({name: 1})
     const records = await cursor.toArray()
     await cursor.close()
 
