@@ -48,7 +48,8 @@ export default function Layout({
     const { showWarning, timeRemaining, extendSession, handleLogout } = useAutoLogout(session)
 
     const handleManualLogout = async () => {
-        await signOut().then()
+        if(session){
+        await signOut().then()}
         await router.push('/login')
     }
 
