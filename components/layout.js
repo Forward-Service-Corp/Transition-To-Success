@@ -48,6 +48,10 @@ export default function Layout({
     const { showWarning, timeRemaining, extendSession, handleLogout } = useAutoLogout(session)
 
     const handleManualLogout = async () => {
+        // if(session) allows for public access to the directory, with a Log In button.
+        // without this check, it sends them to the log in page, then it sees they don't need
+        // a session to access the page they were on, and sends them back, never letting the
+        // user log in.
         if(session){
         await signOut().then()}
         await router.push('/login')
