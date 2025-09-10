@@ -9,6 +9,8 @@ import SimpleModal from "./simpleModal";
 import Image from "next/image";
 import SubNav from "./subNav";
 import {getEnvironmentBgColor} from "../utils/environmentColors";
+import {useAutoLogout} from "../hooks/useAutoLogout";
+import AutoLogoutWarning from "./AutoLogoutWarning";
 
 const navigation = [
     {name: 'Dashboard', href: '/', current: true},
@@ -41,16 +43,21 @@ export default function Layout({
     const router = useRouter()
     const [environment, setEnvironment] = useState("production")
     const [darkMode] = useState(null)
+    
+    // Auto-logout functionality
+    const { showWarning, timeRemaining, extendSession, handleLogout } = useAutoLogout(session)
 
-    const handleLogout = async () => {
-        await signOut().then()
+    const handleManualLogout = async () => {
+        if(session){
+        await signOut().then()}
         await router.push('/login')
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     async function updateLastLogin() {
+        if(session){
         await fetch(`/api/save-last-login?userId=${session?._id}`)
-            .then(res => res.json())
+            .then(res => res.json())}
     }
 
     useEffect(() => {
@@ -90,6 +97,12 @@ export default function Layout({
             </div>
             {simpleModal ? <SimpleModal title={simpleModalTitle} message={simpleModalMessage} label={simpleModalLabel}
                                         version={version}/> : null}
+            <AutoLogoutWarning 
+                isOpen={showWarning}
+                timeRemaining={timeRemaining}
+                onExtendSession={extendSession}
+                onLogout={handleLogout}
+            />
             <div
                 className={`fixed w-full h-full bg-gray-600 bg-opacity-50 flex align-middle justify-center ${loadingState ? "visible" : "hidden"}`}>
                 <div className={"uppercase text-white self-center rounded-full p-5 bg-orange-600 shadow"}>loading...
@@ -127,7 +140,7 @@ export default function Layout({
                                             {/*       className={"ml-16 px-3 py-2 text-white rounded border"}>Logout</a>*/}
                                             {/*</div>*/}
                                             <div className="hidden md:block">
-                                                <div className="flex items-right space-x-4">
+                                                {session && <div className="flex items-right space-x-4">
                                                     {navigation.map((item) => (
                                                         <a
                                                             key={item.name}
@@ -144,7 +157,7 @@ export default function Layout({
                                                         </a>
                                                     ))}
 
-                                                </div>
+                                                </div>}
                                             </div>
                                         </div>
 
@@ -227,7 +240,7 @@ export default function Layout({
                             </>
                         )}
                     </Disclosure>
-                    <SubNav session={session} environment={environment} handleLogout={handleLogout}/>
+                    <SubNav session={session} environment={environment} handleLogout={handleManualLogout}/>
                     <header className="py-10">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <span className="text-4xl font-extralight text-white dark:text-gray-400">{title}</span>

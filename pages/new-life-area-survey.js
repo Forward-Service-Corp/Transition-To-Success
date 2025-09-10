@@ -250,8 +250,7 @@ export default function NewLifeAreaSurvey({user, client}) {
                             router.back()
                         }
 
-                    }}>Update this
-                survey
+                    }}>{domains.length === 0 && Object.keys(answered).length !== 21 ? "Score all life areas and select at least one Priority" : (domains.length === 0 ? "Select at least one priority" : (Object.keys(answered).length !== 21 ? "Please score all life areas" : "Update this Survey"))}
             </button>
         )
     }

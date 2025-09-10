@@ -6,9 +6,9 @@ export default function SubNav({session, handleLogout}) {
         <div className={`w-full bg-orange-700`}>
             <div className={`px-8 min-w-[640px] max-w-[1280px] m-auto`}>
                 <ul className={`flex justify-end text-white font-extralight text-sm`}>
-                    <li className={`py-2 px-4 text-xs`}>
+                    {session && <li className={`py-2 px-4 text-xs`}>
                         <Link href={'/profile'}>Profile</Link>
-                    </li>
+                    </li>}
                     <li className={`${session?.level === "admin" ? 'visible' : 'hidden'} py-2 px-4 text-xs`}>
                         <Link href={'/users'}>Users</Link>
                     </li>
@@ -19,7 +19,7 @@ export default function SubNav({session, handleLogout}) {
                     {/*    onClick={handleDeleteUser}>*/}
                     {/*    Delete Current User*/}
                     {/*</li>*/}
-                    <li className={`py-2 px-4 text-xs cursor-pointer`} onClick={handleLogout}>Logout</li>
+                    <li className={`py-2 px-4 text-xs cursor-pointer`} onClick={handleLogout}>{session ? "Logout" : "Log In"}</li>
                 </ul>
             </div>
         </div>
