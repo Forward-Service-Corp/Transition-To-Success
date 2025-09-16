@@ -22,7 +22,7 @@ function UserRole({terminationPattern, role, setRole, viewingUser, clients, setC
                 <RoleUpdateButton role={role} title={'terminated coach'} id={viewingUser._id} setRole={setRole} />
 
             </div>
-            <div className={`${role === 'coach' ? 'visible' : 'hidden'}`}>
+            <div className={`${(role === 'coach'|| role === 'admin') ? 'visible' : 'hidden'}`}>
                 <div className={"flex justify-between items-center border-0 border-y py-2 mb-4 mt-8"}>
                     <div>
                         <h2 className={"uppercase text-gray-500"}>Current Clients</h2>

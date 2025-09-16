@@ -1,5 +1,5 @@
 // pages/api/users/add-coach.js
-import clientPromise from "../../lib/mongodb";
+import { connectToDatabase } from "../../lib/dbConnect";
 import {ObjectId} from "mongodb";
 
 export default async function handler(req, res) {
@@ -14,16 +14,15 @@ export default async function handler(req, res) {
             return res.status(400).json({ message: 'User ID and Coach Object are required' });
         }
 
-        const client = await clientPromise;
-        const db = client.db(); // Replace with your DB name if necessary
+        const {db} = await connectToDatabase()
         const collection = db.collection('users');
 
         const result = await collection.updateOne(
-            { _id: ObjectId(clientId) },
+            { $or: [{ _id: ObjectId(clientId) }, { key: ObjectId(clientId) }] },
             { $pull: { coach: { key: ObjectId(userId) } } }
         );
 
-        const user = await collection.findOne({ _id: ObjectId(clientId) })
+        const user = await collection.findOne({ $or: [{ _id: ObjectId(clientId) }, { key: ObjectId(clientId) }] })
 
 
         if (result.modifiedCount === 0) {

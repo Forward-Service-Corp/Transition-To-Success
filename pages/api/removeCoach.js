@@ -1,4 +1,4 @@
-import clientPromise from "../../lib/mongodb";
+import { connectToDatabase } from "../../lib/dbConnect";
 import { ObjectId } from "mongodb";
 
 export default async function handler(req, res) {
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   try {
     const { userId, coachObject } = req.body;
     const userSearchId = new ObjectId(userId);
-    const coachObjectId = new ObjectId(coachObject.id);
+    const coachObjectId = new ObjectId(coachObject._id);
     const coachObjectKey = new ObjectId(coachObject.key);
 
     console.log(userId, coachObject);
@@ -20,12 +20,12 @@ export default async function handler(req, res) {
         .json({ message: "User ID and Coach Object are required" });
     }
 
-    const client = await clientPromise;
-    const db = client.db(); // Replace with your DB name if necessary
+    const {db} = await connectToDatabase()
     const collection = db.collection("users");
 
     const result = await collection.updateOne(
       {
+        _id: userSearchId,
         coach: {
           $elemMatch: {
             $or: [
@@ -53,8 +53,8 @@ export default async function handler(req, res) {
         ],
       }
     );
-
-    const user = await collection.findOne({ _id: userSearchId });
+    console.log(result)
+    const user = await collection.findOne({ $or: [{ _id: ObjectId(userSearchId) }, { key: ObjectId(userSearchId) }] });
 
     if (result.modifiedCount === 0) {
       return res
