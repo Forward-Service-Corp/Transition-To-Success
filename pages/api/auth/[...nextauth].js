@@ -100,6 +100,23 @@ export default NextAuth({
             if (user) {
                 token.user = user
             }
+            
+            // Check if token is blacklisted (for client users only)
+            if (token && token.sub) {
+                try {
+                    const {db} = await connectToDatabase();
+                    const blacklistedToken = await db.collection("blacklisted_tokens")
+                        .findOne({tokenId: token.sub});
+                    
+                    if (blacklistedToken) {
+                        // Token is blacklisted, return null to force re-authentication
+                        return null;
+                    }
+                } catch (error) {
+                    console.error('Error checking blacklisted tokens:', error);
+                }
+            }
+            
             return token
         },
     },
