@@ -9,17 +9,17 @@ export default async (req, res) => {
     try {
         const {db} = await connectToDatabase();
         
-        // Remove expired blacklisted tokens
-        const result = await db.collection("blacklisted_tokens").deleteMany({
-            expiresAt: { $lt: new Date() }
+        // Clean up expired sessions (NextAuth database sessions have an expires field)
+        const result = await db.collection("sessions").deleteMany({
+            expires: { $lt: new Date() }
         });
 
         res.status(200).json({
             success: true, 
-            message: `Cleaned up ${result.deletedCount} expired tokens`
+            message: `Cleaned up ${result.deletedCount} expired sessions`
         });
     } catch (error) {
-        console.error('Error cleaning up blacklisted tokens:', error);
+        console.error('Error cleaning up expired sessions:', error);
         res.status(500).json({error: 'Internal server error'});
     }
 };
