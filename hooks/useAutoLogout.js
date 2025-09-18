@@ -126,7 +126,7 @@ export const useAutoLogout = (session) => {
       // Clear session storage to force fresh authentication
       clearClientSessionStorage();
       
-      // Invalidate the JWT token server-side using sendBeacon for reliability
+      // Invalidate the database session server-side using sendBeacon for reliability
       if (navigator.sendBeacon) {
         const data = new Blob([JSON.stringify({})], {type: 'application/json'});
         navigator.sendBeacon('/api/invalidate-session', data);

@@ -10,7 +10,8 @@ export const authOptions = {
     adapter: MongoDBAdapter(clientPromise),
     session: {
         strategy: "database",
-        maxAge: 600000
+        maxAge: 24 * 60 * 60, // 24 hours default (will be overridden for clients)
+        updateAge: 60, // Update session every minute to keep it fresh for active users
     },
     providers: [
         EmailProvider({
@@ -112,6 +113,17 @@ export const authOptions = {
                         "programs": []
                     }
                 })
+            }
+            
+            // Set session expiration based on user level
+            const dbUser = await db.collection("users").findOne({email: user.email});
+            if (dbUser && dbUser.level === 'client') {
+                // For client users, set session to expire in 10 minutes
+                const clientExpiry = new Date(Date.now() + (10 * 60 * 1000)); // 10 minutes
+                await db.collection("sessions").updateMany(
+                    { userId: dbUser._id.toString() },
+                    { $set: { expires: clientExpiry } }
+                );
             }
         },
     }
