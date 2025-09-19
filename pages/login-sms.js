@@ -24,7 +24,21 @@ export default function Login() {
         const check = await fetch(`/api/check-OTP?phone=${phone}&code=${code}`)
             .then(res => res.json())
         if (check === "approved") {
-            await signIn('credentials', {phone: phone, response: check, callbackUrl: '/'})
+            const result = await signIn('credentials', {
+                phone: phone, 
+                response: check, 
+                redirect: false // Handle redirect manually
+            })
+            
+            if (result?.ok) {
+                // Successful authentication - redirect to home
+                router.push('/')
+            } else {
+                // Authentication failed
+                setError(true)
+                setCode("")
+                setFormattedCode("")
+            }
         } else {
             setError(true)
             setCode("")

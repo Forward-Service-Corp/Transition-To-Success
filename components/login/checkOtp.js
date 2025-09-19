@@ -31,10 +31,22 @@ function CheckOtp({loginValue}) {
         const check = await fetch(`/api/check-OTP?phone=${loginValue}&code=${code}`)
             .then(res => res.json())
         if (check === "approved") {
-            await signIn('credentials', {phone: loginValue, response: check, callbackUrl: '/'})
-            console.log(check)
+            const result = await signIn('credentials', {
+                phone: loginValue, 
+                response: check, 
+                redirect: false // Handle redirect manually
+            })
+            
+            if (result?.ok) {
+                // Successful authentication - redirect to home
+                window.location.href = '/'
+            } else {
+                // Authentication failed
+                setError(true)
+                setCode("")
+                setFormattedCode("")
+            }
         } else {
-            console.log(check)
             setError(true)
             setCode("")
             setFormattedCode("")
