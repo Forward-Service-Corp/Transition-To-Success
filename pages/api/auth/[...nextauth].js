@@ -35,15 +35,18 @@ export const authOptions = {
                     .collection("users")
                     .findOne({phone: phone})
 
-                if(response === "approved"){
-                    // If no error and we have user data, return it
+                if(response === "approved" && userSearch){
                     return {
                         id: userSearch._id.toString(),
-                        name: userSearch.name,
-                        email: userSearch.email,
-                    }
+                        name: userSearch.name || '',
+                        email: userSearch.email || `phone-${userSearch.phone}@credentials.local`, // Provide email for database adapter
+                        phone: userSearch.phone,
+                        // Add additional fields that the database adapter expects
+                        emailVerified: null,
+                        image: null
+                    };
                 }else{
-                    return null
+                    return null;
                 }
             }
         })
@@ -58,11 +61,23 @@ export const authOptions = {
         async session({ session, user }) {
             try {
                 const {db} = await connectToDatabase();
-                const dbUser = await db.collection("users").findOne({email: session.user.email})
-                    .catch(er => console.error(er));
+                // Try to find user by email first, then by phone if no email
+                let dbUser = null;
+                
+                if (session.user.email) {
+                    dbUser = await db.collection("users").findOne({email: session.user.email});
+                } else if (session.user.phone) {
+                    dbUser = await db.collection("users").findOne({phone: session.user.phone});
+                } else if (user?.id) {
+                    // Fallback to finding by user ID
+                    const { ObjectId } = require('mongodb');
+                    dbUser = await db.collection("users").findOne({_id: new ObjectId(user.id)});
+                }
+                
                 if(dbUser){
                     session.user._id = dbUser._id;
                     session.level = dbUser.level;
+                    session.user.phone = dbUser.phone;
                 }
             } catch (error){
                 console.error('Error fetching user from database:', error);
@@ -96,6 +111,13 @@ export const authOptions = {
                 }
             }
         },
+        async redirect({ url, baseUrl }) {
+            // Allows relative callback URLs
+            if (url.startsWith("/")) return `${baseUrl}${url}`
+            // Allows callback URLs on the same origin
+            else if (new URL(url).origin === baseUrl) return url
+            return baseUrl
+        },
     },
     events: {
         signIn: async ({user, isNewUser}) => {
@@ -116,7 +138,16 @@ export const authOptions = {
             }
             
             // Set session expiration based on user level
-            const dbUser = await db.collection("users").findOne({email: user.email});
+            let dbUser = null;
+            if (user.email) {
+                dbUser = await db.collection("users").findOne({email: user.email});
+            } else if (user.phone) {
+                dbUser = await db.collection("users").findOne({phone: user.phone});
+            } else if (user.id) {
+                const { ObjectId } = require('mongodb');
+                dbUser = await db.collection("users").findOne({_id: new ObjectId(user.id)});
+            }
+            
             if (dbUser && dbUser.level === 'client') {
                 // For client users, set session to expire in 10 minutes
                 const clientExpiry = new Date(Date.now() + (10 * 60 * 1000)); // 10 minutes
