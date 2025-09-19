@@ -30,7 +30,7 @@ export default function Directory({ pageDataJson }) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({keyword, domain, county}),
+      body: JSON.stringify({ keyword, domain, county }),
     }).then((res) => res.json());
     //console.log(domain, county)
     await setSearching(false);

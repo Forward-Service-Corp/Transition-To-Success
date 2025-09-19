@@ -6,10 +6,12 @@ import {MongoDBAdapter} from "@next-auth/mongodb-adapter"
 import clientPromise from "../../../lib/mongodb"
 import {connectToDatabase} from "../../../lib/dbConnect";
 
-export default NextAuth({
+export const authOptions = {
     adapter: MongoDBAdapter(clientPromise),
     session: {
-        strategy: "jwt"
+        strategy: "database",
+        maxAge: 24 * 60 * 60, // 24 hours default (will be overridden for clients)
+        updateAge: 60, // Update session every minute to keep it fresh for active users
     },
     providers: [
         EmailProvider({
@@ -50,13 +52,10 @@ export default NextAuth({
         signIn: "/auth/sign-in",
         verifyRequest: "/auth/verify-request",
     },
-    jwt: {
-        secret: process.env.JWT_SECRET,
-    },
     secret: process.env.NEXTAUTH_SECRET,
     // url: process.env.NEXTAUTH_URL,
     callbacks: {
-        async session({ session, token }) {
+        async session({ session, user }) {
             try {
                 const {db} = await connectToDatabase();
                 const dbUser = await db.collection("users").findOne({email: session.user.email})
@@ -68,7 +67,8 @@ export default NextAuth({
             } catch (error){
                 console.error('Error fetching user from database:', error);
             }
-            session.custom = token.sub;
+            // In database strategy, user object contains the database user info
+            session.custom = user?.id;
             return session
         },
         async signIn({ user, account, credentials }){
@@ -96,12 +96,6 @@ export default NextAuth({
                 }
             }
         },
-        async jwt({ token, user }) {
-            if (user) {
-                token.user = user
-            }
-            return token
-        },
     },
     events: {
         signIn: async ({user, isNewUser}) => {
@@ -120,6 +114,19 @@ export default NextAuth({
                     }
                 })
             }
+            
+            // Set session expiration based on user level
+            const dbUser = await db.collection("users").findOne({email: user.email});
+            if (dbUser && dbUser.level === 'client') {
+                // For client users, set session to expire in 10 minutes
+                const clientExpiry = new Date(Date.now() + (10 * 60 * 1000)); // 10 minutes
+                await db.collection("sessions").updateMany(
+                    { userId: dbUser._id.toString() },
+                    { $set: { expires: clientExpiry } }
+                );
+            }
         },
     }
-})
+}
+
+export default NextAuth(authOptions)
