@@ -1,124 +1,181 @@
-import {signIn, useSession} from "next-auth/react";
-import {useRouter} from "next/router";
-import Head from "next/head";
-import Image from "next/image";
-import {useState, useEffect} from "react";
+import { signIn, useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
+import Head from 'next/head'
+import Image from 'next/image'
+import { useState, useEffect } from 'react'
 
-export default function Login() {
-    const router = useRouter();
-    const { data: session, status } = useSession();
-    const [disclosure, setDisclosure] = useState(false);
-    const [isVisible, setIsVisible] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    console.log(status)
+export default function Login () {
+  const router = useRouter()
+  const { data: session, status } = useSession()
+  const [disclosure, setDisclosure] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  console.log(status)
 
-    const handleClose = () => {
-        setDisclosure(false);
+  const handleClose = () => {
+    setDisclosure(false)
+  }
+
+  useEffect(() => {
+    if (status !== 'loading') {
+      setIsLoading(false)
     }
+  }, [status])
 
-    useEffect(() => {
-        if (status !== 'loading') {
-            setIsLoading(false);
-        }
-    }, [status]);
+  useEffect(() => {
+    if (status === 'loading') {
+      // Still checking session, keep hidden
+      setIsVisible(false)
+    } else if (status === 'authenticated') {
+      // User is already logged in, redirect to home
+      router.push('/')
+    } else {
+      // Add a small delay to account for session rehydration during page transitions
+      const timer = setTimeout(() => {
+        setIsVisible(true)
+      }, 100) // Brief delay to prevent flash during navigation
 
-    useEffect(() => {
-        if (status === 'loading') {
-            // Still checking session, keep hidden
-            setIsVisible(false);
-        } else if (status === 'authenticated') {
-            // User is already logged in, redirect to home
-            router.push('/');
-        } else {
-            // Add a small delay to account for session rehydration during page transitions
-            const timer = setTimeout(() => {
-                setIsVisible(true);
-            }, 100); // Brief delay to prevent flash during navigation
+      return () => clearTimeout(timer)
+    }
+  }, [status, router])
+  // Show loading or nothing while session status is being determined
+  if (!isVisible) {
+      return (
+          <div className="h-screen w-screen bg-gray-900 flex align-middle justify-center">
+              <Head>
+                  <title>TTS / Login</title>
+              </Head>
+              {isLoading && (
+                  <div className="self-center flex flex-col items-center gap-4">
+                      <div className="relative">
+                          <div className="h-16 w-16 rounded-full border-4 border-orange-500/30 border-t-orange-400 animate-spin"></div>
+                          <div className="absolute inset-0 grid place-items-center">
+                              <div className="h-6 w-6 rounded-full bg-gradient-to-r from-orange-500 to-orange-400 animate-pulse shadow"></div>
+                          </div>
+                      </div>
+                      <div className="text-white uppercase tracking-wider text-xs">Preparing login<span className="animate-pulse">...</span></div>
+                  </div>
+              )}
+          </div>
+      );
+  }
 
-            return () => clearTimeout(timer);
-        }
-    }, [status, router]);
-    // Show loading or nothing while session status is being determined
-    if (!isVisible) {
-        return (
-            <div className="h-screen w-screen bg-gray-900 flex align-middle justify-center">
-                <Head>
-                    <title>TTS / Login</title>
-                </Head>
-                {isLoading && (
-                    <div className="self-center flex flex-col items-center gap-4">
-                        <div className="relative">
-                            <div className="h-16 w-16 rounded-full border-4 border-orange-500/30 border-t-orange-400 animate-spin"></div>
-                            <div className="absolute inset-0 grid place-items-center">
-                                <div className="h-6 w-6 rounded-full bg-gradient-to-r from-orange-500 to-orange-400 animate-pulse shadow"></div>
-                            </div>
-                        </div>
-                        <div className="text-white uppercase tracking-wider text-xs">Preparing login<span className="animate-pulse">...</span></div>
-                    </div>
-                )}
+  return (
+    <div
+      className={`h-screen w-screen bg-[url('/img/YouthWorkbookArt.png')] bg-center bg-cover flex align-middle justify-center`}
+    >
+      <Head>
+        <title>TTS / Login</title>
+      </Head>
+      {isLoading ? (
+        <div className='self-center flex flex-col items-center gap-4'>
+          <div className='relative'>
+            <div className='h-16 w-16 rounded-full border-4 border-orange-500/30 border-t-orange-400 animate-spin'></div>
+            <div className='absolute inset-0 grid place-items-center'>
+              <div className='h-6 w-6 rounded-full bg-gradient-to-r from-orange-500 to-orange-400 animate-pulse shadow'></div>
             </div>
-        );
-    }
-
-    return (
+          </div>
+          <div className='text-white uppercase tracking-wider text-xs'>
+            Preparing login<span className='animate-pulse'>...</span>
+          </div>
+        </div>
+      ) : (
         <div
-            className={`h-screen w-screen bg-[url('/img/YouthWorkbookArt.png')] bg-center bg-cover flex align-middle justify-center`}>
-            <Head>
-                <title>TTS / Login</title>
-            </Head>
-            {isLoading ? (
-                <div className="self-center flex flex-col items-center gap-4">
-                    <div className="relative">
-                        <div className="h-16 w-16 rounded-full border-4 border-orange-500/30 border-t-orange-400 animate-spin"></div>
-                        <div className="absolute inset-0 grid place-items-center">
-                            <div className="h-6 w-6 rounded-full bg-gradient-to-r from-orange-500 to-orange-400 animate-pulse shadow"></div>
-                        </div>
-                    </div>
-                    <div className="text-white uppercase tracking-wider text-xs">Preparing login<span className="animate-pulse">...</span></div>
-                </div>
-            ) : (
-                <div className={`max-w-full  lg:max-w-screen-md flex flex-col  ${isLoading ? 'opacity-100' : 'opacity-0'}`}>
-                    <div className={`bg-gradient-to-r from-orange-600 to-orange-500 bg-opacity-40 px-4 py-4 lg:mb-10 shadow-md w-full justify-center lg:justify-around fixed top-0 left-0 right-0 z-50 flex items-center lg:relative`}>
-                        <Image className={`w-[48px] h-auto backdrop-hue-rotate-270`} width={158} height={140} src={"/img/fsc-logo-white.png"} alt={`Forward Service Corporation logo`}/>
-                        <span className={`text-2xl uppercase font-extralight text-white `}>Forward Service Corporation</span>
-                        <span className={`text-2xl uppercase font-extralight text-white `}>(608) 665-9362</span>
-                    </div>
-                    <div className={"bg-white bg-opacity-80 p-8 h-full w-full  lg:h-auto flex flex-col justify-start gap-8 text-center"}>
-                        <div className={"pt-3 flex flex-col justify-start mt-[80px] lg:mt-0"}>
-                            <Image className={`w-auto h-[100px] self-center mb-4 opacity-70`} width={158} height={140} alt={`Transition to Success logo`} src={"/img/tts-logo-black.png"}/>
-                            <h2 className={'pb-2 font-extralight text-2xl mt-2'}>Sign in to Your Account</h2>
-                            <button className={"rounded bg-gray-700 text-white font-extralight p-2 w-full mt-3"}
-                                onClick={() => signIn("email", {callbackUrl: '/'})}>Sign in with Email
-                            </button>
-                            <button
-                                className={"rounded bg-indigo-700 text-white font-extralight p-2 w-full mt-3 block m-auto"}
-                                onClick={() => {
-                                    router.push('/login-sms').then()
-                                }}>Sign in by Text
-                            </button>
-                            <div className={"flex items-center pt-6"}>
-                                <div className={"border-b border-gray-700 border-opacity-40 w-1/2 mr-4"}></div>
-                                <div>OR</div>
-                                <div className={"border-b border-gray-700 border-opacity-40 w-1/2 ml-4"}></div>
-                            </div>
-                            <h2 className={'font-extralight text-2xl my-2'}>Create a New Account</h2>
-                            <div>
-                                <p className={'text-xs'}>
-                                    If you don&apos;t already have an account you can create one now. Just click the button
-                                    below to get started.
-                                </p>
-                            </div>
-                            <button className={"rounded bg-red-500 text-white font-extralight p-2 w-full mt-5"}
-                                onClick={() => {
-                                    router.push("/create-new-account").then()
-                                }}>Create New Account
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-            )
-            <div className={`max-w-full  lg:max-w-screen-md flex flex-col  ${isLoading ? 'opacity-100' : 'opacity-0'}`}>
+          className={`max-w-full  lg:max-w-screen-md flex flex-col  ${
+            !isLoading && isVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <div
+            className={`bg-gradient-to-r from-orange-600 to-orange-500 bg-opacity-40 px-4 py-4 lg:mb-10 shadow-md w-full justify-center lg:justify-around fixed top-0 left-0 right-0 z-50 flex items-center lg:relative`}
+          >
+            <Image
+              className={`w-[48px] h-auto backdrop-hue-rotate-270`}
+              width={158}
+              height={140}
+              src={'/img/fsc-logo-white.png'}
+              alt={`Forward Service Corporation logo`}
+            />
+            <span className={`text-2xl uppercase font-extralight text-white `}>
+              Forward Service Corporation
+            </span>
+            <span className={`text-2xl uppercase font-extralight text-white `}>
+              (608) 665-9362
+            </span>
+          </div>
+          <div
+            className={
+              'bg-white bg-opacity-80 p-8 h-full w-full  lg:h-auto flex flex-col justify-start gap-8 text-center'
+            }
+          >
+            <div
+              className={'pt-3 flex flex-col justify-start mt-[80px] lg:mt-0'}
+            >
+              <Image
+                className={`w-auto h-[100px] self-center mb-4 opacity-70`}
+                width={158}
+                height={140}
+                alt={`Transition to Success logo`}
+                src={'/img/tts-logo-black.png'}
+              />
+              <h2 className={'pb-2 font-extralight text-2xl mt-2'}>
+                Sign in to Your Account
+              </h2>
+              <button
+                className={
+                  'rounded bg-gray-700 text-white font-extralight p-2 w-full mt-3'
+                }
+                onClick={() => signIn('email', { callbackUrl: '/' })}
+              >
+                Sign in with Email
+              </button>
+              <button
+                className={
+                  'rounded bg-indigo-700 text-white font-extralight p-2 w-full mt-3 block m-auto'
+                }
+                onClick={() => {
+                  router.push('/login-sms').then()
+                }}
+              >
+                Sign in by Text
+              </button>
+              <div className={'flex items-center pt-6'}>
+                <div
+                  className={
+                    'border-b border-gray-700 border-opacity-40 w-1/2 mr-4'
+                  }
+                ></div>
+                <div>OR</div>
+                <div
+                  className={
+                    'border-b border-gray-700 border-opacity-40 w-1/2 ml-4'
+                  }
+                ></div>
+              </div>
+              <h2 className={'font-extralight text-2xl my-2'}>
+                Create a New Account
+              </h2>
+              <div>
+                <p className={'text-xs'}>
+                  If you don&apos;t already have an account you can create one
+                  now. Just click the button below to get started.
+                </p>
+              </div>
+              <button
+                className={
+                  'rounded bg-red-500 text-white font-extralight p-2 w-full mt-5'
+                }
+                onClick={() => {
+                  router.push('/create-new-account').then()
+                }}
+              >
+                Create New Account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      )
+      {/* <div className={`max-w-full  lg:max-w-screen-md flex flex-col  ${isLoading ? 'opacity-100' : 'opacity-0'}`}>
                 <div className={`bg-gradient-to-r from-orange-600 to-orange-500 bg-opacity-40 px-4 py-4 lg:mb-10 shadow-md w-full justify-center lg:justify-around fixed top-0 left-0 right-0 z-50 flex items-center lg:relative`}>
                     <Image className={`w-[48px] h-auto backdrop-hue-rotate-270`} width={158} height={140} src={"/img/fsc-logo-white.png"} alt={`Forward Service Corporation logo`}/>
                     <span className={`text-2xl uppercase font-extralight text-white `}>Forward Service Corporation</span>
@@ -168,7 +225,7 @@ export default function Login() {
                         </p>
                     </div>
                 </div>
-            </div>
-        </div>
-    )
+            </div> */}
+    </div>
+  )
 }
