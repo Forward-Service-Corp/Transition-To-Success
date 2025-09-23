@@ -113,12 +113,10 @@ export const useAutoLogout = (session) => {
     }
 
     const events = [
-      'mousedown',
-      'mousemove',
-      'keypress',
+      'click',
+      'keydown',
       'scroll',
-      'touchstart',
-      'click'
+      'touchstart'
     ];
 
     const handleActivity = () => {
