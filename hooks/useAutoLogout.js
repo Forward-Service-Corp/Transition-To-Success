@@ -103,7 +103,7 @@ export const useAutoLogout = (session) => {
     fetchTimeout();
   }, []);
 
-  // Activity tracking and tab close logout
+  // Timer-based logout and tab close logout
   useEffect(() => {
     if (!session) return;
 
@@ -111,17 +111,6 @@ export const useAutoLogout = (session) => {
     if (session.level !== 'client') {
       return;
     }
-
-    const events = [
-      'click',
-      'keydown',
-      'scroll',
-      'touchstart'
-    ];
-
-    const handleActivity = () => {
-      resetTimer();
-    };
 
     // Handle tab close for client accounts
     const handleBeforeUnload = () => {
@@ -131,25 +120,16 @@ export const useAutoLogout = (session) => {
       }
     };
 
-    // Add event listeners
-    events.forEach(event => {
-      document.addEventListener(event, handleActivity, true);
-    });
-
     // Add beforeunload listener for tab close logout
     window.addEventListener('beforeunload', handleBeforeUnload);
 
-    // Initial timer setup
+    // Initial timer setup - this will not be reset by activity
     resetTimer();
 
     // Cleanup
     return () => {
-      events.forEach(event => {
-        document.removeEventListener(event, handleActivity, true);
-      });
-      
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      
+
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
