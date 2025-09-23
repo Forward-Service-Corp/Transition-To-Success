@@ -9,11 +9,18 @@ export default function Login() {
     const { data: session, status } = useSession();
     const [disclosure, setDisclosure] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     console.log(status)
 
     const handleClose = () => {
         setDisclosure(false);
     }
+
+    useEffect(() => {
+        if (status !== 'loading') {
+            setIsLoading(false);
+        }
+    }, [status]);
 
     useEffect(() => {
         if (status === 'loading') {
@@ -49,11 +56,11 @@ export default function Login() {
 
     return (
         <div
-            className={"h-screen w-screen bg-[url('/img/YouthWorkbookArt.png')] bg-center bg-cover flex align-middle justify-center"}>
+            className={`h-screen w-screen bg-[url('/img/YouthWorkbookArt.png')] bg-center bg-cover flex align-middle justify-center`}>
             <Head>
                 <title>TTS / Login</title>
             </Head>
-            <div className={`max-w-full  lg:max-w-screen-md flex flex-col`}>
+            <div className={`max-w-full  lg:max-w-screen-md flex flex-col  ${isLoading ? 'opacity-100' : 'opacity-0'}`}>
                 <div className={`bg-gradient-to-r from-orange-600 to-orange-500 bg-opacity-40 px-4 py-4 lg:mb-10 shadow-md w-full justify-center lg:justify-around fixed top-0 left-0 right-0 z-50 flex items-center lg:relative`}>
                     <Image className={`w-[48px] h-auto backdrop-hue-rotate-270`} width={158} height={140} src={"/img/fsc-logo-white.png"} alt={`Forward Service Corporation logo`}/>
                     <span className={`text-2xl uppercase font-extralight text-white `}>Forward Service Corporation</span>
