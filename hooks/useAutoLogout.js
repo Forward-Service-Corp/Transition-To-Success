@@ -8,6 +8,7 @@ export const useAutoLogout = (session) => {
   const router = useRouter();
   const timeoutRef = useRef(null);
   const warningTimeoutRef = useRef(null);
+  const countdownIntervalRef = useRef(null);
   const [showWarning, setShowWarning] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [inactivityTimeout, setInactivityTimeout] = useState(1 * 60 * 1000); // Default 1 minute
@@ -35,12 +36,15 @@ export const useAutoLogout = (session) => {
   }, [router, session]);
 
   const resetTimer = useCallback(() => {
-    // Clear existing timeouts
+    // Clear existing timeouts and intervals
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     if (warningTimeoutRef.current) {
       clearTimeout(warningTimeoutRef.current);
+    }
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
     }
 
     setShowWarning(false);
@@ -52,10 +56,11 @@ export const useAutoLogout = (session) => {
       setTimeRemaining(60); // 1 minute remaining
 
       // Start countdown
-      const countdownInterval = setInterval(() => {
+      countdownIntervalRef.current = setInterval(() => {
         setTimeRemaining(prev => {
           if (prev <= 1) {
-            clearInterval(countdownInterval);
+            clearInterval(countdownIntervalRef.current);
+            countdownIntervalRef.current = null;
             return 0;
           }
           return prev - 1;
@@ -70,11 +75,16 @@ export const useAutoLogout = (session) => {
     }, inactivityTimeout);
   }, [handleLogout, inactivityTimeout]);
 
-  const extendSession = () => {
+  const extendSession = useCallback(() => {
+    // Clear the countdown interval when extending session
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+      countdownIntervalRef.current = null;
+    }
     setShowWarning(false);
     setTimeRemaining(0);
     resetTimer();
-  };
+  }, [resetTimer]);
 
   // Fetch session timeout configuration
   useEffect(() => {
@@ -125,6 +135,9 @@ export const useAutoLogout = (session) => {
       }
       if (warningTimeoutRef.current) {
         clearTimeout(warningTimeoutRef.current);
+      }
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
       }
     };
   }, [resetTimer, session, handleLogout]);
