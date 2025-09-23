@@ -3,10 +3,9 @@ import {ObjectId} from "mongodb";
 
 // sets a referral as archived or active
 
-
 // eslint-disable-next-line import/no-anonymous-default-export
 
-export default async (req, res) => {
+const handler = async (req, res) => {
     const {db} = await connectToDatabase()
     const record = await db
         // looks in the collection "Referrals"
@@ -25,3 +24,5 @@ export default async (req, res) => {
     res.json(record)
 
 }
+
+export default handler;

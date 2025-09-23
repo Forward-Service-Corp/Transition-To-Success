@@ -1,20 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import ReferralContainer from "./referralContainer";
 
 function ClientCarePlans({user, viewingUser, viewingUserData}) {
 
     const [userReferrals, setUserReferrals] = useState(viewingUserData.referrals)
 
-    async function getUserReferrals() {
+    const getUserReferrals = useCallback(async () => {
         // const id = clientId === undefined ? user.email : clientId
         const referrals = await fetch("/api/get-referrals?userId=" + viewingUser._id)
             .then(res => res.json())
         await setUserReferrals(referrals)
-    }
+    }, [viewingUser._id])
 
     useEffect(() => {
         getUserReferrals().then()
-    }, [])
+    }, [getUserReferrals])
 
     return (
         <div className={"mt-5 p-6 border rounded dark:border-none dark:bg-black dark:bg-opacity-70 dark:text-white dark:rounded-lg dark:shadow-xl"}>

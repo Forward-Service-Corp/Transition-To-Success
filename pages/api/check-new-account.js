@@ -22,7 +22,7 @@ import {connectToDatabase} from "../../lib/dbConnect";
  * Logs the outcome of the database query for debugging purposes.
  * Sends a default JSON response if no return condition is explicitly met (e.g., duplicate accounting handling or errors).
  */
-export default async(req, res) => {
+const handler = async(req, res) => {
 
     const {loginType, loginValue, loginFrom} = req.body;
     const term = loginType === 'email' ? { email: loginValue } : { phone: loginValue };
@@ -44,3 +44,5 @@ export default async(req, res) => {
 
     res.json(user);
 }
+
+export default handler;

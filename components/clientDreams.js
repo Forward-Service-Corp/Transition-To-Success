@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {CaretDoubleDown, CaretDoubleUp} from "phosphor-react";
 import DreamSingle from "./dreamSingle";
 
@@ -33,16 +33,16 @@ function ClientDreams({viewingUser}) {
         })
     }
 
-    async function getDreams() {
+    const getDreams = useCallback(async () => {
         await fetch("/api/get-dreams?userId=" + viewingUser._id)
             .then(res => res.json())
             .then(res => { setDreams(res) })
             .catch(err => console.warn(err.json()))
-    }
+    }, [viewingUser._id])
 
     useEffect(() => {
         getDreams().then()
-    },[])
+    },[getDreams])
 
 
     return (
