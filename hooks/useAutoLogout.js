@@ -14,15 +14,20 @@ export const useAutoLogout = (session) => {
 
   const handleLogout = useCallback(async () => {
     try {
-      // Clear session storage for client users
-      if (session?.level === 'client') {
-        // Clear local storage items
-        if (typeof window !== 'undefined') {
-          localStorage.clear();
-          sessionStorage.clear();
+      // Clear local storage for security
+      if (typeof window !== 'undefined') {
+        // Only clear TTS-specific storage keys to avoid affecting other applications
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.startsWith('tts-') || key.startsWith('nextauth'))) {
+            keysToRemove.push(key);
+          }
         }
-        // Note: With JWT strategy, server-side session invalidation is not needed
-        // The JWT will expire naturally based on the maxAge configuration
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+
+        // Clear session storage
+        sessionStorage.clear();
       }
 
       await signOut({ redirect: false });
@@ -32,7 +37,7 @@ export const useAutoLogout = (session) => {
       // Even if signOut fails, try to redirect to login
       router.push('/login');
     }
-  }, [router, session]);
+  }, [router]);
 
   const resetTimer = useCallback(() => {
     // Clear existing timeouts
@@ -97,28 +102,29 @@ export const useAutoLogout = (session) => {
   useEffect(() => {
     if (!session) return;
 
-    // Only apply auto-logout to users with 'client' level
-    if (session.level !== 'client') {
-      return;
-    }
+    // Apply auto-logout to all authenticated users
+    // Different timeout durations can be configured per user level via API
 
-    // Handle tab close for client accounts
+    // Handle tab close - apply stricter logout for client accounts
     const handleBeforeUnload = () => {
-      // Only logout client accounts when tab is closed
       if (session.level === 'client') {
         handleLogout();
       }
     };
 
-    // Add beforeunload listener for tab close logout
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    // Add beforeunload listener for tab close logout (clients only)
+    if (session.level === 'client') {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
 
-    // Initial timer setup - this will not be reset by activity
+    // Initial timer setup - applies to all users
     resetTimer();
 
     // Cleanup
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      if (session.level === 'client') {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      }
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);

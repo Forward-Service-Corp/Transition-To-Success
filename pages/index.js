@@ -1,20 +1,51 @@
 import Layout from "../components/layout"
-import {getServerSession} from "next-auth/next"
-import {authOptions} from "./api/auth/[...nextauth]"
 import {useRouter} from "next/router";
 import Head from "next/head"
 import {useState} from "react"
 import DashboardMetric from "../components/dashboardMetric";
 import WelcomeGroupAdult from "../components/pages/welcomeGroupAdult";
 import WelcomeGroupYouth from "../components/pages/welcomeGroupYouth";
+import {useSession} from "next-auth/react";
+import useSpaData from "../hooks/useSpaData";
 
-export default function Home({user, dreams, surveys, referrals, tasks}) {
-
-    // console.log(user)
-
+export default function Home() {
+    const { data: session } = useSession();
     const router = useRouter()
-    tasks.filter(task => eval(task.completed) === true).length;
     const [currentTab, setCurrentTab] = useState(1)
+
+    // Use SPA data fetching for dashboard data
+    const { data: dashboardData, loading: dashboardLoading, error: dashboardError } = useSpaData('/api/pages/indexPageData');
+
+    // Show loading state while data is being fetched
+    if (dashboardLoading || !dashboardData) {
+        return (
+            <Layout title={"Dashboard"} session={session}>
+                <Head>
+                    <title>TTS / Dashboard</title>
+                </Head>
+                <div className="flex items-center justify-center h-64">
+                    <div className="uppercase text-gray-600 text-sm">loading dashboard...</div>
+                </div>
+            </Layout>
+        );
+    }
+
+    // Show error state if data fetching failed
+    if (dashboardError) {
+        return (
+            <Layout title={"Dashboard"} session={session}>
+                <Head>
+                    <title>TTS / Dashboard</title>
+                </Head>
+                <div className="flex items-center justify-center h-64">
+                    <div className="text-red-600 text-sm">Error loading dashboard: {dashboardError}</div>
+                </div>
+            </Layout>
+        );
+    }
+
+    const { user, dreams, surveys, referrals, tasks } = dashboardData;
+    const completedTasks = tasks ? tasks.filter(task => eval(task.completed) === true).length : 0;
 
     function prevPage() {
         setCurrentTab(prevState => prevState - 1)
@@ -69,27 +100,4 @@ export default function Home({user, dreams, surveys, referrals, tasks}) {
     )
 }
 
-export async function getServerSideProps(context) {
-    const session = await getServerSession(context.req, context.res, authOptions)
-    if (!session) return {redirect: {destination: "/login", permanent: false}}
-    const {req} = context;
-
-    // set up dynamic url
-    const protocol = req.headers['x-forwarded-proto'] || 'http'
-    const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
-
-    // page data
-    // console.log("log", session.user._id)
-    const dataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id;
-    const getData = await fetch(dataUrl);
-    const {user, dreams, surveys, referrals, tasks} = await getData.json();
-
-    // redirect to profile page if required fields are not complete
-    // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
-
-    return {
-        props: {user, dreams, surveys, referrals, tasks}
-    }
-
-}
 
