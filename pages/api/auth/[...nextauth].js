@@ -10,7 +10,7 @@ export const authOptions = {
 
     adapter: MongoDBAdapter(clientPromise),
     session: {
-        strategy: "database",
+        strategy: "jwt", // Use JWT for all sessions to support credentials provider
         maxAge: (parseInt(process.env.SESSION_AUTO_LOGOUT_LENGTH_IN_MINUTES) || 1) * 60
     },
     providers: [
@@ -29,23 +29,28 @@ export const authOptions = {
                 response: {label: "Response", type: "text"}
             },
             async authorize(credentials) {
+                console.log('Credentials authorize called with:', { phone: credentials.phone, response: credentials.response });
                 const {phone, response} = credentials;
                 const {db} = await connectToDatabase()
                 const userSearch = await db
                     .collection("users")
                     .findOne({phone: phone})
 
+                console.log('User search result:', userSearch ? 'User found' : 'User not found');
+
                 if(response === "approved" && userSearch){
-                    return {
+                    const userObject = {
                         id: userSearch._id.toString(),
                         name: userSearch.name || '',
-                        email: userSearch.email || `phone-${userSearch.phone}@credentials.local`, // Provide email for database adapter
+                        email: userSearch.email || `phone-${userSearch.phone}@credentials.local`,
                         phone: userSearch.phone,
-                        // Add additional fields that the database adapter expects
                         emailVerified: null,
                         image: null
                     };
+                    console.log('Returning user object:', userObject);
+                    return userObject;
                 }else{
+                    console.log('Authorization failed - response:', response, 'userFound:', !!userSearch);
                     return null;
                 }
             }
@@ -55,70 +60,111 @@ export const authOptions = {
         signIn: "/auth/sign-in",
         verifyRequest: "/auth/verify-request",
     },
-    // jwt: {
-    //     secret: process.env.JWT_SECRET,
-    // },
+    jwt: {
+        secret: process.env.JWT_SECRET,
+    },
     secret: process.env.NEXTAUTH_SECRET,
     // url: process.env.NEXTAUTH_URL,
     callbacks: {
-        async session({ session }) {
-            try {
-                const {db} = await connectToDatabase();
-                // Try to find user by email first, then by phone if no email
-                let dbUser = null;
-                
-                if (session.user.email) {
-                    dbUser = await db.collection("users").findOne({email: session.user.email});
-                } else if (session.user.phone) {
-                    dbUser = await db.collection("users").findOne({phone: session.user.phone});
-                } else if (user?.id) {
-                    // Fallback to finding by user ID
-                    const { ObjectId } = require('mongodb');
-                    dbUser = await db.collection("users").findOne({_id: new ObjectId(user.id)});
-                }
-                
-                if(dbUser){
-                    session.user._id = dbUser._id;
-                    session.level = dbUser.level;
-                    session.user.phone = dbUser.phone;
-                }
-            } catch (error){
-                console.error('Error fetching user from database:', error);
+        async session({ session, token }) {
+            console.log('Session callback called');
+            console.log('Session:', session);
+            console.log('Token:', token);
+
+            // Pass user data from JWT token to session
+            if (token.user) {
+                session.user = {
+                    ...session.user,
+                    ...token.user
+                };
+                session.level = token.user.level;
+                console.log('Session populated from JWT token with level:', session.level);
+            } else {
+                console.log('No user data in token');
             }
-            // session.custom = token.sub;
-            return session
+
+            return session;
         },
         async signIn({ user, account, credentials }){
+            console.log('SignIn callback called with account type:', account.type);
+            console.log('User object:', user);
+            console.log('Credentials:', credentials);
+
             const {db} = await connectToDatabase()
             if (account.type === "email") {
                 const userSearch = await db.collection("users").findOne({email: user.email})
                 if(userSearch){
+                    console.log('Email signin successful for:', user.email);
                     return true
                 } else {
+                    console.log('Email signin failed - no account found for:', user.email);
                     return "/api/auth/no-account"
                 }
             } else if(account.type === "credentials") {
                 const userSearch = await db.collection("users").findOne({phone: credentials.phone})
                 if(userSearch){
+                    console.log('Credentials signin successful for phone:', credentials.phone);
                     return true
                 } else {
+                    console.log('Credentials signin failed - no account found for phone:', credentials.phone);
                     return "/api/auth/no-account"
                 }
             } else if(account.type === "oauth") {
                 const userSearch = await db.collection("users").findOne({email: user.email})
                 if(userSearch){
+                    console.log('OAuth signin successful for:', user.email);
                     return true
                 } else {
+                    console.log('OAuth signin failed - no account found for:', user.email);
                     return "/auth/no-account"
                 }
             }
         },
-        async redirect({ url, baseUrl }) {
-            // Allows relative callback URLs
-            if (url.startsWith("/")) return `${baseUrl}${url}`
-            // Allows callback URLs on the same origin
-            else if (new URL(url).origin === baseUrl) return url
-            return baseUrl
+        async jwt({ token, user, account }) {
+            console.log('JWT callback called');
+            console.log('Token:', token);
+            console.log('User:', user);
+            console.log('Account:', account);
+
+            // If user is present (sign in), add user data to token
+            if (user && account) {
+                console.log('Adding user data to JWT token');
+                token.user = user;
+                token.accountType = account.type;
+
+                // Fetch user data from database
+                try {
+                    const {db} = await connectToDatabase();
+                    let dbUser = null;
+
+                    if (account.type === 'credentials') {
+                        // For phone-based auth, look up by phone
+                        if (user.phone) {
+                            dbUser = await db.collection("users").findOne({phone: user.phone});
+                        } else if (user.email && user.email.includes('@credentials.local')) {
+                            const phoneMatch = user.email.match(/phone-(\d+)@credentials\.local/);
+                            if (phoneMatch) {
+                                dbUser = await db.collection("users").findOne({phone: phoneMatch[1]});
+                            }
+                        }
+                    } else {
+                        // For email/OAuth, look up by email
+                        dbUser = await db.collection("users").findOne({email: user.email});
+                    }
+
+                    if (dbUser) {
+                        token.user._id = dbUser._id.toString();
+                        token.user.level = dbUser.level;
+                        token.user.phone = dbUser.phone;
+                        token.user.name = dbUser.name || user.name;
+                        console.log('Added database user data to token:', { level: dbUser.level, phone: dbUser.phone });
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data for JWT:', error);
+                }
+            }
+
+            return token;
         },
     },
     events: {
@@ -139,26 +185,7 @@ export const authOptions = {
                 })
             }
             
-            // Set session expiration based on user level
-            let dbUser = null;
-            if (user.email) {
-                dbUser = await db.collection("users").findOne({email: user.email});
-            } else if (user.phone) {
-                dbUser = await db.collection("users").findOne({phone: user.phone});
-            } else if (user.id) {
-                const { ObjectId } = require('mongodb');
-                dbUser = await db.collection("users").findOne({_id: new ObjectId(user.id)});
-            }
-            
-            if (dbUser && dbUser.level === 'client') {
-                // For client users, set session to expire based on environment variable
-                const timeoutMinutes = parseInt(process.env.SESSION_AUTO_LOGOUT_LENGTH_IN_MINUTES) || 1;
-                const clientExpiry = new Date(Date.now() + (timeoutMinutes * 60 * 1000));
-                await db.collection("sessions").updateMany(
-                    { userId: dbUser._id.toString() },
-                    { $set: { expires: clientExpiry } }
-                );
-            }
+            // Note: With JWT session strategy, session expiration is handled by JWT maxAge
         },
     }
 }
