@@ -16,8 +16,12 @@ export const useAutoLogout = (session) => {
     try {
       // Clear session storage and invalidate token for client users
       if (session?.level === 'client') {
-        clearClientSessionStorage();
-        
+        // Clear local storage items
+        if (typeof window !== 'undefined') {
+          localStorage.clear();
+          sessionStorage.clear();
+        }
+
         // Invalidate the JWT token server-side
         try {
           await fetch('/api/invalidate-session', {
@@ -32,13 +36,13 @@ export const useAutoLogout = (session) => {
           // Continue with logout even if invalidation fails
         }
       }
-      
+
       await signOut({ redirect: false });
       router.push('/login');
     } catch (error) {
       console.error('Error during auto-logout:', error);
     }
-  }, [router, session, clearClientSessionStorage]);
+  }, [router, session]);
 
   const resetTimer = useCallback(() => {
     // Clear existing timeouts

@@ -149,8 +149,9 @@ export const authOptions = {
             }
             
             if (dbUser && dbUser.level === 'client') {
-                // For client users, set session to expire in 10 minutes
-                const clientExpiry = new Date(Date.now() + (10 * 60 * 1000)); // 10 minutes
+                // For client users, set session to expire based on environment variable
+                const timeoutMinutes = parseInt(process.env.SESSION_AUTO_LOGOUT_LENGTH_IN_MINUTES) || 1;
+                const clientExpiry = new Date(Date.now() + (timeoutMinutes * 60 * 1000));
                 await db.collection("sessions").updateMany(
                     { userId: dbUser._id.toString() },
                     { $set: { expires: clientExpiry } }
