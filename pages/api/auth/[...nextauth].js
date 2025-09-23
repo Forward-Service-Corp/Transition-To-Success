@@ -6,7 +6,7 @@ import {MongoDBAdapter} from "@next-auth/mongodb-adapter"
 import clientPromise from "../../../lib/mongodb"
 import {connectToDatabase} from "../../../lib/dbConnect";
 
-export default NextAuth({
+export const authOptions = {
     adapter: MongoDBAdapter(clientPromise),
     session: {
         strategy: "database",
@@ -34,15 +34,18 @@ export default NextAuth({
                     .collection("users")
                     .findOne({phone: phone})
 
-                if(response === "approved"){
-                    // If no error and we have user data, return it
+                if(response === "approved" && userSearch){
                     return {
                         id: userSearch._id.toString(),
-                        name: userSearch.name,
-                        email: userSearch.email,
-                    }
+                        name: userSearch.name || '',
+                        email: userSearch.email || `phone-${userSearch.phone}@credentials.local`, // Provide email for database adapter
+                        phone: userSearch.phone,
+                        // Add additional fields that the database adapter expects
+                        emailVerified: null,
+                        image: null
+                    };
                 }else{
-                    return null
+                    return null;
                 }
             }
         })
@@ -60,11 +63,23 @@ export default NextAuth({
         async session({ session }) {
             try {
                 const {db} = await connectToDatabase();
-                const dbUser = await db.collection("users").findOne({email: session.user.email})
-                    .catch(er => console.error(er));
+                // Try to find user by email first, then by phone if no email
+                let dbUser = null;
+                
+                if (session.user.email) {
+                    dbUser = await db.collection("users").findOne({email: session.user.email});
+                } else if (session.user.phone) {
+                    dbUser = await db.collection("users").findOne({phone: session.user.phone});
+                } else if (user?.id) {
+                    // Fallback to finding by user ID
+                    const { ObjectId } = require('mongodb');
+                    dbUser = await db.collection("users").findOne({_id: new ObjectId(user.id)});
+                }
+                
                 if(dbUser){
                     session.user._id = dbUser._id;
                     session.level = dbUser.level;
+                    session.user.phone = dbUser.phone;
                 }
             } catch (error){
                 console.error('Error fetching user from database:', error);
@@ -121,6 +136,28 @@ export default NextAuth({
                     }
                 })
             }
+            
+            // Set session expiration based on user level
+            let dbUser = null;
+            if (user.email) {
+                dbUser = await db.collection("users").findOne({email: user.email});
+            } else if (user.phone) {
+                dbUser = await db.collection("users").findOne({phone: user.phone});
+            } else if (user.id) {
+                const { ObjectId } = require('mongodb');
+                dbUser = await db.collection("users").findOne({_id: new ObjectId(user.id)});
+            }
+            
+            if (dbUser && dbUser.level === 'client') {
+                // For client users, set session to expire in 10 minutes
+                const clientExpiry = new Date(Date.now() + (10 * 60 * 1000)); // 10 minutes
+                await db.collection("sessions").updateMany(
+                    { userId: dbUser._id.toString() },
+                    { $set: { expires: clientExpiry } }
+                );
+            }
         },
     }
-})
+}
+
+export default NextAuth(authOptions)

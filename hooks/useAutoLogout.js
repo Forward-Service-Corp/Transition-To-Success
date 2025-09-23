@@ -14,12 +14,31 @@ export const useAutoLogout = (session) => {
 
   const handleLogout = useCallback(async () => {
     try {
+      // Clear session storage and invalidate token for client users
+      if (session?.level === 'client') {
+        clearClientSessionStorage();
+        
+        // Invalidate the JWT token server-side
+        try {
+          await fetch('/api/invalidate-session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          });
+        } catch (invalidationError) {
+          console.error('Error invalidating session:', invalidationError);
+          // Continue with logout even if invalidation fails
+        }
+      }
+      
       await signOut({ redirect: false });
       router.push('/login');
     } catch (error) {
       console.error('Error during auto-logout:', error);
     }
-  }, [router]);
+  }, [router, session, clearClientSessionStorage]);
 
   const resetTimer = useCallback(() => {
     // Clear existing timeouts
@@ -84,8 +103,8 @@ export const useAutoLogout = (session) => {
   useEffect(() => {
     if (!session) return;
 
-    // Skip auto-logout for admin, coach, inactive client, and terminated coach accounts
-    if (session.level === 'admin' || session.level === 'coach' || session.level === 'inactive client' || session.level === 'terminated coach') {
+    // Only apply auto-logout to users with 'client' level
+    if (session.level !== 'client') {
       return;
     }
 
