@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from "../components/layout";
-import {getSession} from "next-auth/react";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "./api/auth/[...nextauth]";
 
 function Reports({pageDataJson}) {
     const {user} = pageDataJson
@@ -19,7 +20,7 @@ function Reports({pageDataJson}) {
 export default Reports;
 
 export async function getServerSideProps(context) {
-    const session = await getSession(context)
+    const session = await getServerSession(context.req, context.res, authOptions)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
     const {req} = context;
 

@@ -1,5 +1,6 @@
 import Layout from "../components/layout";
-import {getSession} from "next-auth/react";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "./api/auth/[...nextauth]";
 import {useEffect, useState} from "react";
 import ProfilePrograms from "../components/profilePrograms";
 import ProfilePersonalDetails from "../components/profilePersonalDetails";
@@ -119,7 +120,7 @@ export default function Profile({user}) {
 }
 
 export async function getServerSideProps(context) {
-    const session = await getSession(context)
+    const session = await getServerSession(context.req, context.res, authOptions)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
     const {req} = context;
     // const {sub} = session;

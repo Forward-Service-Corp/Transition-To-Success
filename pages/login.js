@@ -1,15 +1,52 @@
-import {signIn} from "next-auth/react";
+import {signIn, useSession} from "next-auth/react";
 import {useRouter} from "next/router";
 import Head from "next/head";
 import Image from "next/image";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 
 export default function Login() {
     const router = useRouter();
+    const { data: session, status } = useSession();
     const [disclosure, setDisclosure] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+    console.log(status)
+
     const handleClose = () => {
         setDisclosure(false);
     }
+
+    useEffect(() => {
+        if (status === 'loading') {
+            // Still checking session, keep hidden
+            setIsVisible(false);
+        } else if (status === 'authenticated') {
+            // User is already logged in, redirect to home
+            router.push('/');
+        } else {
+            // Add a small delay to account for session rehydration during page transitions
+            const timer = setTimeout(() => {
+                setIsVisible(true);
+            }, 100); // Brief delay to prevent flash during navigation
+
+            return () => clearTimeout(timer);
+        }
+    }, [status, router]);
+    // Show loading or nothing while session status is being determined
+    if (!isVisible) {
+        return (
+            <div className="h-screen w-screen bg-gray-900 flex align-middle justify-center">
+                <Head>
+                    <title>TTS / Login</title>
+                </Head>
+                {status === 'loading' && (
+                    <div className="uppercase text-white self-center rounded-full p-5 bg-orange-600 shadow">
+                        loading...
+                    </div>
+                )}
+            </div>
+        );
+    }
+
     return (
         <div
             className={"h-screen w-screen bg-[url('/img/YouthWorkbookArt.png')] bg-center bg-cover flex align-middle justify-center"}>

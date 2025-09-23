@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from "../components/layout";
-import {getSession} from "next-auth/react";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "./api/auth/[...nextauth]";
 import Head from "next/head";
 
 function Disclaimer({pageDataJson}) {
@@ -27,7 +28,7 @@ function Disclaimer({pageDataJson}) {
 export default Disclaimer;
 
 export async function getServerSideProps(context) {
-    const session = await getSession(context)
+    const session = await getServerSession(context.req, context.res, authOptions)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
     const {req} = context;
 
