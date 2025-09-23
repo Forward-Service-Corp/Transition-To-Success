@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useEffect, useState, useCallback} from 'react'
 import {Switch} from '@headlessui/react'
 
 function classNames(...classes) {
@@ -13,15 +13,15 @@ export default function WorkbookToggle({user, setVersion, setSimpleModal}) {
        await setSimpleModal(true)
     }
 
-    async function updateWorkbookExperience (){
+    const updateWorkbookExperience = useCallback(async () => {
         await fetch(`/api/update-workbook-experience?userId=${user?._id}&setTo=${checked}`)
         await setVersion(checked)
-    }
+    }, [user?._id, checked, setVersion])
 
     useEffect(()=> {
         updateWorkbookExperience().then(()=>{
         })
-    }, [checked])
+    }, [updateWorkbookExperience])
 
     return (
         <div className={``}>

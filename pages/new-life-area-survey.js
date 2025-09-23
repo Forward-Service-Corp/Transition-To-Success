@@ -3,7 +3,7 @@ import {getServerSession} from "next-auth/next";
 import {authOptions} from "./api/auth/[...nextauth]";
 import SurveyDomainList from "../components/surveyDomainsList";
 import NewLifeAreaSurveyForm from "../components/newLifeAreaSurveyForm";
-import {useEffect, useState} from "react";
+import {useEffect, useState, useCallback} from "react";
 import {useRouter} from "next/router";
 import NewLifeAreaSurveyQuestions from "../components/newLifeAreaSurveyQuestions";
 import Head from "next/head";
@@ -20,7 +20,7 @@ export default function NewLifeAreaSurvey({user, client}) {
     const [health, setHealth] = useState("")
     const [income, setIncome] = useState("")
 
-    async function getSurvey() {
+    const getSurvey = useCallback(async () => {
         const survey = await fetch("/api/get-survey?surveyId=" + router.query.surveyId)
             .then(res => res.json())
             .catch(err => console.warn(err))
@@ -87,13 +87,13 @@ export default function NewLifeAreaSurvey({user, client}) {
         setFamily(survey.family)
         setHealth(survey.health)
         setIncome(survey.income)
-    }
+    }, [router.query.surveyId])
 
     useEffect(() => {
         if (router.query.surveyId !== undefined) {
             getSurvey().then()
         }
-    }, [])
+    }, [getSurvey, router.query.surveyId])
 
     async function saveSurvey() {
         await fetch("/api/post-life-area-survey", {

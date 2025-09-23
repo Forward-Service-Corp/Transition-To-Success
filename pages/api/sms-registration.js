@@ -1,6 +1,6 @@
 import { connectToDatabase } from "../../lib/mongodb";
 
-export default async (req, res) => {
+const handler = async (req, res) => {
     if (req.method !== "POST") {
         return res.status(405).end();
     }
@@ -30,3 +30,5 @@ export default async (req, res) => {
 
     res.status(201).json({ success: true });
 };
+
+export default handler;
