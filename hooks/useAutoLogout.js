@@ -22,18 +22,24 @@ export const useAutoLogout = (session) => {
           sessionStorage.clear();
         }
 
-        // Invalidate the JWT token server-side
+        // Attempt to invalidate the JWT token server-side
+        // This may fail if the session is already expired, which is acceptable
         try {
-          await fetch('/api/invalidate-session', {
+          const response = await fetch('/api/invalidate-session', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({}),
           });
+
+          // Don't treat 401 as an error - session was already expired
+          if (!response.ok && response.status !== 401) {
+            console.warn('Session invalidation returned status:', response.status);
+          }
         } catch (invalidationError) {
-          console.error('Error invalidating session:', invalidationError);
-          // Continue with logout even if invalidation fails
+          // Network errors or other issues - log but continue with logout
+          console.warn('Session invalidation failed (this is not critical):', invalidationError.message);
         }
       }
 
@@ -41,6 +47,8 @@ export const useAutoLogout = (session) => {
       router.push('/login');
     } catch (error) {
       console.error('Error during auto-logout:', error);
+      // Even if signOut fails, try to redirect to login
+      router.push('/login');
     }
   }, [router, session]);
 
