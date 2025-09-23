@@ -14,33 +14,15 @@ export const useAutoLogout = (session) => {
 
   const handleLogout = useCallback(async () => {
     try {
-      // Clear session storage and invalidate token for client users
+      // Clear session storage for client users
       if (session?.level === 'client') {
         // Clear local storage items
         if (typeof window !== 'undefined') {
           localStorage.clear();
           sessionStorage.clear();
         }
-
-        // Attempt to invalidate the JWT token server-side
-        // This may fail if the session is already expired, which is acceptable
-        try {
-          const response = await fetch('/api/invalidate-session', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({}),
-          });
-
-          // Don't treat 401 as an error - session was already expired
-          if (!response.ok && response.status !== 401) {
-            console.warn('Session invalidation returned status:', response.status);
-          }
-        } catch (invalidationError) {
-          // Network errors or other issues - log but continue with logout
-          console.warn('Session invalidation failed (this is not critical):', invalidationError.message);
-        }
+        // Note: With JWT strategy, server-side session invalidation is not needed
+        // The JWT will expire naturally based on the maxAge configuration
       }
 
       await signOut({ redirect: false });
