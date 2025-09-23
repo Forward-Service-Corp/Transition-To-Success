@@ -1,31 +1,65 @@
 import Layout from "../components/layout";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "./api/auth/[...nextauth]";
 import {useEffect, useState, useCallback} from "react";
 import SavedDreams from "../components/savedDreams";
 import Head from "next/head";
 import DreamIntro from "../components/pages/dreamIntro";
 import DreamForm from "../components/dreamForm";
 import {useSession} from "next-auth/react";
+import useSpaData from "../hooks/useSpaData";
 
-export default function Dreams({user, dreams}) {
-
-    // console.log(user)
+export default function Dreams() {
+    const { data: session } = useSession();
     const [savedDreams, setSavedDreams] = useState([])
     const [simpleModal, setSimpleModal] = useState(false)
     const [currentTab, setCurrentTab] = useState("active")
-    const { data: session, status } = useSession();
+
+    // Use SPA data fetching for page data
+    const { data: pageData, loading: pageLoading, error: pageError } = useSpaData('/api/pages/dreamsPageData');
+
+    // Use SPA data fetching for dreams
+    const { data: dreamsData, loading: dreamsLoading, refetch: refetchDreams } = useSpaData('/api/get-dreams');
 
     const getDreams = useCallback(async () => {
-        await fetch("/api/get-dreams?userId=" + user._id)
-            .then(res => res.json())
-            .then(res => { setSavedDreams(res) })
-            .catch(err => console.warn(err))
-    }, [user._id])
+        if (session?.user?._id) {
+            refetchDreams();
+        }
+    }, [session?.user?._id, refetchDreams]);
 
     useEffect(() => {
-        getDreams().then()
-    }, [dreams, getDreams]);
+        if (dreamsData) {
+            setSavedDreams(dreamsData);
+        }
+    }, [dreamsData]);
+
+    // Show loading state while data is being fetched
+    if (pageLoading || !pageData) {
+        return (
+            <Layout title={"Dreams"} session={session}>
+                <Head>
+                    <title>TTS / Dreams</title>
+                </Head>
+                <div className="flex items-center justify-center h-64">
+                    <div className="uppercase text-gray-600 text-sm">loading dreams...</div>
+                </div>
+            </Layout>
+        );
+    }
+
+    // Show error state if data fetching failed
+    if (pageError) {
+        return (
+            <Layout title={"Dreams"} session={session}>
+                <Head>
+                    <title>TTS / Dreams</title>
+                </Head>
+                <div className="flex items-center justify-center h-64">
+                    <div className="text-red-600 text-sm">Error loading dreams: {pageError}</div>
+                </div>
+            </Layout>
+        );
+    }
+
+    const { user, dreams } = pageData;
 
     return (
         <Layout title={"Dreams"} session={user} simpleModal={simpleModal} simpleModalTitle={`Great Work!`} simpleModalMessage={`You just created a new dream.`} simpleModalLabel={`Awesome!`}>
@@ -69,28 +103,4 @@ export default function Dreams({user, dreams}) {
     )
 }
 
-export async function getServerSideProps(context) {
-    const session = await getServerSession(context.req, context.res, authOptions)
-
-    if (!session) return {redirect: {destination: "/login", permanent: false}}
-
-    const {req} = context;
-    console.log("dreams ", session.user)
-    // set up dynamic url
-    const protocol = req.headers['x-forwarded-proto'] || 'http'
-    const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
-
-    // page data
-    const dataUrl = baseUrl + "/api/pages/dreamsPageData?userId=" + session.user._id
-    const getData = await fetch(dataUrl)
-    const {user, dreams} = await getData.json()
-
-    // redirect to profile page if required fields are not complete
-    // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
-
-    return {
-        props: {user, dreams}
-    }
-
-}
 

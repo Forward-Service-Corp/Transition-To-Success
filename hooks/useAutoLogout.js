@@ -15,27 +15,20 @@ export const useAutoLogout = (session) => {
 
   const handleLogout = useCallback(async () => {
     try {
-      // Clear session storage for client users
-      if (session?.level === 'client') {
-        // Clear local storage items
-        if (typeof window !== 'undefined') {
-          localStorage.clear();
-          sessionStorage.clear();
+      // Clear local storage for security
+      if (typeof window !== 'undefined') {
+        // Only clear TTS-specific storage keys to avoid affecting other applications
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.startsWith('tts-') || key.startsWith('nextauth'))) {
+            keysToRemove.push(key);
+          }
         }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
 
-        // Invalidate the JWT token server-side
-        try {
-          await fetch('/api/invalidate-session', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({}),
-          });
-        } catch (invalidationError) {
-          console.error('Error invalidating session:', invalidationError);
-          // Continue with logout even if invalidation fails
-        }
+        // Clear session storage
+        sessionStorage.clear();
       }
 
       await signOut({ redirect: false });
@@ -43,7 +36,7 @@ export const useAutoLogout = (session) => {
     } catch (error) {
       console.error('Error during auto-logout:', error);
     }
-  }, [router, session]);
+  }, [router]);
 
   const resetTimer = useCallback(() => {
     // Clear existing timeouts and intervals
@@ -117,41 +110,29 @@ export const useAutoLogout = (session) => {
   useEffect(() => {
     if (!session) return;
 
-    // Skip auto-logout for admin, coach, inactive client, and terminated coach accounts
-    if (session.level === 'admin' || session.level === 'coach' || session.level === 'inactive client' || session.level === 'terminated coach') {
-      return;
-    }
+    // Apply auto-logout to all authenticated users
+    // Different timeout durations can be configured per user level via API
 
-    const events = [
-      'mousedown',
-      'mousemove',
-      'keypress',
-      'scroll',
-      'touchstart',
-      'click'
-    ];
-
-    const handleActivity = () => {
-      resetTimer();
-    };
-
-    // Handle tab close for client accounts
+    // Handle tab close - apply stricter logout for client accounts
     const handleBeforeUnload = () => {
-      // Only logout client accounts when tab is closed
       if (session.level === 'client') {
         handleLogout();
       }
     };
 
-    // Add beforeunload listener for tab close logout
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    // Add beforeunload listener for tab close logout (clients only)
+    if (session.level === 'client') {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
 
-    // Initial timer setup - this will not be reset by activity
+    // Initial timer setup - applies to all users
     resetTimer();
 
     // Cleanup
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      if (session.level === 'client') {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      }
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);

@@ -10,8 +10,9 @@ export const authOptions = {
 
     adapter: MongoDBAdapter(clientPromise),
     session: {
-        strategy: "database",
-        maxAge: (parseInt(process.env.SESSION_AUTO_LOGOUT_LENGTH_IN_MINUTES) || 1) * 60
+        strategy: "jwt", // Use JWT for all sessions to support credentials provider
+        maxAge: (parseInt(process.env.SESSION_AUTO_LOGOUT_LENGTH_IN_MINUTES) || 30) * 60, // Default 30 minutes
+        updateAge: 24 * 60 * 60, // Update session every 24 hours
     },
     providers: [
         EmailProvider({
@@ -45,6 +46,7 @@ export const authOptions = {
                         emailVerified: null,
                         image: null
                     };
+                    return userObject;
                 }else{
                     return null;
                 }
@@ -55,40 +57,28 @@ export const authOptions = {
         signIn: "/auth/sign-in",
         verifyRequest: "/auth/verify-request",
     },
-    // jwt: {
-    //     secret: process.env.JWT_SECRET,
-    // },
+    jwt: {
+        secret: process.env.JWT_SECRET,
+        maxAge: (parseInt(process.env.SESSION_AUTO_LOGOUT_LENGTH_IN_MINUTES) || 30) * 60, // Match session maxAge
+    },
     secret: process.env.NEXTAUTH_SECRET,
     // url: process.env.NEXTAUTH_URL,
     callbacks: {
-        async session({ session }) {
-            try {
-                const {db} = await connectToDatabase();
-                // Try to find user by email first, then by phone if no email
-                let dbUser = null;
-                
-                if (session.user.email) {
-                    dbUser = await db.collection("users").findOne({email: session.user.email});
-                } else if (session.user.phone) {
-                    dbUser = await db.collection("users").findOne({phone: session.user.phone});
-                } else if (user?.id) {
-                    // Fallback to finding by user ID
-                    const { ObjectId } = require('mongodb');
-                    dbUser = await db.collection("users").findOne({_id: new ObjectId(user.id)});
-                }
-                
-                if(dbUser){
-                    session.user._id = dbUser._id;
-                    session.level = dbUser.level;
-                    session.user.phone = dbUser.phone;
-                }
-            } catch (error){
-                console.error('Error fetching user from database:', error);
+        async session({ session, token }) {
+
+            // Pass user data from JWT token to session
+            if (token.user) {
+                session.user = {
+                    ...session.user,
+                    ...token.user
+                };
+                session.level = token.user.level;
             }
             // session.custom = token.sub;
             return session
         },
         async signIn({ user, account, credentials }){
+
             const {db} = await connectToDatabase()
             if (account.type === "email") {
                 const userSearch = await db.collection("users").findOne({email: user.email})
@@ -113,12 +103,46 @@ export const authOptions = {
                 }
             }
         },
-        // async jwt({ token, user }) {
-        //     if (user) {
-        //         token.user = user
-        //     }
-        //     return token
-        // },
+        async jwt({ token, user, account }) {
+
+            // If user is present (sign in), add user data to token
+            if (user && account) {
+                token.user = user;
+                token.accountType = account.type;
+
+                // Fetch user data from database
+                try {
+                    const {db} = await connectToDatabase();
+                    let dbUser = null;
+
+                    if (account.type === 'credentials') {
+                        // For phone-based auth, look up by phone
+                        if (user.phone) {
+                            dbUser = await db.collection("users").findOne({phone: user.phone});
+                        } else if (user.email && user.email.includes('@credentials.local')) {
+                            const phoneMatch = user.email.match(/phone-(\d+)@credentials\.local/);
+                            if (phoneMatch) {
+                                dbUser = await db.collection("users").findOne({phone: phoneMatch[1]});
+                            }
+                        }
+                    } else {
+                        // For email/OAuth, look up by email
+                        dbUser = await db.collection("users").findOne({email: user.email});
+                    }
+
+                    if (dbUser) {
+                        token.user._id = dbUser._id.toString();
+                        token.user.level = dbUser.level;
+                        token.user.phone = dbUser.phone;
+                        token.user.name = dbUser.name || user.name;
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data for JWT:', error);
+                }
+            }
+
+            return token;
+        },
     },
     events: {
         signIn: async ({user, isNewUser}) => {

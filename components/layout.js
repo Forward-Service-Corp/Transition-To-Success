@@ -11,15 +11,15 @@ import SubNav from "./subNav";
 import {getEnvironmentBgColor} from "../utils/environmentColors";
 
 const navigation = [
-    {name: 'Dashboard', href: '/', current: true},
-    {name: 'Dreams', href: '/dreams', current: false},
-    {name: 'Life Area Surveys', href: '/life-area-surveys', current: false},
-    {name: 'CARE Plans', href: '/care-plans', current: false},
-    {name: 'The Journey', href: '/journey', current: false},
-    {name: 'CARE Network', href: '/directory', current: false},
+    {name: 'Dashboard', view: 'Dashboard', current: true},
+    {name: 'Dreams', view: 'Dreams', current: false},
+    {name: 'Life Area Surveys', view: 'LifeAreaSurveys', current: false},
+    {name: 'CARE Plans', view: 'CarePlans', current: false},
+    {name: 'The Journey', view: 'Journey', current: false},
+    {name: 'CARE Network', view: 'Directory', current: false},
 ]
 const userNavigation = [
-    {name: 'Your Profile', href: '/profile'},
+    {name: 'Your Profile', view: 'Profile'},
 ]
 
 function classNames(...classes) {
@@ -36,23 +36,35 @@ export default function Layout({
                                    simpleModalMessage,
                                    simpleModalLabel,
                                    simpleModal,
-                                   background
+                                   background,
+                                   navigateToView
                                }) {
     const router = useRouter()
     const [environment, setEnvironment] = useState("production")
     const [darkMode] = useState(null)
+    
+    // Auto-logout functionality
+    const { showWarning, timeRemaining, extendSession, handleLogout } = useAutoLogout(session)
 
-    const handleLogout = async () => {
+    const handleManualLogout = async () => {
+        // Properly handle logout with session validation
         if(session){
-        await signOut().then()}
-        await router.push('/login')
+            await signOut({ redirect: false });
+        }
+        await router.push('/login');
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     async function updateLastLogin() {
-        if(session){
-        await fetch(`/api/save-last-login?userId=${session?._id}`)
-            .then(res => res.json())}
+        try {
+            const userId = session?.user?._id || session?._id;
+            if (!userId) return;
+            const res = await fetch(`/api/save-last-login?userId=${userId}`);
+            if (!res.ok) return;
+            await res.json().catch(() => {});
+        } catch (e) {
+            // swallow errors to avoid crashing layout
+        }
     }
 
     useEffect(() => {
@@ -131,19 +143,16 @@ export default function Layout({
                                             <div className="hidden md:block">
                                                 {session && <div className="flex items-right space-x-4">
                                                     {navigation.map((item) => (
-                                                        <a
+                                                        <button
                                                             key={item.name}
-                                                            href={item.href}
+                                                            onClick={() => navigateToView && navigateToView(item.view)}
                                                             className={classNames(
-                                                                router.pathname === item.href
-                                                                    ? 'bg-black bg-opacity-10 text-white'
-                                                                    : 'text-white hover:bg-orange-400 hover:text-white',
-                                                                'px-3 py-2 rounded text-sm font-extralight'
+                                                                'text-white hover:bg-orange-400 hover:text-white',
+                                                                'px-3 py-2 rounded text-sm font-extralight cursor-pointer'
                                                             )}
-                                                            aria-current={item.current ? 'page' : undefined}
                                                         >
                                                             {item.name}
-                                                        </a>
+                                                        </button>
                                                     ))}
 
                                                 </div>}
@@ -170,13 +179,11 @@ export default function Layout({
                                         {navigation.map((item) => (
                                             <Disclosure.Button
                                                 key={item.name}
-                                                as="a"
-                                                href={item.href}
+                                                onClick={() => navigateToView && navigateToView(item.view)}
                                                 className={classNames(
-                                                    router.pathname === item.href ? 'bg-orange-700 text-white dark:bg-purple-800' : 'text-white hover:bg-gray-700 hover:text-white',
-                                                    'block px-3 py-2 rounded-md text-base font-medium'
+                                                    'text-white hover:bg-gray-700 hover:text-white',
+                                                    'block px-3 py-2 rounded-md text-base font-medium cursor-pointer'
                                                 )}
-                                                aria-current={item.current ? 'page' : undefined}
                                             >
                                                 {item.name}
                                             </Disclosure.Button>
@@ -203,9 +210,8 @@ export default function Layout({
                                             {userNavigation.map((item) => (
                                                 <Disclosure.Button
                                                     key={item.name}
-                                                    as="a"
-                                                    href={item.href}
-                                                    className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-white hover:bg-gray-700"
+                                                    onClick={() => navigateToView && navigateToView(item.view)}
+                                                    className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-white hover:bg-gray-700 cursor-pointer"
                                                 >
                                                     {item.name}
                                                 </Disclosure.Button>
@@ -252,12 +258,11 @@ export default function Layout({
                 <div className={"text-center"}>Map of My Dreams Web Application</div>
                 <div className={"text-center"}>Forward Service Corporation &copy; 2024</div>
                 <div className={"text-center"}>
-                    <a href={"/disclaimer"}
-                       target={"_self"}
-                       rel={"noreferrer"}
-                       className={"text-orange-300 underline"}>
+                    <button
+                       onClick={() => navigateToView && navigateToView('Disclaimer')}
+                       className={"text-orange-300 underline cursor-pointer"}>
                         Data Usage Disclaimer
-                    </a>
+                    </button>
                 </div>
                 <div className={"text-center"}>
                     <a href={"https://fsc-support.zendesk.com/hc/en-us/requests/new?ticket_form_id=9189050108308"}
