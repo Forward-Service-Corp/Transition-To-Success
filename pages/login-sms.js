@@ -1,18 +1,35 @@
-import {signIn} from "next-auth/react";
+import {signIn, useSession} from "next-auth/react";
 import {useRouter} from "next/router";
 import Head from "next/head";
 import Image from "next/image";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import Link from "next/link";
 
 export default function Login() {
     const router = useRouter()
+    const { data: session, status } = useSession();
     const [phone, setPhone] = useState("")
     const [formattedNumber, setFormattedNumber] = useState('')
     const [code, setCode] = useState("")
     const [formattedCode, setFormattedCode] = useState("")
     const [error, setError] = useState(false)
     const [sendingState, setSendingState] = useState(1)
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        if (status === 'loading') {
+            setIsVisible(false);
+        } else if (status === 'authenticated') {
+            router.push('/');
+        } else {
+            // Add a small delay to account for session rehydration during page transitions
+            const timer = setTimeout(() => {
+                setIsVisible(true);
+            }, 100); // Brief delay to prevent flash during navigation
+
+            return () => clearTimeout(timer);
+        }
+    }, [status, router]);
 
     const sendOTP = async () => {
         await fetch(`/api/send-OTP?phone=${phone}`)
@@ -104,6 +121,22 @@ export default function Login() {
             setSendingState(2)
             await sendOTP()
         }
+    }
+
+    // Show loading or nothing while session status is being determined
+    if (!isVisible) {
+        return (
+            <div className="h-screen w-screen bg-gray-900 flex align-middle justify-center">
+                <Head>
+                    <title>TTS / Login</title>
+                </Head>
+                {status === 'loading' && (
+                    <div className="uppercase text-white self-center rounded-full p-5 bg-orange-600 shadow">
+                        loading...
+                    </div>
+                )}
+            </div>
+        );
     }
 
     return (

@@ -1,5 +1,6 @@
 import Layout from "../components/layout";
-import {getSession} from "next-auth/react";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "./api/auth/[...nextauth]";
 import {useEffect, useState} from "react";
 import LasHistory from "../components/lasHistory";
 import Head from "next/head";
@@ -54,7 +55,7 @@ export async function getServerSideProps(context) {
     }
 
     // session check and possible redirect
-    const session = await getSession(context)
+    const session = await getServerSession(context.req, context.res, authOptions)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
 
     // dynamic url setup

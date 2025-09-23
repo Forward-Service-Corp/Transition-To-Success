@@ -1,6 +1,7 @@
 import Layout from "../components/layout";
-import {getSession} from "next-auth/react";
-import {useEffect, useState} from "react";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "./api/auth/[...nextauth]";
+import {useEffect, useState, useCallback} from "react";
 import SavedDreams from "../components/savedDreams";
 import Head from "next/head";
 import DreamIntro from "../components/pages/dreamIntro";
@@ -13,18 +14,18 @@ export default function Dreams({user, dreams}) {
     const [savedDreams, setSavedDreams] = useState([])
     const [simpleModal, setSimpleModal] = useState(false)
     const [currentTab, setCurrentTab] = useState("active")
+    const { data: session, status } = useSession();
 
-    async function getDreams() {
-
+    const getDreams = useCallback(async () => {
         await fetch("/api/get-dreams?userId=" + user._id)
             .then(res => res.json())
             .then(res => { setSavedDreams(res) })
-            .catch(err => console.warn(err.json()))
-    }
+            .catch(err => console.warn(err))
+    }, [user._id])
 
     useEffect(() => {
         getDreams().then()
-    }, [dreams]);
+    }, [dreams, getDreams]);
 
     return (
         <Layout title={"Dreams"} session={user} simpleModal={simpleModal} simpleModalTitle={`Great Work!`} simpleModalMessage={`You just created a new dream.`} simpleModalLabel={`Awesome!`}>
@@ -69,9 +70,10 @@ export default function Dreams({user, dreams}) {
 }
 
 export async function getServerSideProps(context) {
-    const session = await getSession(context)
+    const session = await getServerSession(context.req, context.res, authOptions)
 
     if (!session) return {redirect: {destination: "/login", permanent: false}}
+
     const {req} = context;
     console.log("dreams ", session.user)
     // set up dynamic url
