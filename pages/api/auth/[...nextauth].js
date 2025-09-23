@@ -9,7 +9,8 @@ import {connectToDatabase} from "../../../lib/dbConnect";
 export default NextAuth({
     adapter: MongoDBAdapter(clientPromise),
     session: {
-        strategy: "jwt"
+        strategy: "database",
+        maxAge: (parseInt(process.env.SESSION_AUTO_LOGOUT_LENGTH_IN_MINUTES) || 1) * 60
     },
     providers: [
         EmailProvider({
@@ -50,13 +51,13 @@ export default NextAuth({
         signIn: "/auth/sign-in",
         verifyRequest: "/auth/verify-request",
     },
-    jwt: {
-        secret: process.env.JWT_SECRET,
-    },
+    // jwt: {
+    //     secret: process.env.JWT_SECRET,
+    // },
     secret: process.env.NEXTAUTH_SECRET,
     // url: process.env.NEXTAUTH_URL,
     callbacks: {
-        async session({ session, token }) {
+        async session({ session }) {
             try {
                 const {db} = await connectToDatabase();
                 const dbUser = await db.collection("users").findOne({email: session.user.email})
@@ -68,7 +69,7 @@ export default NextAuth({
             } catch (error){
                 console.error('Error fetching user from database:', error);
             }
-            session.custom = token.sub;
+            // session.custom = token.sub;
             return session
         },
         async signIn({ user, account, credentials }){
@@ -96,12 +97,12 @@ export default NextAuth({
                 }
             }
         },
-        async jwt({ token, user }) {
-            if (user) {
-                token.user = user
-            }
-            return token
-        },
+        // async jwt({ token, user }) {
+        //     if (user) {
+        //         token.user = user
+        //     }
+        //     return token
+        // },
     },
     events: {
         signIn: async ({user, isNewUser}) => {

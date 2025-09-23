@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
-const INACTIVITY_TIMEOUT = 10 * 60 * 1000; // 10 minutes in milliseconds
 const WARNING_TIME = 1 * 60 * 1000; // 1 minute warning before logout
 
 export const useAutoLogout = (session) => {
@@ -11,6 +10,7 @@ export const useAutoLogout = (session) => {
   const warningTimeoutRef = useRef(null);
   const [showWarning, setShowWarning] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
+  const [inactivityTimeout, setInactivityTimeout] = useState(1 * 60 * 1000); // Default 1 minute
 
   const handleLogout = useCallback(async () => {
     try {
@@ -29,15 +29,15 @@ export const useAutoLogout = (session) => {
     if (warningTimeoutRef.current) {
       clearTimeout(warningTimeoutRef.current);
     }
-    
+
     setShowWarning(false);
     setTimeRemaining(0);
 
-    // Set warning timeout (9 minutes)
+    // Set warning timeout (inactivity timeout - 1 minute)
     warningTimeoutRef.current = setTimeout(() => {
       setShowWarning(true);
       setTimeRemaining(60); // 1 minute remaining
-      
+
       // Start countdown
       const countdownInterval = setInterval(() => {
         setTimeRemaining(prev => {
@@ -48,20 +48,37 @@ export const useAutoLogout = (session) => {
           return prev - 1;
         });
       }, 1000);
-      
-    }, INACTIVITY_TIMEOUT - WARNING_TIME);
 
-    // Set logout timeout (10 minutes)
+    }, inactivityTimeout - WARNING_TIME);
+
+    // Set logout timeout
     timeoutRef.current = setTimeout(() => {
       handleLogout();
-    }, INACTIVITY_TIMEOUT);
-  }, [handleLogout]);
+    }, inactivityTimeout);
+  }, [handleLogout, inactivityTimeout]);
 
   const extendSession = () => {
     setShowWarning(false);
     setTimeRemaining(0);
     resetTimer();
   };
+
+  // Fetch session timeout configuration
+  useEffect(() => {
+    const fetchTimeout = async () => {
+      try {
+        const response = await fetch('/api/config/session-timeout');
+        if (response.ok) {
+          const data = await response.json();
+          setInactivityTimeout(data.timeoutMilliseconds);
+        }
+      } catch (error) {
+        console.error('Failed to fetch session timeout config:', error);
+      }
+    };
+
+    fetchTimeout();
+  }, []);
 
   // Activity tracking and tab close logout
   useEffect(() => {
