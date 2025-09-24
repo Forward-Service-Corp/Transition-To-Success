@@ -4,6 +4,8 @@ import Head from "next/head";
 import Image from "next/image";
 import {useState} from "react";
 import Link from "next/link";
+import PhoneNumberInput from "../components/PhoneNumberInput";
+import OTPInput from "../components/OTPInput";
 
 export default function Login() {
     const router = useRouter()
@@ -124,38 +126,53 @@ export default function Login() {
                                sizes="(max-width: 320px) 20vw, (max-width: 150px) 20vw, 15vw"/>
                     </div>
                 </div>
-                <div className={"bg-white p-4 text-center rounded shadow-2xl"}>
+                <div className={"bg-white p-6 text-center rounded shadow-2xl"}>
 
                     {/* Phone number entry */}
                     <div className={`${sendingState === 1 ? 'visible' : 'hidden'} self-center flex flex-col`}>
-                        <div className={`${error ? 'visible' : 'hidden'} text-red-600 text-sm mb-4`}>
-                            There was no account with this phone number associated. Try logging in with your email and
-                            adding your mobile number to your account.
-                        </div>
-                        <div className={`text-left pb-2 text-gray-700 font-extralight`}><span className={`font-bold text-black`}>Mobile</span> Phone Number</div>
-                        <input type="text" value={phone} onChange={handlePhoneChange} className={`rounded ${formattedNumber.length === 10 ? 'border-2 border-green-600' : 'border-gray-300'}`} placeholder={"10 digit phone number..."} />
-                        <div className={"text-left text-xs mt-2"}>Example: 5556667777</div>
-                        <button className={`mt-4 p-2 bg-indigo-600 text-gray-400 font-extralight text-sm rounded disabled:bg-gray-200`} disabled={formattedNumber.length !== 10} onClick={checkPhoneNumber}>
+                        <PhoneNumberInput
+                            value={phone}
+                            onChange={(newPhone) => {
+                                setPhone(newPhone);
+                                setFormattedNumber(newPhone);
+                            }}
+                            error={error}
+                            disabled={false}
+                        />
+                        <button className={`mt-6 p-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-lg disabled:bg-gray-300 disabled:text-gray-500 transition-colors duration-200 shadow-lg`} disabled={!phone.startsWith('+1-') || phone.replace(/\D/g, '').length !== 11} onClick={checkPhoneNumber}>
                             Request One-Time Code
                         </button>
-                        <Link href="/login" className={`text-red-600 underline mt-5 block text-sm`}>Go Back</Link>
+                        <Link href="/login" className={`text-red-600 hover:text-red-800 underline mt-5 block text-sm text-center transition-colors duration-200`}>Go Back</Link>
                     </div>
 
                     {/* Sending message */}
-                    <div className={`${sendingState === 2 ? 'visible' : 'hidden'} self-center flex flex-col`}>
-                        Sending code...
+                    <div className={`${sendingState === 2 ? 'visible' : 'hidden'} self-center flex flex-col items-center py-8`}>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>
+                        <p className="text-gray-600 text-sm">Sending verification code...</p>
+                        <p className="text-xs text-gray-500 mt-2">Please wait a moment</p>
                     </div>
 
                     {/* Code entry */}
                     <div className={`${sendingState === 3 ? 'visible' : 'hidden'} self-center flex flex-col`}>
-                        <div className={`${error ? 'visible' : 'hidden'} text-red-600 text-sm mb-4`}>
-                            The code that was entered is incorrect. Please try again.
-                        </div>
-                        <input type="text" value={code} onChange={handleCodeChange} className={`rounded ${formattedCode.length === 6 ? 'border-2 border-green-600' : 'border-gray-300'}`} placeholder={"6 digit code..."}/>
-                        <button className={`mt-4 p-2 bg-green-600 text-white rounded disabled:bg-gray-300`} disabled={formattedCode.length !== 6} onClick={checkCode}>
-                            Submit Code
+                        <OTPInput
+                            value={code}
+                            onChange={(newCode) => {
+                                setCode(newCode);
+                                setFormattedCode(newCode);
+                            }}
+                            error={error}
+                            disabled={false}
+                            onResend={() => {
+                                setCode("");
+                                setFormattedCode("");
+                                setError(false);
+                                sendOTP();
+                            }}
+                        />
+                        <button className={`mt-6 p-3 bg-green-600 hover:bg-green-700 text-white font-medium text-sm rounded-lg disabled:bg-gray-300 disabled:text-gray-500 transition-colors duration-200 shadow-lg`} disabled={code.length !== 6} onClick={checkCode}>
+                            Verify Code
                         </button>
-                        <button className={`mt-4 text-red-600 underline`} onClick={handleCancel}>
+                        <button className={`mt-4 text-red-600 hover:text-red-800 underline transition-colors duration-200`} onClick={handleCancel}>
                             Go Back
                         </button>
                     </div>
