@@ -1,12 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const PhoneNumberInput = ({ value, onChange, error, disabled }) => {
+const PhoneNumberInput = ({ value, onChange, error, disabled, onSubmit }) => {
   const [digits, setDigits] = useState(Array(10).fill(''));
   const inputRefs = useRef([]);
 
-  // Initialize refs array
+  // Initialize refs array and auto-focus first input
   useEffect(() => {
     inputRefs.current = inputRefs.current.slice(0, 10);
+    // Auto-focus the first input when component mounts
+    setTimeout(() => {
+      inputRefs.current[0]?.focus();
+    }, 100);
   }, []);
 
   // Update digits when value prop changes
@@ -78,6 +82,12 @@ const PhoneNumberInput = ({ value, onChange, error, disabled }) => {
     }
     if (e.key === 'ArrowRight' && index < 9) {
       inputRefs.current[index + 1]?.focus();
+    }
+
+    // Handle Enter key to submit
+    const currentValue = digits.join('');
+    if (e.key === 'Enter' && currentValue.length === 10 && onSubmit) {
+      onSubmit(formatPhoneNumberForAPI(currentValue));
     }
   };
 
