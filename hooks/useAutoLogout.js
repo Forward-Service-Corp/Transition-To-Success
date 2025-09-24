@@ -152,27 +152,14 @@ export const useAutoLogout = (session) => {
     // Apply auto-logout to all authenticated users
     // Different timeout durations can be configured per user level via API
 
-    // Handle tab close - apply stricter logout for client accounts
-    const handleBeforeUnload = () => {
-      if (session.level === 'client') {
-        handleLogout();
-      }
-    };
-
-    // Add beforeunload listener for tab close logout (clients only)
-    if (session.level === 'client') {
-      window.addEventListener('beforeunload', handleBeforeUnload);
-    }
+    // Note: beforeunload event removed because it was interfering with normal page navigation
+    // The inactivity timer-based logout provides sufficient security for client accounts
 
     // Initial timer setup - applies to all users
     resetTimer();
 
-    // Cleanup function - removes event listeners and clears timeouts
+    // Cleanup function - clears timeouts
     return () => {
-      if (session.level === 'client') {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-      }
-
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }

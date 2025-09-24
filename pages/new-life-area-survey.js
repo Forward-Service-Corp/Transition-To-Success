@@ -362,7 +362,7 @@ export async function getServerSideProps(context) {
     return {
         props: {
             user,
-            client,
+            client: client || null, // Ensure client is null instead of undefined
             incomingDream: {
                 hasDream: context.query.dream !== undefined,
                 dream: dream,
