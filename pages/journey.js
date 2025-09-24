@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import Layout from "../components/layout";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "./api/auth/[...nextauth]";
+import {getSession} from "next-auth/react";
 import Journey1 from "../components/pages/journey1";
 import Journey2 from "../components/pages/journey2";
 import JourneyYouth1 from "../components/pages/journeyYouth1";
@@ -49,7 +48,7 @@ function Journey({pageDataJson}) {
 export default Journey;
 
 export async function getServerSideProps(context) {
-    const session = await getServerSession(context.req, context.res, authOptions)
+    const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
     const {req} = context;
     const {sub} = session;

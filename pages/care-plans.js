@@ -1,6 +1,5 @@
 import Layout from "../components/layout";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "./api/auth/[...nextauth]";
+import {getSession} from "next-auth/react";
 import Head from "next/head";
 import ReferralContainer from "../components/referralContainer";
 import {useState} from "react";
@@ -94,7 +93,7 @@ export default function CarePlans({pageJson}) {
 }
 
 export async function getServerSideProps(context) {
-    const session = await getServerSession(context.req, context.res, authOptions)
+    const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
     const {req} = context;
     // const {sub} = session;

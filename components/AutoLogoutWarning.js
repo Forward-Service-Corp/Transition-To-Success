@@ -2,15 +2,27 @@ import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { ExclamationIcon } from '@heroicons/react/outline';
 
-export default function AutoLogoutWarning({ 
-  isOpen, 
-  timeRemaining, 
-  onExtendSession, 
-  onLogout 
+export default function AutoLogoutWarning({
+  isOpen,
+  timeRemaining,
+  onExtendSession,
+  onLogout
 }) {
+  console.log('🚨 AutoLogoutWarning render:', { isOpen, timeRemaining });
+
+  const handleExtendSession = () => {
+    console.log('✅ "Stay Logged In" button clicked - calling onExtendSession');
+    onExtendSession();
+  };
+
+  const handleLogout = () => {
+    console.log('🚪 "Log Out Now" button clicked - calling onLogout');
+    onLogout();
+  };
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={() => {}}>
+      <Dialog as="div" className="relative z-50" onClose={() => { console.log('🚨 Dialog onClose called (currently disabled)'); }}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -66,14 +78,14 @@ export default function AutoLogoutWarning({
                   <button
                     type="button"
                     className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-                    onClick={onLogout}
+                    onClick={handleLogout}
                   >
                     Log Out Now
                   </button>
                   <button
                     type="button"
                     className="inline-flex justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-                    onClick={onExtendSession}
+                    onClick={handleExtendSession}
                   >
                     Stay Logged In
                   </button>
