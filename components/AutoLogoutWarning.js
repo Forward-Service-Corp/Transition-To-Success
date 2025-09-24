@@ -8,21 +8,17 @@ export default function AutoLogoutWarning({
   onExtendSession,
   onLogout
 }) {
-  console.log('🚨 AutoLogoutWarning render:', { isOpen, timeRemaining });
-
   const handleExtendSession = () => {
-    console.log('✅ "Stay Logged In" button clicked - calling onExtendSession');
     onExtendSession();
   };
 
   const handleLogout = () => {
-    console.log('🚪 "Log Out Now" button clicked - calling onLogout');
     onLogout();
   };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={() => { console.log('🚨 Dialog onClose called (currently disabled)'); }}>
+      <Dialog as="div" className="relative z-50" onClose={() => {}}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
