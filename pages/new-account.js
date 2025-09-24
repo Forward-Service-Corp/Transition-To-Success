@@ -10,7 +10,7 @@ export default function NoAccount() {
             <Head>
                 <title>TTS / Login</title>
             </Head>
-            <div className={`self-center max-w-[360px] flex flex-col`}>
+            <div className={`self-center max-w-xl flex flex-col`}>
                 <div className={`bg-orange-600 bg-opacity-80 rounded min-h-[150px] mb-8 flex shadow-2xl w-full items-center justify-around`}>
                     <div className={`w-[150px] h-[110px] relative p-2`}>
                         <Image src={"/img/fsc-logo.png"} alt={`Forward Service Corporation logo`} fill={true}
