@@ -11,12 +11,12 @@ import SubNav from "./subNav";
 import {getEnvironmentBgColor} from "../utils/environmentColors";
 
 const navigation = [
-    {name: 'Dashboard', view: 'Dashboard', current: true},
-    {name: 'Dreams', view: 'Dreams', current: false},
-    {name: 'Life Area Surveys', view: 'LifeAreaSurveys', current: false},
-    {name: 'CARE Plans', view: 'CarePlans', current: false},
-    {name: 'The Journey', view: 'Journey', current: false},
-    {name: 'CARE Network', view: 'Directory', current: false},
+    {name: 'Dashboard', view: 'dashboard', current: true},
+    {name: 'Dreams', view: 'dreams', current: false},
+    {name: 'Life Area Surveys', view: 'life-area-surveys', current: false},
+    {name: 'CARE Plans', view: 'care-plans', current: false},
+    {name: 'The Journey', view: 'journey', current: false},
+    {name: 'CARE Network', view: 'directory', current: false},
 ]
 const userNavigation = [
     {name: 'Your Profile', view: 'Profile'},
@@ -145,7 +145,7 @@ export default function Layout({
                                                     {navigation.map((item) => (
                                                         <button
                                                             key={item.name}
-                                                            onClick={() => navigateToView && navigateToView(item.view)}
+                                                            onClick={() => router.push(`/${item.view}`)}
                                                             className={classNames(
                                                                 'text-white hover:bg-orange-400 hover:text-white',
                                                                 'px-3 py-2 rounded text-sm font-extralight cursor-pointer'
