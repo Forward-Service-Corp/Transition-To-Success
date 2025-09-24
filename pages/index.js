@@ -6,6 +6,7 @@ import DashboardMetric from "../components/dashboardMetric";
 import WelcomeGroupAdult from "../components/pages/welcomeGroupAdult";
 import WelcomeGroupYouth from "../components/pages/welcomeGroupYouth";
 import {useSession} from "next-auth/react";
+import { getSession } from "next-auth/react";
 import useSpaData from "../hooks/useSpaData";
 
 export default function Home() {
@@ -100,4 +101,27 @@ export default function Home() {
     )
 }
 
+export async function getServerSideProps(context) {
+    const session = await getSession(context)
+    if (!session) return {redirect: {destination: "/login", permanent: false}}
+    const {req} = context;
+
+    // set up dynamic url
+    const protocol = req.headers['x-forwarded-proto'] || 'http'
+    const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
+
+    // page data
+    // console.log("log", session.user._id)
+    const dataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id;
+    const getData = await fetch(dataUrl);
+    const {user, dreams, surveys, referrals, tasks} = await getData.json();
+
+    // redirect to profile page if required fields are not complete
+    // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
+
+    return {
+        props: {user, dreams, surveys, referrals, tasks}
+    }
+
+}
 

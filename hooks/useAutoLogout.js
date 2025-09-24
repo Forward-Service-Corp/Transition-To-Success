@@ -2,17 +2,33 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
-const WARNING_TIME = 1 * 60 * 1000; // 1 minute warning before logout
+// Duration to show warning modal before automatic logout
+const WARNING_TIME = 10 * 1000; // 10 seconds warning before logout
 
+/**
+ * Custom hook for managing automatic logout functionality
+ * Handles inactivity detection, warning modals, and session extension
+ * @param {Object} session - NextAuth session object
+ * @returns {Object} Auto-logout state and control functions
+ */
 export const useAutoLogout = (session) => {
   const router = useRouter();
-  const timeoutRef = useRef(null);
-  const warningTimeoutRef = useRef(null);
-  const countdownIntervalRef = useRef(null);
+  
+  // Refs to store timeout IDs for cleanup
+  const timeoutRef = useRef(null); // Main logout timeout
+  const warningTimeoutRef = useRef(null); // Warning modal timeout
+  
+  // State for warning modal visibility and countdown
   const [showWarning, setShowWarning] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
+  
+  // Configurable inactivity timeout (fetched from API)
   const [inactivityTimeout, setInactivityTimeout] = useState(1 * 60 * 1000); // Default 1 minute
 
+  /**
+   * Handles the logout process with security cleanup
+   * Clears sensitive data from storage and redirects to login
+   */
   const handleLogout = useCallback(async () => {
     try {
       // Clear local storage for security
@@ -38,58 +54,79 @@ export const useAutoLogout = (session) => {
     }
   }, [router]);
 
+  /**
+   * Resets the inactivity timer and sets up new timeouts
+   * Clears existing timeouts, hides warning modal, and starts fresh timers
+   */
   const resetTimer = useCallback(() => {
-    // Clear existing timeouts and intervals
+    console.log('⏰ resetTimer called - clearing existing timers and setting new ones');
+
+    // Clear existing timeouts to prevent multiple timers running
     if (timeoutRef.current) {
+      console.log('⏰ Clearing existing logout timeout:', timeoutRef.current);
       clearTimeout(timeoutRef.current);
     }
     if (warningTimeoutRef.current) {
+      console.log('⏰ Clearing existing warning timeout:', warningTimeoutRef.current);
       clearTimeout(warningTimeoutRef.current);
     }
     if (countdownIntervalRef.current) {
       clearInterval(countdownIntervalRef.current);
     }
 
+    // Reset warning modal state
+    console.log('⏰ Resetting modal state - setting showWarning=false, timeRemaining=0');
     setShowWarning(false);
     setTimeRemaining(0);
 
-    // Set warning timeout (inactivity timeout - 1 minute)
-    warningTimeoutRef.current = setTimeout(() => {
-      setShowWarning(true);
-      setTimeRemaining(60); // 1 minute remaining
+    const warningDelay = inactivityTimeout - WARNING_TIME;
+    console.log('⏰ Setting warning timeout for', warningDelay, 'ms (', warningDelay/1000, 'seconds )');
 
-      // Start countdown
-      countdownIntervalRef.current = setInterval(() => {
+    // Set warning timeout (shows modal before logout)
+    warningTimeoutRef.current = setTimeout(() => {
+      console.log('⚠️ WARNING TIMEOUT TRIGGERED - showing modal');
+      setShowWarning(true);
+      setTimeRemaining(WARNING_TIME / 1000); // Start countdown based on WARNING_TIME
+
+      // Start countdown timer that decrements every second
+      const countdownInterval = setInterval(() => {
         setTimeRemaining(prev => {
           if (prev <= 1) {
-            clearInterval(countdownIntervalRef.current);
-            countdownIntervalRef.current = null;
+            console.log('⏰ Countdown finished - clearing interval');
+            clearInterval(countdownInterval);
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
 
-    }, inactivityTimeout - WARNING_TIME);
+    }, warningDelay);
 
-    // Set logout timeout
+    console.log('⏰ Setting main logout timeout for', inactivityTimeout, 'ms (', inactivityTimeout/1000, 'seconds )');
+    // Set main logout timeout (triggers actual logout)
     timeoutRef.current = setTimeout(() => {
+      console.log('🚪 LOGOUT TIMEOUT TRIGGERED - logging out');
       handleLogout();
     }, inactivityTimeout);
   }, [handleLogout, inactivityTimeout]);
 
+  /**
+   * Extends the current session by hiding warning modal and resetting timer
+   * Called when user clicks "Stay Logged In" button
+   */
   const extendSession = useCallback(() => {
-    // Clear the countdown interval when extending session
-    if (countdownIntervalRef.current) {
-      clearInterval(countdownIntervalRef.current);
-      countdownIntervalRef.current = null;
-    }
+    console.log('🔄 extendSession called - hiding modal and resetting timer');
+    console.log('🔄 Before: showWarning =', showWarning, 'timeRemaining =', timeRemaining);
     setShowWarning(false);
     setTimeRemaining(0);
     resetTimer();
-  }, [resetTimer]);
+    console.log('🔄 After: showWarning should be false, timeRemaining should be 0');
+  }, [resetTimer, showWarning, timeRemaining]);
 
-  // Fetch session timeout configuration
+  /**
+   * Fetch session timeout configuration from API
+   * Allows dynamic timeout configuration without code changes
+   */
   useEffect(() => {
     const fetchTimeout = async () => {
       try {
@@ -106,7 +143,10 @@ export const useAutoLogout = (session) => {
     fetchTimeout();
   }, []);
 
-  // Timer-based logout and tab close logout
+  /**
+   * Main effect for setting up inactivity detection and cleanup
+   * Handles both timer-based logout and tab-close logout for clients
+   */
   useEffect(() => {
     if (!session) return;
 
@@ -128,7 +168,7 @@ export const useAutoLogout = (session) => {
     // Initial timer setup - applies to all users
     resetTimer();
 
-    // Cleanup
+    // Cleanup function - removes event listeners and clears timeouts
     return () => {
       if (session.level === 'client') {
         window.removeEventListener('beforeunload', handleBeforeUnload);
@@ -146,10 +186,19 @@ export const useAutoLogout = (session) => {
     };
   }, [resetTimer, session, handleLogout]);
 
-  return {
+  // Log current state for debugging
+  console.log('🎯 useAutoLogout hook state:', {
     showWarning,
     timeRemaining,
-    extendSession,
-    handleLogout
+    sessionLevel: session?.level,
+    inactivityTimeout: inactivityTimeout / 1000 + 's'
+  });
+
+  // Return hook interface for components to use
+  return {
+    showWarning,      // Boolean: whether warning modal should be shown
+    timeRemaining,    // Number: seconds remaining before logout
+    extendSession,    // Function: extends session when user clicks "Stay Logged In"
+    handleLogout      // Function: manually triggers logout process
   };
 };

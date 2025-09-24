@@ -1,6 +1,5 @@
 import Layout from "../components/layout";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "./api/auth/[...nextauth]";
+import {getSession} from "next-auth/react";
 import SurveyDomainList from "../components/surveyDomainsList";
 import NewLifeAreaSurveyForm from "../components/newLifeAreaSurveyForm";
 import {useEffect, useState, useCallback} from "react";
@@ -339,7 +338,7 @@ export async function getServerSideProps(context) {
 
     
     // session check and possible redirect
-    const session = await getServerSession(context.req, context.res, authOptions)
+    const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
 
     // dynamic url setup

@@ -1,6 +1,5 @@
 import Layout from "../components/layout";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "./api/auth/[...nextauth]";
+import {getSession} from "next-auth/react";
 import {useState} from "react";
 import {useRouter} from "next/router";
 import CurrentReferral from "../components/currentReferral";
@@ -101,7 +100,7 @@ export default function MapOfMyDreams({pageDataJson, referralJson, surveyJson}) 
 }
 
 export async function getServerSideProps(context) {
-    const session = await getServerSession(context.req, context.res, authOptions)
+    const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
     const {req} = context;
 
