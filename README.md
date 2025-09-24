@@ -8,16 +8,6 @@ The FSC-Corp-TTS platform serves as the digital backbone for Forward Service Cor
 
 Forward Service Corporation, a Wisconsin non-profit employment and training organization, adopted the TTS framework in 2018 to enhance service delivery and better track client outcomes. This platform digitizes the TTS approach, providing a streamlined interface for FSC's programs including FoodShare Employment and Training (FSET), Wisconsin Works (W-2), WIOA, and other employment services.
 
-## Key Features
-
-- **Dream Mapping**: Digital tools to help clients visualize and map their goals and aspirations
-- **CARE Plan Management**: Create and track Coordinating All Resources Effectively (CARE) plans
-- **Resource Coordination**: Connect clients with appropriate services across health care, education, employment, and support services
-- **Progress Tracking**: Monitor client advancement through 18 life domains
-- **Assessment Tools**: Standardized screening tools to evaluate client needs and circumstances
-- **Analytics Dashboard**: Generate reports on program effectiveness and client outcomes
-- **Secure Client Portal**: Client access to their own plans, resources, and progress tracking
-- **Staff Collaboration Tools**: Coordination features for case managers and support staff
 
 ## User Roles
 
