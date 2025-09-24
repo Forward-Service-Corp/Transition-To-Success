@@ -112,6 +112,19 @@ export const useAutoLogout = (session) => {
       return;
     }
 
+    const events = [
+      'mousedown',
+      'mousemove',
+      'keypress',
+      'scroll',
+      'touchstart',
+      'click'
+    ];
+
+    const handleActivity = () => {
+      resetTimer();
+    };
+
     // Handle tab close for client accounts
     const handleBeforeUnload = () => {
       // Only logout client accounts when tab is closed
