@@ -2,7 +2,7 @@ import {signIn} from "next-auth/react";
 import {useRouter} from "next/router";
 import Head from "next/head";
 import Image from "next/image";
-import {useState, useEffect} from "react";
+import {useState} from "react";
 import Link from "next/link";
 import PhoneNumberInput from "../components/PhoneNumberInput";
 import OTPInput from "../components/OTPInput";
@@ -15,22 +15,6 @@ export default function Login() {
     const [formattedCode, setFormattedCode] = useState("")
     const [error, setError] = useState(false)
     const [sendingState, setSendingState] = useState(1)
-
-    // Suppress browser extension errors that don't affect functionality
-    useEffect(() => {
-        const originalConsoleError = console.error;
-        console.error = (...args) => {
-            const errorMessage = args.join(' ');
-            // Filter out extension-related message channel errors
-            if (!errorMessage.includes('message channel closed before a response was received')) {
-                originalConsoleError.apply(console, args);
-            }
-        };
-
-        return () => {
-            console.error = originalConsoleError;
-        };
-    }, []);
 
     const sendOTP = async () => {
         await fetch(`/api/send-OTP?phone=${phone}`)
@@ -152,11 +136,6 @@ export default function Login() {
                                 setPhone(newPhone);
                                 setFormattedNumber(newPhone);
                             }}
-                            onSubmit={(formattedPhone) => {
-                                if (formattedPhone.startsWith('+1-') && formattedPhone.replace(/\D/g, '').length === 11) {
-                                    checkPhoneNumber();
-                                }
-                            }}
                             error={error}
                             disabled={false}
                         />
@@ -180,11 +159,6 @@ export default function Login() {
                             onChange={(newCode) => {
                                 setCode(newCode);
                                 setFormattedCode(newCode);
-                            }}
-                            onSubmit={(enteredCode) => {
-                                if (enteredCode.length === 6) {
-                                    checkCode();
-                                }
                             }}
                             error={error}
                             disabled={false}
