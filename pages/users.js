@@ -1,6 +1,5 @@
 import Layout from "../components/layout";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "./api/auth/[...nextauth]";
+import {getSession} from "next-auth/react";
 import {useState} from "react";
 import UsersTable from "../components/usersTable";
 import Head from "next/head";
@@ -20,7 +19,7 @@ export default function Users({user, users}) {
 }
 
 export async function getServerSideProps(context) {
-    const session = await getServerSession(context.req, context.res, authOptions)
+    const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
     const {req} = context;
 

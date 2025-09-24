@@ -1,6 +1,5 @@
 import Layout from "../components/layout";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "./api/auth/[...nextauth]";
+import {getSession} from "next-auth/react";
 import Head from "next/head";
 
 export default function Dreams({custom}) {
@@ -14,7 +13,7 @@ export default function Dreams({custom}) {
 }
 
 export async function getServerSideProps(context) {
-    const session = await getServerSession(context.req, context.res, authOptions)
+    const session = await getSession(context)
     // console.log(session)
     //redirect
     if (!session) return {redirect: {destination: "/login", permanent: false}}
