@@ -31,6 +31,8 @@ export const useAutoLogout = (session) => {
    */
   const handleLogout = useCallback(async () => {
     try {
+      console.log('Auto-logout triggered at:', new Date().toISOString(), 'from page:', window.location.pathname);
+
       // Clear local storage for security
       if (typeof window !== 'undefined') {
         // Only clear TTS-specific storage keys to avoid affecting other applications
@@ -61,6 +63,8 @@ export const useAutoLogout = (session) => {
    * Clears existing timeouts, hides warning modal, and starts fresh timers
    */
   const resetTimer = useCallback(() => {
+    console.log('Timer reset at:', new Date().toISOString(), 'timeout:', inactivityTimeout + 'ms');
+
     // Clear existing timeouts to prevent multiple timers running
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -77,6 +81,7 @@ export const useAutoLogout = (session) => {
 
     // Set warning timeout (shows modal before logout)
     warningTimeoutRef.current = setTimeout(() => {
+      console.log('Auto-logout warning shown at:', new Date().toISOString());
       setShowWarning(true);
       setTimeRemaining(WARNING_TIME / 1000); // Start countdown based on WARNING_TIME
 
@@ -142,16 +147,21 @@ export const useAutoLogout = (session) => {
     // Activity events that should reset the inactivity timer
     const activityEvents = [
       'mousedown',
-      'mousemove',
       'keypress',
-      'scroll',
       'touchstart',
       'click'
     ];
 
-    // Activity event handler that resets the timer
+    // Throttled activity handler to prevent excessive timer resets
+    let lastActivityTime = 0;
+    const ACTIVITY_THROTTLE = 5000; // Only reset timer once every 5 seconds
+
     const handleActivity = () => {
-      resetTimer();
+      const now = Date.now();
+      if (now - lastActivityTime > ACTIVITY_THROTTLE) {
+        lastActivityTime = now;
+        resetTimer();
+      }
     };
 
     // Add activity event listeners

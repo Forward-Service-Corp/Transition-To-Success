@@ -1,12 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const OTPInput = ({ value, onChange, error, disabled, onResend }) => {
+const OTPInput = ({ value, onChange, error, disabled, onResend, onSubmit }) => {
   const [digits, setDigits] = useState(Array(6).fill(''));
   const inputRefs = useRef([]);
 
-  // Initialize refs array
+  // Initialize refs array and auto-focus first input
   useEffect(() => {
     inputRefs.current = inputRefs.current.slice(0, 6);
+    // Auto-focus the first input when component mounts
+    setTimeout(() => {
+      inputRefs.current[0]?.focus();
+    }, 100);
   }, []);
 
   // Update digits when value prop changes
@@ -52,8 +56,8 @@ const OTPInput = ({ value, onChange, error, disabled, onResend }) => {
 
     // Handle Enter key to submit
     const currentValue = digits.join('');
-    if (e.key === 'Enter' && currentValue.length === 6) {
-      // Could trigger submit here if needed
+    if (e.key === 'Enter' && currentValue.length === 6 && onSubmit) {
+      onSubmit(currentValue);
     }
   };
 
