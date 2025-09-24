@@ -11,7 +11,7 @@ import SubNav from "./subNav";
 import {getEnvironmentBgColor} from "../utils/environmentColors";
 
 const navigation = [
-    {name: 'Dashboard', view: 'dashboard', current: true},
+    {name: 'Dashboard', view: '', current: true},
     {name: 'Dreams', view: 'dreams', current: false},
     {name: 'Life Area Surveys', view: 'life-area-surveys', current: false},
     {name: 'CARE Plans', view: 'care-plans', current: false},

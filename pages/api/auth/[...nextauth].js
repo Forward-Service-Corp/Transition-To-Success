@@ -5,6 +5,17 @@ import Credentials from "next-auth/providers/credentials";
 import {MongoDBAdapter} from "@next-auth/mongodb-adapter"
 import clientPromise from "../../../lib/mongodb"
 import {connectToDatabase} from "../../../lib/dbConnect";
+import { generatePhoneSearchPatterns } from "../../../lib/phoneUtils";
+
+// Helper function for fuzzy phone user lookup
+async function findUserByPhone(db, phoneNumber) {
+    if (!phoneNumber) return null;
+
+    const searchPatterns = generatePhoneSearchPatterns(phoneNumber);
+    const searchQueries = searchPatterns.map(pattern => ({ phone: pattern }));
+
+    return await db.collection("users").findOne({ $or: searchQueries });
+}
 
 export const authOptions = {
 
@@ -32,9 +43,9 @@ export const authOptions = {
             async authorize(credentials) {
                 const {phone, response} = credentials;
                 const {db} = await connectToDatabase()
-                const userSearch = await db
-                    .collection("users")
-                    .findOne({phone: phone})
+
+                // Use fuzzy phone matching
+                const userSearch = await findUserByPhone(db, phone);
 
                 if(response === "approved" && userSearch){
                     return {
@@ -88,7 +99,8 @@ export const authOptions = {
                     return "/api/auth/no-account"
                 }
             } else if(account.type === "credentials") {
-                const userSearch = await db.collection("users").findOne({phone: credentials.phone})
+                // Use fuzzy phone matching
+                const userSearch = await findUserByPhone(db, credentials.phone);
                 if(userSearch){
                     return true
                 } else {
@@ -116,13 +128,13 @@ export const authOptions = {
                     let dbUser = null;
 
                     if (account.type === 'credentials') {
-                        // For phone-based auth, look up by phone
+                        // For phone-based auth, look up by phone using fuzzy matching
                         if (user.phone) {
-                            dbUser = await db.collection("users").findOne({phone: user.phone});
+                            dbUser = await findUserByPhone(db, user.phone);
                         } else if (user.email && user.email.includes('@credentials.local')) {
-                            const phoneMatch = user.email.match(/phone-(\d+)@credentials\.local/);
+                            const phoneMatch = user.email.match(/phone-([^@]+)@credentials\.local/);
                             if (phoneMatch) {
-                                dbUser = await db.collection("users").findOne({phone: phoneMatch[1]});
+                                dbUser = await findUserByPhone(db, phoneMatch[1]);
                             }
                         }
                     } else {

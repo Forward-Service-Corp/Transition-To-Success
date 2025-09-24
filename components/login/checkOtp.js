@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import Link from "next/link";
 import {signIn} from "next-auth/react";
+import OTPInput from "../OTPInput";
 
-function CheckOtp({loginValue}) {
+function CheckOtp({loginValue, onResend}) {
     const [error, setError] = useState(false);
     const [code, setCode] = useState("");
     const [formattedCode, setFormattedCode] = useState("")
@@ -53,24 +54,30 @@ function CheckOtp({loginValue}) {
         }
     }
     return (
-
-    <div className={`self-center flex flex-col`}>
-        <div className={`${error ? 'visible' : 'hidden'} text-red-600 text-sm mb-4`}>
-            The code that was entered is incorrect. Please try again.
+        <div className={`self-center flex flex-col`}>
+            <OTPInput
+                value={code}
+                onChange={(newCode) => {
+                    setCode(newCode);
+                    setFormattedCode(newCode);
+                }}
+                error={error}
+                disabled={false}
+                onResend={() => {
+                    setCode("");
+                    setFormattedCode("");
+                    setError(false);
+                    if (onResend) onResend();
+                }}
+            />
+            <button className={`mt-6 p-3 bg-green-600 hover:bg-green-700 text-white font-medium text-sm rounded-lg disabled:bg-gray-300 disabled:text-gray-500 transition-colors duration-200 shadow-lg`}
+                    disabled={code.length !== 6} onClick={checkCode}>
+                Verify Code
+            </button>
+            <div>
+                <Link href="/login" className={`text-red-600 hover:text-red-800 underline mt-5 text-sm block m-auto transition-colors duration-200`}>Go Back</Link>
+            </div>
         </div>
-        <input type="text" value={code} onChange={handleCodeChange}
-               id={'code'}
-               className={`rounded ${formattedCode.length === 6 ? 'border-2 border-green-600' : 'border-gray-300'}`}
-               placeholder={"6 digit code..."}/>
-        <button className={`mt-4 p-2 bg-green-600 text-white rounded disabled:bg-gray-300`}
-                disabled={formattedCode.length !== 6} onClick={checkCode}>
-            Submit Code
-        </button>
-        <div>
-            <Link href="/login" className={`text-red-600 underline mt-5 text-sm block m-auto`}>Go
-                Back</Link>
-        </div>
-    </div>
     );
 }
 
