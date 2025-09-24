@@ -22,16 +22,26 @@ export const useAutoLogout = (session) => {
           localStorage.clear();
           sessionStorage.clear();
         }
-        // Note: With JWT strategy, server-side session invalidation is not needed
-        // The JWT will expire naturally based on the maxAge configuration
+
+        // Invalidate the JWT token server-side
+        try {
+          await fetch('/api/invalidate-session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          });
+        } catch (invalidationError) {
+          console.error('Error invalidating session:', invalidationError);
+          // Continue with logout even if invalidation fails
+        }
       }
 
       await signOut({ redirect: false });
       router.push('/login');
     } catch (error) {
       console.error('Error during auto-logout:', error);
-      // Even if signOut fails, try to redirect to login
-      router.push('/login');
     }
   }, [router, session]);
 
