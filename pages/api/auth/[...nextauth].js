@@ -63,7 +63,6 @@ export default NextAuth({
                     .catch(er => console.error(er));
                 if(dbUser){
                     session.user._id = dbUser._id;
-                    session.level = dbUser.level;
                 }
             } catch (error){
                 console.error('Error fetching user from database:', error);

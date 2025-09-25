@@ -67,11 +67,6 @@ export const useAutoLogout = (session) => {
   useEffect(() => {
     if (!session) return;
 
-    // Skip auto-logout for admin, coach, inactive client, and terminated coach accounts
-    if (session.level === 'admin' || session.level === 'coach' || session.level === 'inactive client' || session.level === 'terminated coach') {
-      return;
-    }
-
     const events = [
       'mousedown',
       'mousemove',
