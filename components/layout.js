@@ -43,7 +43,8 @@ export default function Layout({
     const [darkMode] = useState(null)
 
     const handleLogout = async () => {
-        await signOut().then()
+        if(session){
+        await signOut().then()}
         await router.push('/login')
     }
 
