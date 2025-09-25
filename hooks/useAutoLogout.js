@@ -12,50 +12,14 @@ export const useAutoLogout = (session) => {
   const [showWarning, setShowWarning] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
 
-  // Utility function to clear client session storage
-  const clearClientSessionStorage = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      sessionStorage.clear();
-      
-      // Clear NextAuth-related localStorage items
-      const keysToRemove = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && (key.startsWith('nextauth.') || key.includes('next-auth'))) {
-          keysToRemove.push(key);
-        }
-      }
-      keysToRemove.forEach(key => localStorage.removeItem(key));
-    }
-  }, []);
-
   const handleLogout = useCallback(async () => {
     try {
-      // Clear session storage and invalidate token for client users
-      if (session?.level === 'client') {
-        clearClientSessionStorage();
-        
-        // Invalidate the JWT token server-side
-        try {
-          await fetch('/api/invalidate-session', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({}),
-          });
-        } catch (invalidationError) {
-          console.error('Error invalidating session:', invalidationError);
-          // Continue with logout even if invalidation fails
-        }
-      }
-      
       await signOut({ redirect: false });
       router.push('/login');
     } catch (error) {
       console.error('Error during auto-logout:', error);
     }
-  }, [router, session, clearClientSessionStorage]);
+  }, [router]);
 
   const resetTimer = useCallback(() => {
     // Clear existing timeouts
@@ -103,8 +67,8 @@ export const useAutoLogout = (session) => {
   useEffect(() => {
     if (!session) return;
 
-    // Only apply auto-logout to users with 'client' level
-    if (session.level !== 'client') {
+    // Skip auto-logout for admin, coach, inactive client, and terminated coach accounts
+    if (session.level === 'admin' || session.level === 'coach' || session.level === 'inactive client' || session.level === 'terminated coach') {
       return;
     }
 
@@ -121,45 +85,10 @@ export const useAutoLogout = (session) => {
       resetTimer();
     };
 
-    // Handle tab closure for client users - force logout
-    const handleBeforeUnload = () => {
-      // Clear session storage to force fresh authentication
-      clearClientSessionStorage();
-      
-      // Invalidate the JWT token server-side using sendBeacon for reliability
-      if (navigator.sendBeacon) {
-        const data = new Blob([JSON.stringify({})], {type: 'application/json'});
-        navigator.sendBeacon('/api/invalidate-session', data);
-      } else {
-        // Fallback for browsers that don't support sendBeacon
-        fetch('/api/invalidate-session', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({}),
-          keepalive: true
-        }).catch(() => {
-          // Ignore errors since the page is unloading
-        });
-      }
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        // Tab is being hidden/closed - force logout for clients
-        handleBeforeUnload();
-      }
-    };
-
     // Add event listeners
     events.forEach(event => {
       document.addEventListener(event, handleActivity, true);
     });
-
-    // Add tab closure handlers for client users
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     // Initial timer setup
     resetTimer();
@@ -169,10 +98,6 @@ export const useAutoLogout = (session) => {
       events.forEach(event => {
         document.removeEventListener(event, handleActivity, true);
       });
-      
-      // Remove tab closure handlers
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
       
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
