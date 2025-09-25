@@ -6,11 +6,10 @@ import {MongoDBAdapter} from "@next-auth/mongodb-adapter"
 import clientPromise from "../../../lib/mongodb"
 import {connectToDatabase} from "../../../lib/dbConnect";
 
-export const authOptions = {
+export default NextAuth({
     adapter: MongoDBAdapter(clientPromise),
     session: {
-        strategy: "database",
-        maxAge: 600000
+        strategy: "jwt"
     },
     providers: [
         EmailProvider({
@@ -51,10 +50,13 @@ export const authOptions = {
         signIn: "/auth/sign-in",
         verifyRequest: "/auth/verify-request",
     },
+    jwt: {
+        secret: process.env.JWT_SECRET,
+    },
     secret: process.env.NEXTAUTH_SECRET,
     // url: process.env.NEXTAUTH_URL,
     callbacks: {
-        async session({ session, user }) {
+        async session({ session, token }) {
             try {
                 const {db} = await connectToDatabase();
                 const dbUser = await db.collection("users").findOne({email: session.user.email})
@@ -66,8 +68,7 @@ export const authOptions = {
             } catch (error){
                 console.error('Error fetching user from database:', error);
             }
-            // In database strategy, user object contains the database user info
-            session.custom = user?.id;
+            session.custom = token.sub;
             return session
         },
         async signIn({ user, account, credentials }){
@@ -95,6 +96,29 @@ export const authOptions = {
                 }
             }
         },
+        async jwt({ token, user }) {
+            if (user) {
+                token.user = user
+            }
+            
+            // Check if token is blacklisted (for client users only)
+            if (token && token.sub) {
+                try {
+                    const {db} = await connectToDatabase();
+                    const blacklistedToken = await db.collection("blacklisted_tokens")
+                        .findOne({tokenId: token.sub});
+                    
+                    if (blacklistedToken) {
+                        // Token is blacklisted, return null to force re-authentication
+                        return null;
+                    }
+                } catch (error) {
+                    console.error('Error checking blacklisted tokens:', error);
+                }
+            }
+            
+            return token
+        },
     },
     events: {
         signIn: async ({user, isNewUser}) => {
@@ -115,6 +139,4 @@ export const authOptions = {
             }
         },
     }
-}
-
-export default NextAuth(authOptions)
+})
