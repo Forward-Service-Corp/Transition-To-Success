@@ -63,7 +63,7 @@ export const useAutoLogout = (session) => {
     resetTimer();
   };
 
-  // Activity tracking and tab close logout
+  // Activity tracking
   useEffect(() => {
     if (!session) return;
 
@@ -106,7 +106,7 @@ export const useAutoLogout = (session) => {
         clearTimeout(warningTimeoutRef.current);
       }
     };
-  }, [resetTimer, session, handleLogout]);
+  }, [resetTimer, session]);
 
   return {
     showWarning,
