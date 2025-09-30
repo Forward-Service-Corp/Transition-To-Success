@@ -17,7 +17,7 @@ export default function AutoLogoutWarning({
   };
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
+    <Transition appear show={false} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={() => {}}>
         <Transition.Child
           as={Fragment}
