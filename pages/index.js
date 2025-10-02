@@ -104,23 +104,40 @@ export default function Home() {
 export async function getServerSideProps(context) {
     const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
+    
+    // Validate session structure
+    if (!session.user?._id) {
+        console.error("index.js: Session missing user._id");
+        return {redirect: {destination: "/login", permanent: false}}
+    }
+    
     const {req} = context;
 
     // set up dynamic url
     const protocol = req.headers['x-forwarded-proto'] || 'http'
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
-    // page data
-    // console.log("log", session.user._id)
-    const dataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id;
-    const getData = await fetch(dataUrl);
-    const {user, dreams, surveys, referrals, tasks} = await getData.json();
+    try {
+        // page data
+        const dataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id;
+        const getData = await fetch(dataUrl);
+        
+        if (!getData.ok) {
+            console.error("index.js: API fetch failed with status:", getData.status);
+            return {redirect: {destination: "/login", permanent: false}}
+        }
+        
+        const {user, dreams, surveys, referrals, tasks} = await getData.json();
 
-    // redirect to profile page if required fields are not complete
-    // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
+        // redirect to profile page if required fields are not complete
+        // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
 
-    return {
-        props: {user, dreams, surveys, referrals, tasks}
+        return {
+            props: {user, dreams, surveys, referrals, tasks}
+        }
+    } catch (error) {
+        console.error("index.js: Error in getServerSideProps:", error);
+        return {redirect: {destination: "/login", permanent: false}}
     }
 
 }

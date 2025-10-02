@@ -26,24 +26,30 @@ function NewLifeAreaSurveyForm({activeDomain, setAnswered, answered, domains, se
                 select &quot;This does not apply to me.&quot;</p>
             <div className={"mt-8"}>
 
-                <form onChange={async (event) => {
-                    await setAnswered(prevState => ({
-                        ...prevState,
-                        [activeDomain]: {
-                            ...prevState[activeDomain],
-                            selection: eval(event.target.value),
-                            statement: event.target.dataset.statement
-                        }
-                    }))
-                }}>
+                <form>
                     {answerArr.map(index => {
                         return (
                             <div key={index} className={"flex justify-center align-middle"}>
                                 <div className={"flex-1 self-center"}>
-                                    <input checked={answered[activeDomain] && answered[activeDomain].selection === index} value={index}
-                                           className={"hidden peer"} type={"radio"} id={activeDomain + "-" + index}
+                                    <input 
+                                           checked={answered[activeDomain]?.selection === index || false} 
+                                           value={index}
+                                           className={"hidden peer"} 
+                                           type={"radio"} 
+                                           id={activeDomain + "-" + index}
                                            data-statement={useSurvey[activeDomain].statements[index]}
-                                           name={activeDomain}/>
+                                           name={activeDomain}
+                                           onChange={(event) => {
+                                               setAnswered(prevState => ({
+                                                   ...prevState,
+                                                   [activeDomain]: {
+                                                       ...prevState[activeDomain],
+                                                       selection: Number(event.target.value),
+                                                       statement: event.target.dataset.statement
+                                                   }
+                                               }))
+                                           }}
+                                    />
                                     <label
                                         className={"relative hover:bg-gray-100 peer-checked:bg-green-300 mb-4 border text-sm flex items-center justify-between rounded overflow-hidden dark:hover:bg-gray-700 dark:peer-checked:bg-purple-800 dark:text-white dark:bg-black dark:bg-opacity-70 dark:shadow-xl dark:border-none"}
                                         htmlFor={activeDomain + "-" + index}>

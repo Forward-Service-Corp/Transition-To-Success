@@ -12,27 +12,25 @@ export default function Directory({ pageDataJson }) {
   );
   const [searched, setSearched] = useState(false);
   const [keyword, setKeyword] = useState("");
-  const [domain, setDomain] = useState("");
-  const [county, setCounty] = useState("");
+  const [domain, setDomain] = useState("none");
+  const [county, setCounty] = useState("none");
   const domains = Object.keys(labelMap);
   const [searching, setSearching] = useState(false);
 
   async function search() {
     setSearching(true);
-    if (domain === "none") {
-      setDomain("");
-    }
-    if (county === "none") {
-      setCounty("");
-    }
+    // Convert "none" to empty string for API
+    const searchDomain = domain === "none" ? "" : domain;
+    const searchCounty = county === "none" ? "" : county;
+    
     const fetchSearch = await fetch("/api/search-directory", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({keyword, domain, county}),
+      body: JSON.stringify({keyword, domain: searchDomain, county: searchCounty}),
     }).then((res) => res.json());
-    //console.log(domain, county)
+    
     await setSearching(false);
     await setLoadedServices(fetchSearch);
   }
@@ -77,8 +75,7 @@ export default function Directory({ pageDataJson }) {
               Search by domain
             </p>
             <select
-              defaultValue={""}
-              value={domain || ""}
+              value={domain || "none"}
               id={"domainSelect"}
               className={
                 "w-full rounded border-gray-300 text-xs dark:bg-black dark:text-white dark:border-0 dark:placeholder:text-gray-500 focus:border-0 focus:border-transparent focus:ring-transparent outline-none focus:outline-none dark:default:text-gray-500"
@@ -100,8 +97,7 @@ export default function Directory({ pageDataJson }) {
               Search by county
             </p>
             <select
-              defaultValue={""}
-              value={county || ""}
+              value={county || "none"}
               className={
                 "w-full rounded border-gray-300 text-xs dark:bg-black dark:text-white dark:border-0 dark:placeholder:text-gray-500 focus:border-0 focus:border-transparent focus:ring-transparent outline-none focus:outline-none dark:default:text-gray-500"
               }

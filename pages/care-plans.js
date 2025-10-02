@@ -95,23 +95,39 @@ export default function CarePlans({pageJson}) {
 export async function getServerSideProps(context) {
     const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
+    
+    if (!session.user?._id) {
+        console.error("care-plans.js: Session missing user._id");
+        return {redirect: {destination: "/login", permanent: false}}
+    }
+    
     const {req} = context;
-    // const {sub} = session;
 
     const protocol = req.headers['x-forwarded-proto'] || 'http'
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
-    // page data
-    const pageDataUrl = baseUrl + "/api/pages/carePlansPageData?userId=" + session.user._id
-    const getPageData = await fetch(pageDataUrl)
-    const pageJson = await getPageData.json()
+    try {
+        // page data
+        const pageDataUrl = baseUrl + "/api/pages/carePlansPageData?userId=" + session.user._id
+        const getPageData = await fetch(pageDataUrl)
+        
+        if (!getPageData.ok) {
+            console.error("care-plans.js: API fetch failed:", getPageData.status);
+            return {redirect: {destination: "/login", permanent: false}}
+        }
+        
+        const pageJson = await getPageData.json()
 
-    // redirect to profile page if required fields are not complete
-    const {user} = pageJson
-    // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
+        // redirect to profile page if required fields are not complete
+        const {user} = pageJson
+        // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
 
-    return {
-        props: {pageJson, user}
+        return {
+            props: {pageJson, user}
+        }
+    } catch (error) {
+        console.error("care-plans.js: Error in getServerSideProps:", error);
+        return {redirect: {destination: "/login", permanent: false}}
     }
 
 }

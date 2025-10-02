@@ -5,15 +5,31 @@ import {ObjectId} from "mongodb";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async(req, res) => {
+    try {
+        // Validate required parameters
+        if (!req.query.userId) {
+            console.error("indexPageData: Missing userId parameter");
+            return res.status(400).json({error: "Missing userId parameter"});
+        }
 
-    // connects to Mongo DB to be able to do queries
-    const {db} = await connectToDatabase()
+        if (!ObjectId.isValid(req.query.userId)) {
+            console.error("indexPageData: Invalid userId format:", req.query.userId);
+            return res.status(400).json({error: "Invalid userId format"});
+        }
 
-    //stores the user object from the database in user
-    const user = await db.collection("users").findOne({_id: ObjectId(req.query.userId)})
-    
-    //stores the userID of the user in query, to make searching the database easier
-    const query = {userId: ObjectId(req.query.userId) }
+        // connects to Mongo DB to be able to do queries
+        const {db} = await connectToDatabase()
+
+        //stores the user object from the database in user
+        const user = await db.collection("users").findOne({_id: new ObjectId(req.query.userId)})
+        
+        if (!user) {
+            console.error("indexPageData: User not found:", req.query.userId);
+            return res.status(404).json({error: "User not found"});
+        }
+        
+        //stores the userID of the user in query, to make searching the database easier
+        const query = {userId: new ObjectId(req.query.userId) }
 
     //Find all dreams in the collection "dreams" in the database that have the userid of our user on it.
     const dreamsCursor = await db.collection("dreams").find(query)
@@ -58,11 +74,15 @@ export default async(req, res) => {
     const customClientRefs = await customClientCursor.toArray()
     await customClientCursor.close()
 
-    //Combine the results of clientReferrals and clientCustomReferrals into one array
-    const clientReferrals = await clientRefs.concat(customClientRefs)   
+        //Combine the results of clientReferrals and clientCustomReferrals into one array
+        const clientReferrals = await clientRefs.concat(customClientRefs)   
 
 
-    //return all of the data we retrieved in a JSON
-    res.json({user, dreams, surveys, referrals, tasks, notes, clientReferrals})
+        //return all of the data we retrieved in a JSON
+        res.json({user, dreams, surveys, referrals, tasks, notes, clientReferrals})
+    } catch (error) {
+        console.error("indexPageData: Error:", error);
+        res.status(500).json({error: "Internal server error", message: error.message});
+    }
 
 }
