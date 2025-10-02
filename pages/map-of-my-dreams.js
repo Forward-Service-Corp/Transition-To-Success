@@ -102,39 +102,62 @@ export default function MapOfMyDreams({pageDataJson, referralJson, surveyJson}) 
 export async function getServerSideProps(context) {
     const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
+    
+    if (!session.user?._id) {
+        console.error("map-of-my-dreams.js: Session missing user._id");
+        return {redirect: {destination: "/login", permanent: false}}
+    }
+    
     const {req} = context;
 
     const protocol = req.headers['x-forwarded-proto'] || 'http'
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
-    // page data
-    let pageDataUrl;
-    if (context.query.clientId === undefined) {
-        pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id;
-    } else {
-        pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id + "&clientId=" + context.query.clientId;
-    }
-
-    const getPageData = await fetch(pageDataUrl);
-    const pageDataJson = await getPageData.json();
-
-    //referral options
-    const referralOptionsUrl = baseUrl + "/api/get-referral-options?county=" + context.query.county + "&domain=" + context.query.domain;
-    const getReferralOptions = await fetch(referralOptionsUrl);
-    const referralJson = await getReferralOptions.json();
-
-    // single survey data
-    const surveyUrl = baseUrl + "/api/get-survey-by-id?surveyId=" + context.query.surveyId;
-    const getSurvey = await fetch(surveyUrl);
-    const surveyJson = await getSurvey.json();
-
-    // const {user} = pageDataJson
-    // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}};
-
-    return {
-        props: {
-            pageDataJson, referralJson, surveyJson
+    try {
+        // page data
+        let pageDataUrl;
+        if (context.query.clientId === undefined) {
+            pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id;
+        } else {
+            pageDataUrl = baseUrl + "/api/pages/indexPageData?userId=" + session.user._id + "&clientId=" + context.query.clientId;
         }
+
+        const getPageData = await fetch(pageDataUrl);
+        if (!getPageData.ok) {
+            console.error("map-of-my-dreams.js: indexPageData fetch failed:", getPageData.status);
+            return {redirect: {destination: "/login", permanent: false}}
+        }
+        const pageDataJson = await getPageData.json();
+
+        //referral options
+        const referralOptionsUrl = baseUrl + "/api/get-referral-options?county=" + context.query.county + "&domain=" + context.query.domain;
+        const getReferralOptions = await fetch(referralOptionsUrl);
+        if (!getReferralOptions.ok) {
+            console.error("map-of-my-dreams.js: referral options fetch failed:", getReferralOptions.status);
+            return {redirect: {destination: "/login", permanent: false}}
+        }
+        const referralJson = await getReferralOptions.json();
+
+        // single survey data
+        const surveyUrl = baseUrl + "/api/get-survey-by-id?surveyId=" + context.query.surveyId;
+        const getSurvey = await fetch(surveyUrl);
+        if (!getSurvey.ok) {
+            console.error("map-of-my-dreams.js: survey fetch failed:", getSurvey.status);
+            return {redirect: {destination: "/login", permanent: false}}
+        }
+        const surveyJson = await getSurvey.json();
+
+        // const {user} = pageDataJson
+        // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}};
+
+        return {
+            props: {
+                pageDataJson, referralJson, surveyJson
+            }
+        }
+    } catch (error) {
+        console.error("map-of-my-dreams.js: Error in getServerSideProps:", error);
+        return {redirect: {destination: "/login", permanent: false}}
     }
 
 }

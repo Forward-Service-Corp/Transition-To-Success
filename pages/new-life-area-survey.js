@@ -7,85 +7,53 @@ import {useRouter} from "next/router";
 import NewLifeAreaSurveyQuestions from "../components/newLifeAreaSurveyQuestions";
 import Head from "next/head";
 
+// Survey field definitions
+const YOUTH_FIELDS = ['myFamily', 'school', 'familyCare', 'childrensEducation', 'money', 'disabilities', 
+    'work', 'friends', 'food', 'healthCare', 'housing', 'internetAccess', 'legal', 'lifeSkills', 
+    'mentalHealth', 'manageMoney', 'parenting', 'education', 'safety', 'substances', 'transportation'];
+
+const ADULT_FIELDS = ['adultEducation', 'budgeting', 'childcare', 'childrensEducation', 'communityInvolvement',
+    'disabilities', 'employment', 'familyFriendsSupport', 'food', 'healthInsurance', 'housing', 
+    'internetAccess', 'legal', 'lifeSkills', 'mentalHealth', 'money', 'parentingSkills', 'racismBigotry',
+    'safety', 'substances', 'transportation'];
+
 export default function NewLifeAreaSurvey({user, client}) {
 
     const router = useRouter()
     const [activeDomain, setActiveDomain] = useState("food")
-    const [answered, setAnswered] = useState([] || null)
+    const [answered, setAnswered] = useState({})
     const [domains, setDomains] = useState([])
     const [surprise, setSurprise] = useState("")
     const [concern, setConcern] = useState("")
     const [family, setFamily] = useState("")
     const [health, setHealth] = useState("")
     const [income, setIncome] = useState("")
+    const [testingMode, setTestingMode] = useState(false)
+
+    // Helper to initialize survey data from API response
+    const initializeSurveyData = (survey, fields) => {
+        return fields.reduce((acc, field) => {
+            acc[field] = {
+                selection: survey[field]?.[0] || 0,
+                statement: survey[field]?.[1] || ""
+            };
+            return acc;
+        }, {});
+    };
 
     const getSurvey = useCallback(async () => {
         const survey = await fetch("/api/get-survey?surveyId=" + router.query.surveyId)
             .then(res => res.json())
             .catch(err => console.warn(err))
-        const isYouth = survey.isYouthSurvey
-        await setDomains(survey.priority)
-        if(isYouth){
-            await setAnswered({
-                myFamily: {selection: survey.myFamily[0] || 0, statement: survey.myFamily[1] || ""},
-                school: {selection: survey.school[0] || 0, statement: survey.school[1] || ""},
-                familyCare: {selection: survey.familyCare[0] || 0, statement: survey.familyCare[1] || ""},
-                childrensEducation: {selection: survey.childrensEducation[0] || 0, statement: survey.childrensEducation[1] || ""},
-                money: {selection: survey.money[0] || 0,statement: survey.money[1] || ""},
-                disabilities: {selection: survey.disabilities[0] || 0, statement: survey.disabilities[1] || ""},
-                work: {selection: survey.work[0] || 0, statement: survey.work[1] || ""},
-                friends: {selection: survey.friends[0] || 0,statement: survey.friends[1] || ""},
-                food: {selection: survey.food[0] || 0, statement: survey.food[1] || ""},
-                healthCare: {selection: survey.healthCare[0] || 0, statement: survey.healthCare[1] || ""},
-                housing: {selection: survey.housing[0] || 0, statement: survey.housing[1] || ""},
-                internetAccess: {selection: survey.internetAccess[0] || 0, statement: survey.internetAccess[1] || ""},
-                legal: {selection: survey.legal[0] || 0, statement: survey.legal[1] || ""},
-                lifeSkills: {selection: survey.lifeSkills[0] || 0, statement: survey.lifeSkills[1] || ""},
-                mentalHealth: {selection: survey.mentalHealth[0] || 0, statement: survey.mentalHealth[1] || ""},
-                manageMoney: {selection: survey.manageMoney[0] || 0, statement: survey.manageMoney[1] || ""},
-                parenting: {selection: survey.parenting[0] || 0, statement: survey.parenting[1] || ""},
-                education: {selection: survey.education[0] || 0, statement: survey.education[1] || ""},
-                safety: {selection: survey.safety[0] || 0, statement: survey.safety[1] || ""},
-                substances: {selection: survey.substances[0] || 0, statement: survey.substances[1] || ""},
-                transportation: {selection: survey.transportation[0] || 0, statement: survey.transportation[1] || ""}
-            })
-        }else{
-            await setAnswered({
-                adultEducation: {selection: survey.adultEducation[0] || 0, statement: survey.adultEducation[1] || ""},
-                budgeting: {selection: survey.budgeting[0] || 0, statement: survey.budgeting[1] || ""},
-                childcare: {selection: survey.childcare[0] || 0, statement: survey.childcare[1] || ""},
-                childrensEducation: {selection: survey.childrensEducation[0] || 0, statement: survey.childrensEducation[1] || ""},
-                communityInvolvement: {
-                    selection: survey.communityInvolvement[0] || 0,
-                    statement: survey.communityInvolvement[1] || ""
-                },
-                disabilities: {selection: survey.disabilities[0] || 0, statement: survey.disabilities[1] || ""},
-                employment: {selection: survey.employment[0], statement: survey.employment[1] || ""},
-                familyFriendsSupport: {
-                    selection: survey.familyFriendsSupport[0] || 0,
-                    statement: survey.familyFriendsSupport[1] || ""
-                },
-                food: {selection: survey.food[0] || 0, statement: survey.food[1] || ""},
-                healthInsurance: {selection: survey.healthInsurance[0] || 0, statement: survey.healthInsurance[1] || ""},
-                housing: {selection: survey.housing[0] || 0, statement: survey.housing[1] || ""},
-                internetAccess: {selection: survey.internetAccess[0] || 0, statement: survey.internetAccess[1] || ""},
-                legal: {selection: survey.legal[0] || 0, statement: survey.legal[1] || ""},
-                lifeSkills: {selection: survey.lifeSkills[0] || 0, statement: survey.lifeSkills[1] || ""},
-                mentalHealth: {selection: survey.mentalHealth[0] || 0, statement: survey.mentalHealth[1] || ""},
-                money: {selection: survey.money[0] || 0, statement: survey.money[1] || ""},
-                parentingSkills: {selection: survey.parentingSkills[0] || 0, statement: survey.parentingSkills[1] || ""},
-                racismBigotry: {selection: survey.racismBigotry[0] || 0, statement: survey.racismBigotry[1] || ""},
-                safety: {selection: survey.safety[0] || 0, statement: survey.safety[1] || ""},
-                substances: {selection: survey.substances[0] || 0, statement: survey.substances[1] || ""},
-                transportation: {selection: survey.transportation[0] || 0, statement: survey.transportation[1] || ""}
-            })
-        }
-
-        setSurprise(survey.surprise)
-        setConcern(survey.concern)
-        setFamily(survey.family)
-        setHealth(survey.health)
-        setIncome(survey.income)
+        
+        const fields = survey.isYouthSurvey ? YOUTH_FIELDS : ADULT_FIELDS;
+        setDomains(survey.priority);
+        setAnswered(initializeSurveyData(survey, fields));
+        setSurprise(survey.surprise);
+        setConcern(survey.concern);
+        setFamily(survey.family);
+        setHealth(survey.health);
+        setIncome(survey.income);
     }, [router.query.surveyId])
 
     useEffect(() => {
@@ -94,174 +62,173 @@ export default function NewLifeAreaSurvey({user, client}) {
         }
     }, [getSurvey, router.query.surveyId])
 
-    async function saveSurvey() {
-        await fetch("/api/post-life-area-survey", {
+    // Helper to convert answered object to API payload format
+    const buildSurveyPayload = () => {
+        const payload = {
+            priority: domains,
+            userId: router.query.clientId || user._id,
+            surprise, concern, family, health, income
+        };
+
+        // Convert each answered field to [selection, statement] array
+        Object.keys(answered).forEach(field => {
+            payload[field] = [answered[field].selection, answered[field].statement];
+        });
+
+        // Add metadata based on operation type
+        if (router.query.surveyId) {
+            // Update operation
+            payload.surveyId = router.query.surveyId;
+            payload.dreamId = router.query.dreamId;
+            payload.dream = router.query.dreamName;
+            payload.user = router.query.clientId ? client?.name : user.name;
+        } else {
+            // Create operation
+            payload.dreamId = router.query.dreamId;
+            payload.dream = router.query.dreamName;
+            payload.county = user.county;
+            payload.coach = user.coach;
+            if (!user.isYouth) {
+                payload.user = user.name;
+            }
+        }
+
+        return payload;
+    };
+
+    async function handleSaveSurvey() {
+        const isUpdate = router.query.surveyId !== undefined;
+        const isYouth = user.isYouth === true;
+        
+        let endpoint;
+        if (isUpdate) {
+            endpoint = "/api/update-life-area-survey";
+        } else if (isYouth) {
+            endpoint = "/api/post-youth-life-area-survey";
+        } else {
+            endpoint = "/api/post-life-area-survey";
+        }
+
+        await fetch(endpoint, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                dreamId: router.query.dreamId,
-                dream: router.query.dreamName,
-                county: user.county,
-                coach: user.coach,
-                user: user.name,
-                priority: domains,
-                food: [answered.food.selection, answered.food.statement],
-                money: [answered.money.selection, answered.money.statement],
-                substances: [answered.substances.selection, answered.substances.statement],
-                mentalHealth: [answered.mentalHealth.selection, answered.mentalHealth.statement],
-                safety: [answered.safety.selection, answered.safety.statement],
-                healthInsurance: [answered.healthInsurance.selection, answered.healthInsurance.statement],
-                transportation: [answered.transportation.selection, answered.transportation.statement],
-                disabilities: [answered.disabilities.selection, answered.disabilities.statement],
-                lifeSkills: [answered.lifeSkills.selection, answered.lifeSkills.statement],
-                employment: [answered.employment.selection, answered.employment.statement],
-                legal: [answered.legal.selection, answered.legal.statement],
-                childcare: [answered.childcare.selection, answered.childcare.statement],
-                adultEducation: [answered.adultEducation.selection, answered.adultEducation.statement],
-                parentingSkills: [answered.parentingSkills.selection, answered.parentingSkills.statement],
-                childrensEducation: [answered.childrensEducation.selection, answered.childrensEducation.statement],
-                communityInvolvement: [answered.communityInvolvement.selection, answered.communityInvolvement.statement],
-                familyFriendsSupport: [answered.familyFriendsSupport.selection, answered.familyFriendsSupport.statement],
-                budgeting: [answered.budgeting.selection, answered.budgeting.statement],
-                racismBigotry: [answered.racismBigotry.selection, answered.racismBigotry.statement],
-                internetAccess: [answered.internetAccess.selection, answered.internetAccess.statement],
-                housing: [answered.housing.selection, answered.housing.statement],
-                userId: router.query.clientId === undefined ? user._id : router.query.clientId,
-                surprise, concern, family, health, income
-            })
-        })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(buildSurveyPayload())
+        });
+
+        // Navigate after save
+        if (router.query.clientId) {
+            router.back();
+        } else {
+            router.push("/life-area-surveys");
+        }
     }
 
-    async function saveYouthSurvey() {
-        console.log("ran function")
-        await fetch("/api/post-youth-life-area-survey", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                dreamId: router.query.dreamId,
-                dream: router.query.dreamName,
-                county: user.county,
-                coach: user.coach,
-                priority: domains,
-                food: [answered.food.selection, answered.food.statement],
-                housing: [answered.housing.selection, answered.housing.statement],
-                safety: [answered.safety.selection, answered.safety.statement],
-                friends: [answered.friends.selection, answered.friends.statement],
-                myFamily: [answered.myFamily.selection, answered.myFamily.statement],
-                school: [answered.school.selection, answered.school.statement],
-                work: [answered.work.selection, answered.work.statement],
-                money: [answered.money.selection, answered.money.statement],
-                transportation: [answered.transportation.selection, answered.transportation.statement],
-                familyCare: [answered.familyCare.selection, answered.familyCare.statement],
-                mentalHealth: [answered.mentalHealth.selection, answered.mentalHealth.statement],
-                substances: [answered.substances.selection, answered.substances.statement],
-                disabilities: [answered.disabilities.selection, answered.disabilities.statement],
-                lifeSkills: [answered.lifeSkills.selection, answered.lifeSkills.statement],
-                healthCare: [answered.healthCare.selection, answered.healthCare.statement],
-                manageMoney: [answered.manageMoney.selection, answered.manageMoney.statement],
-                legal: [answered.legal.selection, answered.legal.statement],
-                internetAccess: [answered.internetAccess.selection, answered.internetAccess.statement],
-                education: [answered.education.selection, answered.education.statement],
-                parenting: [answered.parenting.selection, answered.parenting.statement],
-                childrensEducation: [answered.childrensEducation.selection, answered.childrensEducation.statement],
-                userId: router.query.clientId === undefined ? user._id : router.query.clientId,
-                surprise, concern, family, health, income
-            })
-        })
-    }
+    // Testing mode: Generate random survey data
+    const generateTestData = () => {
+        const fields = user.isYouth ? YOUTH_FIELDS : ADULT_FIELDS;
+        const testStatements = [
+            "Test statement 1", "Test statement 2", "Test statement 3", 
+            "Test statement 4", "Test statement 5", "N/A"
+        ];
+        
+        // Generate random answers for all fields
+        const generatedAnswers = fields.reduce((acc, field) => {
+            const randomSelection = Math.floor(Math.random() * 6); // 0-5
+            acc[field] = {
+                selection: randomSelection,
+                statement: testStatements[randomSelection]
+            };
+            return acc;
+        }, {});
+        
+        setAnswered(generatedAnswers);
+        
+        // Randomly select 2-4 priorities
+        const numPriorities = Math.floor(Math.random() * 3) + 2; // 2-4
+        const shuffled = [...fields].sort(() => 0.5 - Math.random());
+        const selectedPriorities = shuffled.slice(0, numPriorities);
+        setDomains(selectedPriorities);
+        
+        // Fill in additional questions
+        setSurprise("Test surprise text");
+        setConcern("Test concern text");
+        setFamily("Test family text");
+        setHealth("Test health text");
+        setIncome("Test income text");
+    };
 
-    async function updateSurvey() {
-        await fetch("/api/update-life-area-survey", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                surveyId: router.query.surveyId,
-                dreamId: router.query.dreamId,
-                dream: router.query.dreamName,
-                priority: domains,
-                food: [answered.food.selection, answered.food.statement],
-                money: [answered.money.selection, answered.money.statement],
-                substances: [answered.substances.selection, answered.substances.statement],
-                mentalHealth: [answered.mentalHealth.selection, answered.mentalHealth.statement],
-                safety: [answered.safety.selection, answered.safety.statement],
-                healthInsurance: [answered.healthInsurance.selection, answered.healthInsurance.statement],
-                transportation: [answered.transportation.selection, answered.transportation.statement],
-                disabilities: [answered.disabilities.selection, answered.disabilities.statement],
-                lifeSkills: [answered.lifeSkills.selection, answered.lifeSkills.statement],
-                employment: [answered.employment.selection, answered.employment.statement],
-                legal: [answered.legal.selection, answered.legal.statement],
-                childcare: [answered.childcare.selection, answered.childcare.statement],
-                adultEducation: [answered.adultEducation.selection, answered.adultEducation.statement],
-                parentingSkills: [answered.parentingSkills.selection, answered.parentingSkills.statement],
-                childrensEducation: [answered.childrensEducation.selection, answered.childrensEducation.statement],
-                communityInvolvement: [answered.communityInvolvement.selection, answered.communityInvolvement.statement],
-                familyFriendsSupport: [answered.familyFriendsSupport.selection, answered.familyFriendsSupport.statement],
-                budgeting: [answered.budgeting.selection, answered.budgeting.statement],
-                racismBigotry: [answered.racismBigotry.selection, answered.racismBigotry.statement],
-                internetAccess: [answered.internetAccess.selection, answered.internetAccess.statement],
-                housing: [answered.housing.selection, answered.housing.statement],
-                userId: router.query.clientId === undefined ? user._id : router.query.clientId,
-                user: router.query.clientId === undefined ? user.name : client.name,
-                surprise, concern, family, health, income
-            })
-        })
-    }
+    // Helper to get button text based on state
+    const getButtonText = (isUpdate) => {
+        const allAnswered = Object.keys(answered).length === 21;
+        const hasPriorities = domains.length > 0;
 
-    const saveSurveyButton = () => {
+        if (!hasPriorities && !allAnswered) {
+            return "Score all life areas and select at least one Priority";
+        }
+        if (!hasPriorities) {
+            return "Select at least one priority";
+        }
+        if (!allAnswered) {
+            return "Please score all life areas";
+        }
+        return isUpdate ? "Update this Survey" : "Save this Survey";
+    };
+
+    const SurveyButton = () => {
+        const isUpdate = router.query.surveyId !== undefined;
+        const isDisabled = domains.length === 0 || Object.keys(answered).length !== 21;
+
         return (
-            <button disabled={domains.length === 0 || Object.keys(answered).length !== 21}
-                    className={`text-white text-sm rounded py-2 px-4 mt-5 bg-gradient-to-t from-orange-600 to-orange-400 disabled:bg-gradient-to-b disabled:from-gray-300 disabled:to-gray-400`}
-                    onClick={async () => {
-                        if(!user.isYouth || user.isYouth === false){
-                            await saveSurvey().then()
-                            if (router.query.clientId === undefined) {
-                                router.push("/life-area-surveys").then()
-                            } else {
-                                router.back()
-                            }
-                        }else{
-                            await saveYouthSurvey().then()
-                            if (router.query.clientId === undefined) {
-                                router.push("/life-area-surveys").then()
-                            } else {
-                                router.back()
-                            }
-                        }
-                    }}>{domains.length === 0 && Object.keys(answered).length !== 21 ? "Score all life areas and select at least one Priority" : (domains.length === 0 ? "Select at least one priority" : (Object.keys(answered).length !== 21 ? "Please score all life areas" : "Save this Survey"))}
+            <button 
+                disabled={isDisabled}
+                className="text-white text-sm rounded py-2 px-4 mt-5 bg-gradient-to-t from-orange-600 to-orange-400 disabled:bg-gradient-to-b disabled:from-gray-300 disabled:to-gray-400"
+                onClick={handleSaveSurvey}
+            >
+                {getButtonText(isUpdate)}
             </button>
-        )
-    }
-
-    const updateSurveyButton = () => {
-        return (
-            <button disabled={domains.length === 0 || Object.keys(answered).length !== 21}
-                    className={`text-white text-sm rounded py-2 px-4 mt-5 bg-gradient-to-t from-orange-600 to-orange-400 disabled:bg-gradient-to-b disabled:from-gray-300 disabled:to-gray-400`}
-                    onClick={async () => {
-                        await updateSurvey().then()
-                        if (router.query.clientId === undefined) {
-                            router.push("/life-area-surveys").then()
-                        } else {
-                            router.back()
-                        }
-
-                    }}>{domains.length === 0 && Object.keys(answered).length !== 21 ? "Score all life areas and select at least one Priority" : (domains.length === 0 ? "Select at least one priority" : (Object.keys(answered).length !== 21 ? "Please score all life areas" : "Update this Survey"))}
-            </button>
-        )
-    }
+        );
+    };
 
     return (
         <Layout title={"Life Area Survey"} session={user}>
             <Head>
                 <title>TTS / Life Area Survey</title>
             </Head>
-            {router.query.clientId === undefined ? "" : <div className={"text-xl text-center p-3 truncate dark:text-white"}>Client: {client.name}</div>}
+            {router.query.clientId === undefined ? "" : <div className={"text-xl text-center p-3 truncate dark:text-white"}>Client: {client?.name}</div>}
             <div className={"text-xl text-center p-3 truncate dark:text-white"}>Dream: {router.query.dreamName}</div>
+
+            {/* Admin Testing Mode */}
+            {user?.level === 'admin' && (
+                <div className="mb-4 p-4 bg-yellow-50 border-2 border-yellow-400 rounded-lg dark:bg-yellow-900 dark:bg-opacity-20 dark:border-yellow-600">
+                    <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-yellow-800 dark:text-yellow-400">⚡ Testing Mode</span>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input 
+                                    type="checkbox" 
+                                    checked={testingMode} 
+                                    onChange={(e) => setTestingMode(e.target.checked)}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 dark:peer-focus:ring-yellow-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-yellow-600"></div>
+                            </label>
+                        </div>
+                        {testingMode && (
+                            <button
+                                onClick={generateTestData}
+                                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm rounded hover:from-purple-700 hover:to-purple-600 transition-all shadow-md"
+                            >
+                                ✨ Generate Test Data
+                            </button>
+                        )}
+                    </div>
+                    {testingMode && (
+                        <p className="text-xs text-yellow-700 dark:text-yellow-300">
+                            Testing mode active - Generate button will auto-fill the survey without saving
+                        </p>
+                    )}
+                </div>
+            )}
 
             <div className={"p-4 bg-gray-100 rounded text-sm mb-4 text-center dark:rounded-lg dark:shadow-xl dark:text-white dark:bg-black dark:bg-opacity-70"}>
                 <p>Where am I today?</p>
@@ -318,8 +285,7 @@ export default function NewLifeAreaSurvey({user, client}) {
                                         setIncome={setIncome}/>
 
             <div className={"flex justify-end"}>
-                {router.query.surveyId !== undefined ? updateSurveyButton() : saveSurveyButton()}
-
+                <SurveyButton />
             </div>
         </Layout>
     )

@@ -57,31 +57,47 @@ export async function getServerSideProps(context) {
     const session = await getSession(context)
     if (!session) return {redirect: {destination: "/login", permanent: false}}
 
+    // Ensure session has the required structure
+    if (!session.user?._id) {
+        console.error("Session missing user._id:", session);
+        return {redirect: {destination: "/login", permanent: false}}
+    }
+
     // dynamic url setup
     const {req} = context;
-    const {sub} = session;
 
     const protocol = req.headers['x-forwarded-proto'] || 'http'
     const baseUrl = req ? `${protocol}://${req.headers.host}` : ''
 
-    // page data
-    const dataUrl = baseUrl + "/api/pages/surveysPageData?userId=" + session.user._id
-    const getData = await fetch(dataUrl)
-    const {user, surveys} = await getData.json()
+    try {
+        // page data
+        const dataUrl = baseUrl + "/api/pages/surveysPageData?userId=" + session.user._id
+        const getData = await fetch(dataUrl)
+        
+        if (!getData.ok) {
+            console.error("API fetch failed with status:", getData.status);
+            throw new Error(`API request failed with status ${getData.status}`);
+        }
+        
+        const {user, surveys} = await getData.json()
 
-    // redirect to profile page if required fields are not complete
-    // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
+        // redirect to profile page if required fields are not complete
+        // if(!user.county.length || !user.homeCounty  || !user.programs.length || !user.name) return  {redirect: {destination: "/profile", permanent: false}}
 
-    return {
-        props: {
-            user,
-            surveys,
-            incomingDream: {
-                hasDream: context.query.dream !== undefined,
-                dream: dream,
-                dreamId: dreamId
+        return {
+            props: {
+                user,
+                surveys,
+                incomingDream: {
+                    hasDream: context.query.dream !== undefined,
+                    dream: dream,
+                    dreamId: dreamId
+                }
             }
         }
+    } catch (error) {
+        console.error("Error in life-area-surveys getServerSideProps:", error);
+        return {redirect: {destination: "/login", permanent: false}}
     }
 
 }
