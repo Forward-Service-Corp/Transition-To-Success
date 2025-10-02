@@ -136,8 +136,12 @@ export const useAutoLogout = (session) => {
   useEffect(() => {
     if (!session) return;
 
-    // Apply auto-logout to all authenticated users
-    // Different timeout durations can be configured per user level via API
+    // Only apply auto-logout to users with level "client"
+    // Coaches and admins are exempt from auto-logout
+    const userLevel = session.level || session.user?.level;
+    if (userLevel !== 'client') {
+      return;
+    }
 
     // Activity events that should reset the inactivity timer
     const activityEvents = [
@@ -159,7 +163,7 @@ export const useAutoLogout = (session) => {
       document.addEventListener(event, handleActivity, true);
     });
 
-    // Initial timer setup - applies to all users
+    // Initial timer setup - applies only to client users
     resetTimer();
 
     // Cleanup function - clears timeouts and removes event listeners
