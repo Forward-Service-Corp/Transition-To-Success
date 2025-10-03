@@ -73,7 +73,7 @@ export default function Layout({
             setEnvironment("development")
         } else if (location.indexOf("training") > -1) {
             setEnvironment("training")
-        } else if (location.indexOf("testing") > -1) {
+        } else if (location.indexOf("test") > -1) {
             setEnvironment("testing")
         } else if (location.indexOf("production") > -1) {
             setEnvironment("production")
