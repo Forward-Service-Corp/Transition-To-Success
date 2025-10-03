@@ -41,7 +41,7 @@ p {
   background-color: #534e53;
 }
 
-#envBanner.staging {
+#envBanner.testing {
   visibility: visible;
   background-color: #2f5697;
 }
