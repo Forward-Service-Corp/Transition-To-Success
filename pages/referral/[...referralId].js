@@ -140,7 +140,7 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
         <div>
           {user && <button
             disabled={
-              userReferrals.filter(
+              userReferrals?.filter(
                 (referral) => referral.name === referralDataJson.name
               ).length > 0
             }
@@ -155,7 +155,7 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
           </button>}
         </div>
         <div className={"text-xs text-red-600 dark:accent-red-500"}>
-          {userReferrals.filter(
+          {userReferrals?.filter(
             (referral) => referral.name === referralDataJson.name
           ).length > 0
             ? "This referral is currently in your CARE Plan."

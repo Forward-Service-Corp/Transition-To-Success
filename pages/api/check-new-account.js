@@ -32,17 +32,17 @@ const handler = async(req, res) => {
 
     if (loginFrom === 'existing-account') {
         if (user) {
-            res.json({code: 666, message: "SCENARIO 0: Success."})
+            return res.json({code: 666, message: "SCENARIO 0: Success."})
         }
-        res.json({code: 777, message: "SCENARIO 1: No account found with this login.  Please try again or create a new account.", loginValue, user})
+        return res.json({code: 777, message: "SCENARIO 1: No account found with this login.  Please try again or create a new account.", loginValue, user})
     } else {
         if (user) {
-            res.json({code: 666, message: "SCENARIO 2: There is already an account with that email address."})
+            return res.json({code: 666, message: "SCENARIO 2: There is already an account with that email address."})
         }
-        res.json({code: 777, message: "SCENARIO 3: No account found with this login.  Please try again or create a new account.", loginValue, user})
+        return res.json({code: 777, message: "SCENARIO 3: No account found with this login.  Please try again or create a new account.", loginValue, user})
     }
 
-    res.json(user);
+    //return res.json(user);
 }
 
 export default handler;
