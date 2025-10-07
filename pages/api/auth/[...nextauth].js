@@ -20,9 +20,17 @@ async function findUserByPhone(db, phoneNumber) {
 export const authOptions = {
     adapter: MongoDBAdapter(clientPromise),
     session: {
-        strategy: "jwt", // Use JWT for all sessions to support credentials provider
-        maxAge: (parseInt(process.env.SESSION_AUTO_LOGOUT_LENGTH_IN_MINUTES) || 30) * 60, // Default 30 minutes
-        updateAge: 24 * 60 * 60, // Update session every 24 hours
+        strategy: "jwt",
+        maxAge: async (session) => {
+            // Clients get short sessions, coaches/admins get longer sessions
+            const userLevel = session?.level || session?.user?.level;
+            const timeoutMinutes = userLevel === 'client' 
+                ? (parseInt(process.env.SESSION_AUTO_LOGOUT_LENGTH_IN_MINUTES) || 30)
+                : (parseInt(process.env.COACH_ADMIN_SESSION_LENGTH_IN_MINUTES) || 480); // 8 hours
+            
+            return timeoutMinutes * 60;
+        },
+        updateAge: 24 * 60 * 60,
     },
     providers: [
         EmailProvider({
