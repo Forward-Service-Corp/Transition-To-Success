@@ -68,7 +68,7 @@ export const authOptions = {
     },
     jwt: {
         secret: process.env.JWT_SECRET,
-        maxAge: (parseInt(process.env.SESSION_AUTO_LOGOUT_LENGTH_IN_MINUTES) || 30) * 60, // Match session maxAge
+        // maxAge: (parseInt(process.env.SESSION_AUTO_LOGOUT_LENGTH_IN_MINUTES) || 30) * 60, // Match session maxAge
     },
     secret: process.env.NEXTAUTH_SECRET,
     // url: process.env.NEXTAUTH_URL,
