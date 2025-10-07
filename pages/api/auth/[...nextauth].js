@@ -164,10 +164,10 @@ export const authOptions = {
                 await db.collection("users").updateOne({"email": userEmail}, {
                     $set: {
                         "level": isFSCEmail ? "coach" : "client",
-                        "name": "",
-                        "county": [],
-                        "homeCounty": "",
-                        "programs": []
+                        // "name": "",
+                        // "county": [],
+                        // "homeCounty": "",
+                        // "programs": []
                     }
                 })
             }
