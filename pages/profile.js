@@ -12,6 +12,8 @@ import ProfilePhoneMessage from "../components/profilePhoneMessage";
 
 export default function Profile({user}) {
 
+    const tempFormattedNumber = user?.phone ? user?.phone : ''
+
     const [version, setVersion] = useState(user?.isYouth)
     const [name, setName] = useState(user?.name ? user?.name : "")
     const [street, setStreet] = useState(user?.street ? user?.street : "")
@@ -23,7 +25,7 @@ export default function Profile({user}) {
     const [counties, setCounties] = useState(user?.county ? user?.county : [])
     const [email] = useState(user?.email)
     const [phone, setPhone] = useState(user?.phone ? user?.phone : "")
-    const [formattedNumber, setFormattedNumber] = useState("");
+    const [formattedNumber, setFormattedNumber] = useState(tempFormattedNumber);
     const [simpleModal, setSimpleModal] = useState(false)
     const [isButtonEnabled, setIsButtonEnabled] = useState(false);
     const [fieldsWarning, setFieldsWarning] = useState(false);
