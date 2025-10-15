@@ -138,10 +138,11 @@ export const useAutoLogout = (session) => {
 
     // Only apply auto-logout to users with level "client"
     // Coaches and admins are exempt from auto-logout
-    const userLevel = session.level || session.user?.level;
-    if (userLevel !== 'client') {
-      return;
-    }
+    const userLevel = session.level// || session.user?.level;
+    console.log(userLevel)
+    if (userLevel === 'client') {
+      
+    
 
     // Activity events that should reset the inactivity timer
     const activityEvents = [
@@ -179,7 +180,7 @@ export const useAutoLogout = (session) => {
       activityEvents.forEach(event => {
         document.removeEventListener(event, handleActivity, true);
       });
-    };
+    };}
   }, [resetTimer, session, handleLogout]);
 
   // Return hook interface for components to use
