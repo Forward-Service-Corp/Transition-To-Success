@@ -5,7 +5,7 @@ import TaskTodo from "./taskTodo";
 import {labelMap} from "../lib/serviceLabelsMap";
 import {useRouter} from "next/router";
 
-function ReferralContainer({item, user, notes, setUserReferrals, modifier, loggedInUser, tasks}) {
+function ReferralContainer({item, user, notes, setUserReferrals, updateTaskHandler, modifier, loggedInUser, tasks}) {
 
     const router = useRouter()
     const [open, setOpen] = useState(false)
@@ -52,6 +52,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
         await getTasks()
         await setSaving("false")
     }
+    
 
     const getTasks = useCallback( () => {
         fetch("/api/get-tasks?userId=" + user._id + "&referralId=" + item._id)
@@ -86,6 +87,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, modifier, logge
         if (data.ok) {
             await setUserReferrals(res)
             await setSaving("false")
+            await updateTaskHandler(taskArr)
         }else {
             await setSaving("error")
         }

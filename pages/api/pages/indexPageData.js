@@ -64,18 +64,33 @@ export default async(req, res) => {
     const notes = await notesCursor.toArray()
     await notesCursor.close()
 
+    let q
+        if (req.query.surveyId === undefined) {
+            q = {
+                userId: new ObjectId(req.query.clientId),
+            }
+        } else {
+            q = {
+                userId: new ObjectId(req.query.clientId),
+                surveyId: req.query.surveyId
+            }
+        }
+
     //Find all referrals in the collection "referrals" in the database that have the user_id of our client on it.
-    const clientReferralsCursor = await db.collection("referrals").find({ userId: req.query.clientId })
+    const clientReferralsCursor = await db.collection("referrals").find(q)
     const clientRefs = await clientReferralsCursor.toArray()
     await clientReferralsCursor.close()
+    //console.log(client)
 
     //Find all referrals in the collection "customReferrals" in the database that have the user_id of our client on it.
-    const customClientCursor = await db.collection("customReferrals").find({ userId: req.query.clientId })
+    const customClientCursor = await db.collection("customReferrals").find(q)
     const customClientRefs = await customClientCursor.toArray()
     await customClientCursor.close()
 
         //Combine the results of clientReferrals and clientCustomReferrals into one array
         const clientReferrals = await clientRefs.concat(customClientRefs)   
+
+        //console.log(clientReferrals)
 
 
         //return all of the data we retrieved in a JSON
