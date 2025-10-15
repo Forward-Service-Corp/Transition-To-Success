@@ -4,6 +4,7 @@ import ReferralContainer from "./referralContainer";
 function ClientCarePlans({user, viewingUser, viewingUserData}) {
 
     const [userReferrals, setUserReferrals] = useState(viewingUserData.referrals)
+    const [tasks, setTasks] = useState(viewingUserData.tasks)
 
     const getUserReferrals = useCallback(async () => {
         // const id = clientId === undefined ? user.email : clientId
@@ -11,6 +12,10 @@ function ClientCarePlans({user, viewingUser, viewingUserData}) {
             .then(res => res.json())
         await setUserReferrals(referrals)
     }, [viewingUser._id])
+
+    const updateTaskHandler = async (newTasks) => {
+        setTasks(newTasks)
+    }
 
     useEffect(() => {
         getUserReferrals().then()
@@ -25,9 +30,10 @@ function ClientCarePlans({user, viewingUser, viewingUserData}) {
                 return (
                     <ReferralContainer key={item._id} item={item} user={viewingUser} notes={viewingUserData.notes}
                                        loggedInUser={user}
-                                       tasks={viewingUserData.tasks.filter((task) => task.referralId === item._id)}
+                                       tasks={tasks.filter((task) => task.referralId === item._id)}
                                        modifier={user.email}
-                                       setUserReferrals={setUserReferrals}/>
+                                       setUserReferrals={setUserReferrals}
+                                       updateTaskHandler={updateTaskHandler}/>
                 )
             })}
 
@@ -38,9 +44,10 @@ function ClientCarePlans({user, viewingUser, viewingUserData}) {
                 return (
                     <ReferralContainer key={item._id} item={item} user={viewingUser} notes={viewingUserData.notes}
                                        loggedInUser={user}
-                                       tasks={viewingUserData.tasks.filter((task) => task.referralId === item._id)}
+                                       tasks={tasks.filter((task) => task.referralId === item._id)}
                                        modifier={user.email}
-                                       setUserReferrals={setUserReferrals}/>
+                                       setUserReferrals={setUserReferrals}
+                                       updateTaskHandler={updateTaskHandler}/>
                 )
             })}
         </div>
