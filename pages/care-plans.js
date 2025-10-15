@@ -49,7 +49,7 @@ export default function CarePlans({pageJson}) {
                                        item={item}
                                        user={pageJson.user}
                                        tasks={tasks.filter((task) => task.referralId === item._id)} notes={pageJson.notes} i={i}
-                                       setTasks={setTasks}
+                                       updateTaskHandler={setTasks}
                                        modifier={pageJson.user.email}
                                        loggedInUser={pageJson.user}
                                        setUserReferrals={setUserReferrals}/>
