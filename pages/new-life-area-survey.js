@@ -190,7 +190,7 @@ export default function NewLifeAreaSurvey({user, client}) {
     };
 
     return (
-        <Layout title={"Life Area Survey"} session={user}>
+        <Layout title={"Life Area Survey"} session={user} version={router.query.clientId ? client.isYouth : user.isYouth}>
             <Head>
                 <title>TTS / Life Area Survey</title>
             </Head>
