@@ -190,7 +190,7 @@ export default function NewLifeAreaSurvey({user, client}) {
     };
 
     return (
-        <Layout title={"Life Area Survey"} session={user}>
+        <Layout title={"Life Area Survey"} session={user} version={router.query.clientId ? client.isYouth : user.isYouth}>
             <Head>
                 <title>TTS / Life Area Survey</title>
             </Head>
@@ -256,7 +256,7 @@ export default function NewLifeAreaSurvey({user, client}) {
             <div className={"flex"}>
                 <div className={"flex-initial"}>
                     <SurveyDomainList setActiveDomain={setActiveDomain} activeDomain={activeDomain}
-                                      answered={answered} domains={domains} user={user}/>
+                                      answered={answered} domains={domains} user={router.query.clientId ? client : user}/>
                 </div>
                 <div className={"flex-grow"}>
                     <div className={"p-4 bg-gray-100 m-0 md:m-4 my-2 md:my-0 dark:rounded-lg dark:shadow-xl dark:text-white dark:bg-black dark:bg-opacity-70"}>

@@ -5,17 +5,19 @@ import {ObjectId} from "mongodb";
 export default async(req, res) => {
     const {db} = await connectToDatabase()
     const UID = req.query.userId
+    //console.log(req.query.setTo === "true")
     // const userId = new ObjectId(UID)
     const user = await db
         .collection("users")
         .updateOne(
-            { _id: UID },
+            { _id: new ObjectId(UID) },
             {
                 $set: {
                     isYouth: req.query.setTo === "true"
                 }
             }
         )
+        //console.log(user)
 
     res.json(user)
 }
