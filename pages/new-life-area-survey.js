@@ -274,7 +274,7 @@ export default function NewLifeAreaSurvey({user, client}) {
                         <p>MOST IMPORTANT TO YOU -- your priorities.</p>
                     </div>
                     <NewLifeAreaSurveyForm activeDomain={activeDomain} setAnswered={setAnswered} answered={answered}
-                                           domains={domains} setDomains={setDomains} user={user}/>
+                                           domains={domains} setDomains={setDomains} user={router.query.clientId ? client : user}/>
 
                 </div>
             </div>
