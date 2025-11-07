@@ -187,7 +187,7 @@ export default function Layout({
                                         {navigation.map((item) => (
                                             <Disclosure.Button
                                                 key={item.name}
-                                                onClick={() => navigateToView && navigateToView(item.view)}
+                                                onClick={() => router.push(`/${item.view}`)}
                                                 className={classNames(
                                                     'text-white hover:bg-gray-700 hover:text-white',
                                                     'block px-3 py-2 rounded-md text-base font-medium cursor-pointer'
@@ -218,7 +218,7 @@ export default function Layout({
                                             {userNavigation.map((item) => (
                                                 <Disclosure.Button
                                                     key={item.name}
-                                                    onClick={() => navigateToView && navigateToView(item.view)}
+                                                    onClick={() => router.push(`/${item.view}`)}
                                                     className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-white hover:bg-gray-700 cursor-pointer"
                                                 >
                                                     {item.name}
