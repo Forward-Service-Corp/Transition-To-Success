@@ -3,6 +3,7 @@ import {ObjectId} from "mongodb";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async(req, res) => {
+    const today = new Date()
     const record = {
         surveyId: req.body.surveyId,
         userId: ObjectId(req.body.userId),
@@ -16,7 +17,8 @@ export default async(req, res) => {
         url: req.body.url,
         contact: req.body.contact,
         needs: req.body.needs,
-        isCustom: true
+        isCustom: true,
+        createdDate: date
     }
 
     const {db} = await connectToDatabase()
