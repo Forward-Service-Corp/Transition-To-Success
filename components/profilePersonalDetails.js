@@ -40,7 +40,10 @@ function ProfilePersonalDetails({name, setName, street, setStreet, city, setCity
                        onChange={(e) => {
                            if(label === "Phone"){
                                setValue(e)
-                           }else {
+                           } else if (label === "Email"){
+                                setValue(e.target.value.toLowerCase())
+                           }
+                           else {
                                setValue(e.target.value)
                            }
 
