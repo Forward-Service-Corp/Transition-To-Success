@@ -2,11 +2,18 @@ import Layout from "../../components/layout";
 import { getSession } from "next-auth/react";
 import { useState } from "react";
 import Head from "next/head";
-import { Printer } from "phosphor-react";
+import { Printer, Pencil, Trash } from "phosphor-react";
+import ServiceEditModal from "../../components/serviceEditModal";
+import { canUserManageServices } from "../../lib/servicePermissions";
+import { useRouter } from "next/router";
 
 export default function ReferralId({ pageDataJson, referralDataJson }) {
+  const router = useRouter();
   const { user, referrals } = pageDataJson;
   const [userReferrals, setUserReferrals] = useState(referrals);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  
+  const canManage = user ? canUserManageServices(user) : false;
 
   async function saveReferral() {
     await fetch("/api/save-referral", {
@@ -39,6 +46,40 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
       })
       .catch((err) => console.warn(err.json()));
   }
+
+  const handleDelete = async () => {
+    if (!confirm(`Are you sure you want to delete "${referralDataJson.name}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/delete-service", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          serviceId: referralDataJson._id
+        })
+      });
+
+      if (response.ok) {
+        // Redirect to directory page after successful deletion
+        router.push('/directory');
+      } else {
+        const error = await response.json();
+        alert(error.error || 'Failed to delete service');
+      }
+    } catch (err) {
+      console.error('Error deleting service:', err);
+      alert('Failed to delete service');
+    }
+  };
+
+  const handleSave = (updatedService) => {
+    // Reload the page to show updated data
+    router.reload();
+  };
 
   const textInfoJSX = (data, label) => {
     return (
@@ -137,7 +178,7 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
         <title>{referralDataJson.name}</title>
       </Head>
       <div className={"flex justify-between items-center print:hidden"}>
-        <div>
+        <div className="flex items-center gap-2">
           {user && <button
             disabled={
               userReferrals?.filter(
@@ -153,6 +194,32 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
           >
             Add to my CARE Plan
           </button>}
+          {canManage && (
+            <>
+              <button
+                onClick={() => setIsEditModalOpen(true)}
+                className={
+                  "flex items-center my-3 py-2 px-6 text-white text-xs bg-green-500 hover:bg-green-600 rounded-lg shadow-xl dark:font-extralight dark:text-white dark:hover:bg-green-700"
+                }
+              >
+                <span className={"inline-block mr-2"}>
+                  <Pencil size={18} />
+                </span>
+                <span className={"inline-block"}>Edit Service</span>
+              </button>
+              <button
+                onClick={handleDelete}
+                className={
+                  "flex items-center my-3 py-2 px-6 text-white text-xs bg-red-500 hover:bg-red-600 rounded-lg shadow-xl dark:font-extralight dark:text-white dark:hover:bg-red-700"
+                }
+              >
+                <span className={"inline-block mr-2"}>
+                  <Trash size={18} />
+                </span>
+                <span className={"inline-block"}>Delete Service</span>
+              </button>
+            </>
+          )}
         </div>
         <div className={"text-xs text-red-600 dark:accent-red-500"}>
           {userReferrals?.filter(
@@ -176,6 +243,14 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
           </button>
         </div>
       </div>
+      {canManage && (
+        <ServiceEditModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          service={referralDataJson}
+          onSave={handleSave}
+        />
+      )}
       <div className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"}>
         {/*column 1*/}
         <div>
