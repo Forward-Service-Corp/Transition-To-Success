@@ -5,8 +5,8 @@ import {authOptions} from "./auth/[...nextauth]";
 import {canUserManageServices} from "../../lib/servicePermissions";
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default async(req, res) => {
-    if (req.method !== 'POST') {
+export default async (req, res) => {
+    if (req.method !== 'DELETE' && req.method !== 'POST') {
         return res.status(405).json({error: 'Method not allowed'});
     }
 
@@ -31,36 +31,36 @@ export default async(req, res) => {
             return res.status(403).json({error: 'You do not have permission to manage services'});
         }
 
-        const record = {
-            name: req.body.name,
-            city: req.body.city,
-            state: req.body.state,
-            street: req.body.street,
-            zip: req.body.zip,
-            county: req.body.county,
-            service: req.body.service,
-            url: req.body.url,
-            requirements: req.body.requirements,
-            contactName: req.body.contactName,
-            hours: req.body.hours,
-            phone: req.body.phone,
-            contactEmail: req.body.contactEmail,
-            contactPhone: req.body.contactPhone,
-            needs: req.body.needs,
-            createdDate: new Date()
+        const serviceId = req.query.serviceId || req.body.serviceId;
+
+        if (!serviceId) {
+            return res.status(400).json({error: 'serviceId is required'});
         }
 
-        const result = await db
-            .collection("services")
-            .insertOne(record)
+        if (!ObjectId.isValid(serviceId)) {
+            return res.status(400).json({error: 'Invalid serviceId format'});
+        }
+
+        // Check if service exists
+        const existingService = await db.collection("services").findOne({_id: new ObjectId(serviceId)});
+        
+        if (!existingService) {
+            return res.status(404).json({error: 'Service not found'});
+        }
+
+        // Delete the service
+        const result = await db.collection("services").deleteOne({_id: new ObjectId(serviceId)});
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({error: 'Service not found'});
+        }
 
         res.json({
             success: true,
-            insertedId: result.insertedId,
-            ...result
-        })
+            message: 'Service deleted successfully'
+        });
     } catch (error) {
-        console.error('Error saving new service:', error);
+        console.error('Error deleting service:', error);
         res.status(500).json({error: 'Internal server error'});
     }
-}
+};
