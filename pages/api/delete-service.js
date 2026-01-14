@@ -48,6 +48,21 @@ export default async (req, res) => {
             return res.status(404).json({error: 'Service not found'});
         }
 
+        // Log the deletion before deleting
+        await db.collection("serviceModifications").insertOne({
+            serviceId: new ObjectId(serviceId),
+            serviceName: existingService.name,
+            modifiedBy: {
+                userId: user._id,
+                email: user.email,
+                name: user.name
+            },
+            action: 'deleted',
+            changes: [],
+            summary: `Service "${existingService.name}" deleted`,
+            timestamp: new Date()
+        });
+
         // Delete the service
         const result = await db.collection("services").deleteOne({_id: new ObjectId(serviceId)});
 

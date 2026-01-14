@@ -1,11 +1,14 @@
 import {useState} from "react";
 import { labelMap} from "../lib/serviceLabelsMap";
-import {ArrowCircleRight, Pencil, Trash} from "phosphor-react";
+import {ArrowCircleRight, Pencil, Trash, Clock} from "phosphor-react";
 import ServiceEditModal from "./serviceEditModal";
+import ServiceModificationHistoryModal from "./serviceModificationHistoryModal";
 
 export default function ServicesTable({services, canManageServices, onServiceUpdate}) {
     const [editingService, setEditingService] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [historyService, setHistoryService] = useState(null);
+    const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
     const handleEdit = (service) => {
         setEditingService(service);
@@ -53,6 +56,11 @@ export default function ServicesTable({services, canManageServices, onServiceUpd
         }
         setIsEditModalOpen(false);
         setEditingService(null);
+    };
+
+    const handleViewHistory = (service) => {
+        setHistoryService(service);
+        setIsHistoryModalOpen(true);
     };
 
     return (
@@ -117,6 +125,13 @@ export default function ServicesTable({services, canManageServices, onServiceUpd
                                                             <Pencil size={18} />
                                                         </button>
                                                         <button
+                                                            onClick={() => handleViewHistory(service)}
+                                                            className="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
+                                                            title="View modification history"
+                                                        >
+                                                            <Clock size={18} />
+                                                        </button>
+                                                        <button
                                                             onClick={() => handleDelete(service)}
                                                             className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                                                             title="Delete service"
@@ -150,6 +165,17 @@ export default function ServicesTable({services, canManageServices, onServiceUpd
                     }}
                     service={editingService}
                     onSave={handleSave}
+                />
+            )}
+            {historyService && (
+                <ServiceModificationHistoryModal
+                    isOpen={isHistoryModalOpen}
+                    onClose={() => {
+                        setIsHistoryModalOpen(false);
+                        setHistoryService(null);
+                    }}
+                    serviceId={historyService._id}
+                    serviceName={historyService.name}
                 />
             )}
         </>
