@@ -48,16 +48,28 @@ export default async (req, res) => {
             return res.status(404).json({error: 'Service not found'});
         }
 
+        // Track what changed for audit log
+        const changes = [];
+        const allowedFields = ['name', 'city', 'state', 'street', 'zip', 'county', 'service', 'url', 
+                              'requirements', 'contactName', 'hours', 'phone', 'contactEmail', 
+                              'contactPhone', 'needs'];
+        
+        allowedFields.forEach(field => {
+            if (updateData[field] !== undefined && updateData[field] !== existingService[field]) {
+                changes.push({
+                    field,
+                    oldValue: existingService[field] || '',
+                    newValue: updateData[field] || ''
+                });
+            }
+        });
+
         // Prepare update object (only include fields that are provided)
         const updateFields = {
             lastModified: new Date()
         };
 
         // Add provided fields to update
-        const allowedFields = ['name', 'city', 'state', 'street', 'zip', 'county', 'service', 'url', 
-                              'requirements', 'contactName', 'hours', 'phone', 'contactEmail', 
-                              'contactPhone', 'needs'];
-        
         allowedFields.forEach(field => {
             if (updateData[field] !== undefined) {
                 updateFields[field] = updateData[field];
@@ -74,6 +86,27 @@ export default async (req, res) => {
 
         if (result.matchedCount === 0) {
             return res.status(404).json({error: 'Service not found'});
+        }
+
+        // Log the modification if there were changes
+        if (changes.length > 0) {
+            const modificationSummary = changes
+                .map(change => `${change.field}: "${change.oldValue}" → "${change.newValue}"`)
+                .join(', ');
+            
+            await db.collection("serviceModifications").insertOne({
+                serviceId: new ObjectId(serviceId),
+                serviceName: existingService.name,
+                modifiedBy: {
+                    userId: user._id,
+                    email: user.email,
+                    name: user.name
+                },
+                action: 'updated',
+                changes: changes,
+                summary: modificationSummary,
+                timestamp: new Date()
+            });
         }
 
         // Fetch updated service

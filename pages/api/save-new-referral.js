@@ -54,6 +54,21 @@ export default async(req, res) => {
             .collection("services")
             .insertOne(record)
 
+        // Log the creation
+        await db.collection("serviceModifications").insertOne({
+            serviceId: result.insertedId,
+            serviceName: record.name,
+            modifiedBy: {
+                userId: user._id,
+                email: user.email,
+                name: user.name
+            },
+            action: 'created',
+            changes: [],
+            summary: `Service "${record.name}" created`,
+            timestamp: new Date()
+        });
+
         res.json({
             success: true,
             insertedId: result.insertedId,

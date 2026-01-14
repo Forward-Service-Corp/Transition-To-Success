@@ -2,7 +2,7 @@ import Layout from "../../components/layout";
 import { getSession } from "next-auth/react";
 import { useState } from "react";
 import Head from "next/head";
-import { Printer, Pencil, Trash } from "phosphor-react";
+import { Printer, Pencil, Trash, Clock } from "phosphor-react";
 import ServiceEditModal from "../../components/serviceEditModal";
 import { canUserManageServices } from "../../lib/servicePermissions";
 import { useRouter } from "next/router";
@@ -207,6 +207,19 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
                 </span>
                 <span className={"inline-block"}>Edit Service</span>
               </button>
+              <a
+                href={`/service/${referralDataJson._id}/history`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={
+                  "flex items-center my-3 py-2 px-6 text-white text-xs bg-indigo-500 hover:bg-indigo-600 rounded-lg shadow-xl dark:font-extralight dark:text-white dark:hover:bg-indigo-700"
+                }
+              >
+                <span className={"inline-block mr-2"}>
+                  <Clock size={18} />
+                </span>
+                <span className={"inline-block"}>View History</span>
+              </a>
               <button
                 onClick={handleDelete}
                 className={
