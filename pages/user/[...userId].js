@@ -16,6 +16,12 @@ export default function User({viewingUser, pageDataJson, coachesJson, viewingUse
     const [version, setVersion] = useState(viewingUser.isYouth)
     const [clients, setClients] = useState(viewingUserClients || [])
     const [simpleModal, setSimpleModal] = useState(false)
+    // Admins should default to true for canManageServices (backward compatibility)
+    const [canManageServices, setCanManageServices] = useState(
+        viewingUser.canManageServices !== undefined 
+            ? viewingUser.canManageServices 
+            : (viewingUser.level === 'admin' ? true : false)
+    )
 
     async function saveRole(newRole) {
         await fetch("/api/save-role?userId=" + viewingUser._id + "&role=" + newRole)
@@ -33,6 +39,14 @@ export default function User({viewingUser, pageDataJson, coachesJson, viewingUse
     async function updateRoleInformation(role){
         await setRole(role)
         await saveRole(role)
+        // Update canManageServices based on new role
+        if (role === 'admin') {
+            setCanManageServices(true);
+        } else if (role !== 'coach') {
+            // If changing from admin/coach to another role, disable service management
+            setCanManageServices(false);
+        }
+        // If changing to coach, keep existing canManageServices value
     }
 
     async function terminationPattern(){
@@ -70,6 +84,9 @@ export default function User({viewingUser, pageDataJson, coachesJson, viewingUse
                 role={role}
                 setRole={setRole}
                 viewingUser={viewingUser}
+                loggedInUser={user}
+                canManageServices={canManageServices}
+                setCanManageServices={setCanManageServices}
             />
             <CoachAssignments coachesJson={coachesJson} viewingUser={viewingUser}/>
             <NewEmailAssignment viewingUserState={viewingUserState} setViewingUserState={setViewingUserState}/>
