@@ -76,6 +76,11 @@ export default async(req, res) => {
             }
         }
 
+    let client;
+        if (req.query.clientId){
+            client = await db.collection("users").findOne({_id: new ObjectId(req.query.clientId)})
+        }
+
     //Find all referrals in the collection "referrals" in the database that have the user_id of our client on it.
     const clientReferralsCursor = await db.collection("referrals").find(q)
     const clientRefs = await clientReferralsCursor.toArray()
@@ -94,7 +99,7 @@ export default async(req, res) => {
 
 
         //return all of the data we retrieved in a JSON
-        res.json({user, dreams, surveys, referrals, tasks, notes, clientReferrals})
+        res.json({user, dreams, surveys, referrals, tasks, notes, clientReferrals, client})
     } catch (error) {
         console.error("indexPageData: Error:", error);
         res.status(500).json({error: "Internal server error", message: error.message});
