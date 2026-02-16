@@ -158,7 +158,7 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
           {userReferrals?.filter(
             (referral) => referral.name === referralDataJson.name
           ).length > 0
-            ? "This referral is currently in your CARE Plan."
+            ? "This referral has been added to your CARE Plan."
             : null}
         </div>
         
