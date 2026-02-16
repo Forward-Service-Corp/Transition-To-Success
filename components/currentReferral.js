@@ -47,7 +47,7 @@ function CurrentReferral({currentReferral}) {
                 {currentReferral.url !== undefined ? (
                     <div>
                         <p className={"text-xs text-gray-500 mt-3"}>Website</p>
-                        <p className={"text-sm truncate"}>{currentReferral.url}</p>
+                        <p className={"text-sm truncate underline"}><a href={currentReferral.url}>{currentReferral.url}</a></p>
                     </div>
                 ) : null}
 

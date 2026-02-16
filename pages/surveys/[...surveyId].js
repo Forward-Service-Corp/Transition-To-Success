@@ -180,7 +180,7 @@ export default function SurveyId({ pageDataJson }) {
                   <p>
                     Date taken:{" "}
                     <span className={"font-extralight"}>
-                      {moment(survey.datestamp).calendar()}
+                      {moment(survey.datestamp).format("M/D/YYYY [at] h:mm A")}
                     </span>
                   </p>
                 </div>

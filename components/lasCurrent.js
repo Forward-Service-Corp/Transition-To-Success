@@ -67,7 +67,7 @@ function LasCurrent({surveys, user, isClientSurvey, clientId}) {
                                             }).then()
                                         }
 
-                                    }}>Map your priorities
+                                    }}>Start your CARE Plan: Map your priorities
                                 </div>
                                 {/*{*/}
                                 {/*    (new Date() - new Date(survey.datestamp)) / (1000 * 60 * 60) < 12 ?*/}
