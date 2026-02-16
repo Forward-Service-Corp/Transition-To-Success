@@ -113,7 +113,7 @@ export default function MapOfMyDreams({
         <div
           className={`${router.query.clientId ? "visible uppercase" : "hidden"} text-red-600`}
         >
-          MAPPING FOR CLIENT {client.name}
+          MAPPING FOR CLIENT {client?.name}
         </div>
 
         <div className={"flex py-4 w-full dark:text-white"}>
