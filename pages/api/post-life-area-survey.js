@@ -3,7 +3,22 @@ import { ObjectId } from 'mongodb'
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req, res) => {
-  const survey = {
+
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Origin", "*"); // Or your specific origin
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization",
+    );
+    return res.status(200).end();
+  }
+
+    if (req.method === "POST") {
+
+      
+      const survey = {
     dream: req.body.dream,
     dreamId: req.body.dreamId,
     county: req.body.county,
@@ -40,7 +55,7 @@ export default async (req, res) => {
     income: req.body.income,
     isYouthSurvey: false
   }
-
+  
   const surveyData = {
     dream: req.body.dream,
     dreamId: req.body.dreamId,
@@ -78,18 +93,19 @@ export default async (req, res) => {
     income: req.body.income,
     isYouthSurvey: false
   }
-
+  
   const { db } = await connectToDatabase()
   const LAS = await db.collection('lifeAreaSurveys').insertOne(survey)
-
+  
   const surveyInsert = await db.collection('ttsReporting').insertOne(surveyData)
-
+  
   const dreamUpdate = await db.collection('dreams').updateOne(
     { _id: ObjectId(req.body.dreamId) },
     {
       $set: { survey }
     }
   )
-
-  res.json(LAS, surveyInsert, dreamUpdate)
+  
+  return res.json(LAS, surveyInsert, dreamUpdate)
+}
 }
