@@ -15,24 +15,27 @@ export default async (req, res) => {
   }
 
   if (req.method === "POST") {
-    const survey = {
-      dream: req.body.dream,
-      dreamId: req.body.dreamId,
-      county: req.body.county,
-      coach: req.body.coach,
-      priority: req.body.priority,
-      food: req.body.food,
-      money: req.body.money,
-      substances: req.body.substances,
-      mentalHealth: req.body.mentalHealth,
-      safety: req.body.safety,
-      healthInsurance: req.body.healthInsurance,
-      transportation: req.body.transportation,
-      disabilities: req.body.disabilities,
-      lifeSkills: req.body.lifeSkills,
-      employment: req.body.employment,
-      legal: req.body.legal,
-      childcare: req.body.childcare,
+
+    try{
+
+      const survey = {
+        dream: req.body.dream,
+        dreamId: req.body.dreamId,
+        county: req.body.county,
+        coach: req.body.coach,
+        priority: req.body.priority,
+        food: req.body.food,
+        money: req.body.money,
+        substances: req.body.substances,
+        mentalHealth: req.body.mentalHealth,
+        safety: req.body.safety,
+        healthInsurance: req.body.healthInsurance,
+        transportation: req.body.transportation,
+        disabilities: req.body.disabilities,
+        lifeSkills: req.body.lifeSkills,
+        employment: req.body.employment,
+        legal: req.body.legal,
+        childcare: req.body.childcare,
       adultEducation: req.body.adultEducation,
       parentingSkills: req.body.parentingSkills,
       childrensEducation: req.body.childrensEducation,
@@ -52,7 +55,7 @@ export default async (req, res) => {
       income: req.body.income,
       isYouthSurvey: false,
     };
-
+    
     const surveyData = {
       dream: req.body.dream,
       dreamId: req.body.dreamId,
@@ -90,21 +93,25 @@ export default async (req, res) => {
       income: req.body.income,
       isYouthSurvey: false,
     };
-
+    
     const { db } = await connectToDatabase();
     const LAS = await db.collection("lifeAreaSurveys").insertOne(survey);
-
+    
     const surveyInsert = await db
-      .collection("ttsReporting")
-      .insertOne(surveyData);
-
+    .collection("ttsReporting")
+    .insertOne(surveyData);
+    
     const dreamUpdate = await db.collection("dreams").updateOne(
       { _id: ObjectId(req.body.dreamId) },
       {
         $set: { survey },
       },
     );
-
+    
     return res.json(LAS, surveyInsert, dreamUpdate);
+  } catch(error){
+    console.error("Error in post-life-area-survet:", error);
+    return res.status(500).json({error: error.message})
+  }
   }
 };
