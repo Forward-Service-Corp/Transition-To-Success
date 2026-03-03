@@ -1,9 +1,19 @@
-import {connectToDatabase} from "../../lib/dbConnect";
-import {ObjectId} from "mongodb";
+import { connectToDatabase } from "../../lib/dbConnect";
+import { ObjectId } from "mongodb";
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default async(req, res) => {
-    const today = new Date()
+export default async (req, res) => {
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization",
+    );
+    return res.status(200).end();
+  }
+  if (req.method === "POST") {
+    const today = new Date();
     const record = {
       surveyId: req.body.surveyId,
       userId: ObjectId(req.body.userId),
