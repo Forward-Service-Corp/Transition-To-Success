@@ -30,13 +30,13 @@ export default async (req, res) => {
       contact: req.body.contact,
       needs: req.body.needs,
       isCustom: true,
-      createdDate: date,
+      createdDate: today,
     };
 
     const { db } = await connectToDatabase();
     const user = await db.collection("customReferrals").insertOne(record);
 
-    res.json(user);
+    return res.json(user);
   }
 
   return res.status(405).json({ error: "Method not allowed" });
