@@ -101,7 +101,7 @@ export default function Layout({
 
     return (
         <>
-            <div id="envBanner" className={`${getEnvironmentBgColor(environment)}`}>
+            <div id="envBanner" className={`${getEnvironmentBgColor(environment)} print:hidden`}>
                 You are currently in the <strong className={`uppercase font-black`}>{environment}</strong> environment.
             </div>
             {simpleModal ? <SimpleModal title={simpleModalTitle} message={simpleModalMessage} label={simpleModalLabel}
