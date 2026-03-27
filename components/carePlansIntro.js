@@ -2,7 +2,7 @@ import React from 'react';
 
 function CarePlansIntro() {
     return (
-        <div className={"text-sm pt-4 pb-6 mb-4 bg-gray-600 text-white text-center dark:bg-opacity-0"}>
+        <div className={"text-sm pt-4 pb-6 mb-4 bg-gray-600 text-white text-center dark:bg-opacity-0 print:hidden"}>
             <p><strong>&quot;To accomplish great things, we must not only act but also dream - not only plan, but
                 also believe.&quot;</strong>
                 --Anatole France, French poet and novelist</p>
