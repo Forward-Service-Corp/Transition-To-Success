@@ -69,8 +69,8 @@ export default function Home() {
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4">
                     <DashboardMetric title={"Active dreams"} metric={dreams.filter(dream => dream.status === "active").length} link={"/dreams"} linkLabel={"View dreams"} icon={"Brain"}/>
                     <DashboardMetric title={"Life Area Surveys"} metric={surveys.length} link={"/life-area-surveys"} linkLabel={"View life area surveys"} icon={"ListNumbers"}/>
-                    <DashboardMetric title={"Referrals"} metric={referrals.length} link={"/life-area-surveys"} linkLabel={"View all referrals"} icon={"Bookmarks"}/>
-                    <DashboardMetric title={"To-Do's"} metric={tasks.filter(task => task.completed !== "true").length} link={"/care-plans"} linkLabel={"View all to-do's"} icon={"CheckSquare"}/>
+                    <DashboardMetric title={"Resources"} metric={referrals.length} link={"/life-area-surveys"} linkLabel={"View all resources"} icon={"Bookmarks"}/>
+                    <DashboardMetric title={"Tasks"} metric={tasks.filter(task => task.completed !== "true").length} link={"/care-plans"} linkLabel={"View all tasks"} icon={"CheckSquare"}/>
                 </div>
             </div>
             <div className={"flex justify-between py-8"}>
