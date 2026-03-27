@@ -12,6 +12,10 @@ export default function CarePlans({pageJson}) {
     const [userReferrals, setUserReferrals] = useState(pageJson.referrals)
     const [sort] = useState('priority')
 
+    const updateTaskHandler = async (newTasks) => {
+        setTasks(newTasks)
+    }
+
     return (
         <Layout title={"CARE Plans"} session={pageJson.user}>
             <Head>
@@ -49,7 +53,7 @@ export default function CarePlans({pageJson}) {
                                        item={item}
                                        user={pageJson.user}
                                        tasks={tasks.filter((task) => task.referralId === item._id)} notes={pageJson.notes} i={i}
-                                       updateTaskHandler={setTasks}
+                                       updateTaskHandler={updateTaskHandler}
                                        modifier={pageJson.user.email}
                                        loggedInUser={pageJson.user}
                                        setUserReferrals={setUserReferrals}/>
@@ -83,7 +87,7 @@ export default function CarePlans({pageJson}) {
                                        notes={pageJson.notes}
                                        modifier={pageJson.user.email}
                                        tasks={tasks.filter((task) => task.referralId === item._id)}
-                                       setTasks={setTasks}
+                                       updateTaskHandler={updateTaskHandler}
                                        loggedInUser={pageJson.user}
                                        setUserReferrals={setUserReferrals}/>
                 )
