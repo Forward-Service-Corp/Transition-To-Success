@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import CarePlanDomain from "./carePlanDomain";
 import {CaretDoubleDown, CaretDoubleUp, Trash, CheckCircle, Files} from "phosphor-react";
 import TaskTodo from "./taskTodo";
@@ -9,6 +9,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, updateTaskHandl
 
     const router = useRouter()
     const [open, setOpen] = useState(false)
+    const [storedOpen, setStoredOpen] = useState(false)
     const [task, setTask] = useState("")
     const [taskArr, setTasks] = useState(tasks)
     const [allNotes, setAllNotes] = useState(notes)
@@ -94,10 +95,30 @@ function ReferralContainer({item, user, notes, setUserReferrals, updateTaskHandl
 
     }
 
+    useEffect(()=>{
+        const handleBeforePrint = () => {
+            setStoredOpen(open)
+            setOpen(true)
+        }
+        const handleAfterPrint = () => setOpen(storedOpen)
+        document.getElementById("careplanwidget").addEventListener("beforeprint", handleBeforePrint)
+        //document.getElementById("careplanwidget").addEventListener("afterprint", handleAfterPrint)
+        
+        return () => {
+            document.getElementById("careplanwidget").removeEventListener("beforeprint", handleBeforePrint)
+            //document.getElementById("careplanwidget").removeEventListener("afterprint", handleAfterPrint)
+        }
+    })
+
+
     return (
-        <div className={"my-3  dark:bg-black dark:text-white dark:overflow-hidden dark:bg-opacity-70 dark:rounded-lg dark:shadow-xl"} key={item._id}>
+        <div id="careplanwidget" className={"my-3  dark:bg-black dark:text-white dark:overflow-hidden dark:bg-opacity-70 dark:rounded-lg dark:shadow-xl"} key={item._id}
+            style={{breakInside: "avoid"}}
+        >
             <div
-                className={`flex justify-start items-center text-sm font-light relative p-3 ${item.archived !== "true" ? "bg-orange-300 text-black" : "bg-gray-300 text-black"}`}>
+                className={`flex justify-start items-center text-sm font-light relative p-3 ${item.archived !== "true" ? "bg-orange-300 text-black" : "bg-gray-300 text-black print:hidden"}`}
+                
+                >
                 <div className={"w-[160px] ml-4 whitespace-nowrap mr-3 truncate font-bold"}>{labelMap[item.domain]}</div>
                 <div className={"truncate max-w-[200px]"}>{item.name}</div>
                 <div
@@ -109,8 +130,9 @@ function ReferralContainer({item, user, notes, setUserReferrals, updateTaskHandl
                         <CaretDoubleDown size={20} weight="thin" color={"white"}/>}</div>
                 </div>
             </div>
-            <div className={`flex justify-between items-center bg-gray-100 p-2 ${open ? "visible" : "hidden"} dark:bg-black dark:bg-opacity-80`}>
-                <div className={"flex items-center text-xs cursor-pointer"} onClick={() => {
+            <div className={`flex justify-between items-center bg-gray-100 p-2  ${open ? "visible" : "hidden print:flex"} dark:bg-black dark:bg-opacity-80`}
+            >
+                <div className={"flex items-center text-xs cursor-pointer print:hidden"} onClick={() => {
                     router.push("/surveys/" + item.surveyId).then()
                 }}>
                     <div className={`${item.surveyId === null ? 'hidden' : 'visible'} `}>
@@ -121,7 +143,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, updateTaskHandl
 
                 </div>
                 {item.hasOwnProperty("archived") && item.archived === "true" ?
-                    <div className={"flex items-center cursor-pointer"} onClick={() => {
+                    <div className={"flex items-center cursor-pointer print:hidden"} onClick={() => {
                         if (item.isCustom) {
                             setCustomReferralStatus(item._id, false).then(getReferrals)
                         } else {
@@ -132,7 +154,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, updateTaskHandl
                         <div className={"text-blue-600 text-xs cursor-pointer dark:text-orange-400"}>Make active again</div>
                     </div>
                     :
-                    <div className={"flex items-center cursor-pointer"} onClick={() => {
+                    <div className={"flex items-center cursor-pointer print:hidden"} onClick={() => {
                         if (item.isCustom) {
                             setCustomReferralStatus(item._id, true).then(getReferrals)
                         } else {
@@ -147,7 +169,7 @@ function ReferralContainer({item, user, notes, setUserReferrals, updateTaskHandl
 
 
                 {item.hasOwnProperty("archived") && item.archived === "true" ?
-                    <div className={"flex items-center cursor-pointer ml-5"} onClick={() => {
+                    <div className={"flex items-center cursor-pointer ml-5 print:hidden"} onClick={() => {
                         if (confirm("You are about to delete this referral and all of its details. This cannot be undone.")) {
                             if (item.isCustom) {
                                 deleteCustomReferral(item._id).then(getReferrals)
@@ -164,17 +186,18 @@ function ReferralContainer({item, user, notes, setUserReferrals, updateTaskHandl
 
 
             </div>
-            <div className={`flex ${open ? "visible" : "hidden"} flex-col md:flex-row`}>
+            <div className={`flex ${open ? "" : "hidden"} ${item.hasOwnProperty("archived") && item.archived === "true" ? "print:!hidden" : ""} flex-col md:flex-row print:flex print:flex-col`}
+            >
                 <CarePlanDomain item={item}/>
                 <div className={"w-full p-5 inline"}>
-                    <h2 className={"uppercase text-orange-600 mb-2"}>Add a new task</h2>
-                    <input type={"text"} className={"w-full border-0 border-b-[1px] p-1 text-sm font-light"} id={item._id}
+                    <h2 className={"uppercase text-orange-600 mb-2 print:hidden"}>Add a new task</h2>
+                    <input type={"text"} className={"w-full border-0 border-b-[1px] p-1 text-sm font-light print:hidden"} id={item._id}
                            value={task} placeholder={"Enter new todo item..."} onChange={(e) => {
                         setTask(e.target.value)
                     }}/>
                     <div className={"flex justify-end"}>
                         <button
-                            className={"mt-2 mb-4 text-white px-4 py-2 text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400"}
+                            className={"mt-2 mb-4 text-white px-4 py-2 text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 print:hidden"}
                             onClick={() => {
                                 saveTask().then(() => {
                                     getTasks();
