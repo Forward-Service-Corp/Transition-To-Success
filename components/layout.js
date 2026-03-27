@@ -46,7 +46,7 @@ export default function Layout({
     const [darkMode] = useState(null)
     
     // Auto-logout functionality
-    const { showWarning, timeRemaining, extendSession, handleLogout } = useAutoLogout(session)
+    //const { showWarning, timeRemaining, extendSession, handleLogout } = useAutoLogout(session)
 
     const handleManualLogout = async () => {
         // Properly handle logout with session validation
@@ -106,12 +106,12 @@ export default function Layout({
             </div>
             {simpleModal ? <SimpleModal title={simpleModalTitle} message={simpleModalMessage} label={simpleModalLabel}
                                         version={version}/> : null}
-            <AutoLogoutWarning 
+            {/* <AutoLogoutWarning 
                 isOpen={showWarning}
                 timeRemaining={timeRemaining}
                 onExtendSession={extendSession}
                 onLogout={handleLogout}
-            />
+            /> */}
             <div
                 className={`fixed w-full h-full bg-gray-600 bg-opacity-50 flex align-middle justify-center ${loadingState ? "visible" : "hidden"}`}>
                 <div className={"uppercase text-white self-center rounded-full p-5 bg-orange-600 shadow"}>loading...
