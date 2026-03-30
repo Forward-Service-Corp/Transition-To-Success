@@ -5,12 +5,17 @@ import ReferralContainer from "../components/referralContainer";
 import {useState} from "react";
 import CarePlansIntro from "../components/carePlansIntro";
 import CarePlansInstructions from "../components/carePlansInstructions";
+import { Printer } from "phosphor-react";
 
 export default function CarePlans({pageJson}) {
 
     const [tasks, setTasks] = useState(pageJson.todos)
     const [userReferrals, setUserReferrals] = useState(pageJson.referrals)
     const [sort] = useState('priority')
+
+    const updateTaskHandler = async (newTasks) => {
+        setTasks(newTasks)
+    }
 
     return (
         <Layout title={"CARE Plans"} session={pageJson.user}>
@@ -19,9 +24,21 @@ export default function CarePlans({pageJson}) {
             </Head>
             <CarePlansIntro/>
             <CarePlansInstructions/>
+            
 
             <div className={`flex justify-between align-middle items-center`}>
-                <div><h2 className={"uppercase text-gray-500 my-4"}>Manage Care Plans</h2></div>
+                <div><h2 className={"uppercase text-gray-500 my-4 print:hidden"}>Manage Care Plans</h2></div>
+                <button
+                        onClick={() => window.print()}
+                        className={
+                          "flex items-center my-3 py-2 px-6 text-white text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-800 rounded-lg shadow-xl dark:font-extralight dark:text-white dark:hover:bg-indigo-600 print:hidden"
+                        }
+                      >
+                        <span className={"inline-block mr-2"}>
+                          <Printer size={22} />
+                        </span>
+                        <span className={"inline-block"}>Print All Active Care Plans</span>
+                      </button>
             </div>
 
             {userReferrals.filter(item => !item.hasOwnProperty("archived") || item.archived === "false" || item.archived === null).sort((a, b) => {
@@ -49,14 +66,14 @@ export default function CarePlans({pageJson}) {
                                        item={item}
                                        user={pageJson.user}
                                        tasks={tasks.filter((task) => task.referralId === item._id)} notes={pageJson.notes} i={i}
-                                       updateTaskHandler={setTasks}
+                                       updateTaskHandler={updateTaskHandler}
                                        modifier={pageJson.user.email}
                                        loggedInUser={pageJson.user}
                                        setUserReferrals={setUserReferrals}/>
                 )
             })}
 
-            <h2 className={"uppercase text-gray-500 mb-4 mt-10"}>Archived Care Plans</h2>
+            <h2 className={"uppercase text-gray-500 mb-4 mt-10 print:hidden"}>Archived Care Plans</h2>
             {userReferrals.filter(item => item.hasOwnProperty("archived") && item.archived === "true").sort((a, b) => {
                 if (sort === 'domain') {
                     return a.domain.localeCompare(b.domain)
@@ -83,7 +100,7 @@ export default function CarePlans({pageJson}) {
                                        notes={pageJson.notes}
                                        modifier={pageJson.user.email}
                                        tasks={tasks.filter((task) => task.referralId === item._id)}
-                                       setTasks={setTasks}
+                                       updateTaskHandler={updateTaskHandler}
                                        loggedInUser={pageJson.user}
                                        setUserReferrals={setUserReferrals}/>
                 )

@@ -3,7 +3,7 @@ import {CaretDoubleDown, FilePlus} from "phosphor-react";
 
 function CarePlansInstructions() {
     return (
-        <div className={"bg-gray-100 p-3 mb-2 text-xs dark:bg-opacity-0"}>
+        <div className={"bg-gray-100 p-3 mb-2 text-xs dark:bg-opacity-0 print:hidden"}>
 
             <div className={"text-lg uppercase text-gray-500 mb-4 "}>Instructions</div>
             <div className={"grid grid-cols-1 md:grid-cols-3 gap-4"}>

@@ -42,6 +42,13 @@ export default function SignIn() {
         }
     }
 
+    const handleEnterToSubmit = (e) => {
+        if (e.key == "Enter"){
+            e.preventDefault()
+            document.getElementById("magicLinkButton").click()
+        }
+    }
+
     return (
         <div
             className={"h-screen w-screen bg-[url('/img/YouthWorkbookArt.png')] bg-center bg-cover flex align-middle justify-center"}>
@@ -66,7 +73,9 @@ export default function SignIn() {
                         <input type="email" value={email}
                                className={`rounded ${isEmailValid ? 'border-2 border-green-600' : 'border-gray-300'}`}
                                onChange={handleEmailChange}
-                               placeholder={"Your email address..."}/>
+                               placeholder={"Your email address..."}
+                               onKeyDown={handleEnterToSubmit}
+                               />
                         <div
                             className={`bg-green-100 p-4 text-center rounded ${checking ? 'visible' : 'hidden'}`}>One
                             moment please...
@@ -77,6 +86,7 @@ export default function SignIn() {
                             or <Link className={'underline'} href={'/create-new-account'}>Create a new account here.</Link>
                         </div>
                         <button className={`mt-4 p-2 bg-indigo-600 text-white rounded disabled:bg-gray-300`}
+                                id="magicLinkButton"
                                 disabled={!isEmailValid || error.code === 777}
                                 onClick={handleEmailSubmit}>
                             Get my magic link
