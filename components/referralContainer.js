@@ -105,8 +105,11 @@ function ReferralContainer({item, user, notes, setUserReferrals, updateTaskHandl
         //document.getElementById("careplanwidget").addEventListener("afterprint", handleAfterPrint)
         
         return () => {
-            document.getElementById("careplanwidget").removeEventListener("beforeprint", handleBeforePrint)
-            //document.getElementById("careplanwidget").removeEventListener("afterprint", handleAfterPrint)
+            if(document.getElementById("careplanwidget")){
+
+                document.getElementById("careplanwidget").removeEventListener("beforeprint", handleBeforePrint)
+                //document.getElementById("careplanwidget").removeEventListener("afterprint", handleAfterPrint)
+            }
         }
     })
 
