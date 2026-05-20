@@ -56,6 +56,7 @@ export default function AddNewReferral({ pageDataJson }) {
         needs: "",
       };
     });
+    refScrollUp.current.scrollIntoView({ behavior: "smooth" });
   };
 
   const saveReferral = async () => {
@@ -78,7 +79,6 @@ export default function AddNewReferral({ pageDataJson }) {
       setSaving(false);
       setTimeout(() => {
         setMessage("");
-        refScrollUp.current.scrollIntoView({ behavior: "smooth" });
       }, 1000);
     }
   };
@@ -286,16 +286,26 @@ export default function AddNewReferral({ pageDataJson }) {
             />
           </div>
 
-          <div className="text-center">
+          <div className="flex justify-around">
             <button
               className={
-                "py-[6px] px-6 mr-2 text-white  text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 rounded-lg"
+                "py-[6px] px-6 mx-2 text-white  text-xs bg-green-500 hover:bg-green-600 disabled:bg-gray-400 rounded-lg"
               }
               onClick={() => {
                 saveReferral().then();
               }}
             >
               {saving ? "Saving..." : "Save new referral"}
+            </button>
+            <button
+              className={
+                "py-[6px] px-6 mx-2 text-white  text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 rounded-lg"
+              }
+              onClick={() => {
+                resetReferral();
+              }}
+            >
+              {saving ? "Please Wait..." : "Reset Form"}
             </button>
             {error && (
               <p className="text-red-600 font-bold text-sm my-1">{error}</p>
