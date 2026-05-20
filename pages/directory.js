@@ -5,8 +5,11 @@ import Head from "next/head";
 import ServicesTable from "../components/servicesTable";
 import { WICountiesList } from "../lib/WI_Counties";
 import { labelMap } from "../lib/serviceLabelsMap";
+import { canUserManageServices } from "../lib/servicePermissions";
+import { useRouter } from "next/router";
 
 export default function Directory({ pageDataJson }) {
+  const router = useRouter();
   const [loadedServices, setLoadedServices] = useState(
     pageDataJson.directory ? pageDataJson.directory : []
   );
@@ -16,6 +19,9 @@ export default function Directory({ pageDataJson }) {
   const [county, setCounty] = useState("none");
   const domains = Object.keys(labelMap);
   const [searching, setSearching] = useState(false);
+  
+  const user = pageDataJson.user;
+  const canManage = user ? canUserManageServices(user) : false;
 
   async function search() {
     setSearching(true);
@@ -175,8 +181,25 @@ export default function Directory({ pageDataJson }) {
       >
         Please enter your search criteria.
       </div>
+      {canManage && (
+        <div className="w-full max-w-[95%] m-auto p-3 mb-4">
+          <button
+            onClick={() => router.push('/add-new-referral')}
+            className="py-[8px] px-6 text-white text-xs bg-green-500 hover:bg-green-600 rounded-lg dark:bg-green-600 dark:hover:bg-green-700"
+          >
+            Add New Service
+          </button>
+        </div>
+      )}
       {loadedServices.length > 0 ? (
-        <ServicesTable services={loadedServices} />
+        <ServicesTable 
+          services={loadedServices} 
+          canManageServices={canManage}
+          onServiceUpdate={() => {
+            // Refresh the services list after update
+            search();
+          }}
+        />
       ) : null}
     </Layout>
   );
