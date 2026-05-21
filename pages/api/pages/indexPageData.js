@@ -91,11 +91,6 @@ export default async (req, res) => {
         .findOne({ _id: new ObjectId(req.query.clientId) });
     }
 
-    let client;
-        if (req.query.clientId){
-            client = await db.collection("users").findOne({_id: new ObjectId(req.query.clientId)})
-        }
-
     //Find all referrals in the collection "referrals" in the database that have the user_id of our client on it.
     const clientReferralsCursor = await db.collection("referrals").find(q);
     const clientRefs = await clientReferralsCursor.toArray();
