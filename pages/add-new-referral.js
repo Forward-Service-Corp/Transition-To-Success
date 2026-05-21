@@ -296,15 +296,29 @@ export default function AddNewReferral({ pageDataJson }) {
             >
               {saving ? "Saving..." : "Save new referral"}
             </button>
-            {error && (
-              <p className="text-red-600 font-bold text-sm my-1">{error}</p>
-            )}
-            {message && (
-              <p className="text-green-600 font-bold text-sm my-1 transition-all">
-                {message}
-              </p>
-            )}
+            <button
+              className={
+                "py-[6px] px-6 mx-2 text-white  text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 rounded-lg"
+              }
+              onClick={() => {
+                resetReferral();
+              }}
+            >
+              {saving ? "Please Wait..." : "Reset Form"}
+            </button>
           </div>
+          {(error || saving) && (
+            <>
+              {error && (
+                <p className="text-red-600 font-bold text-sm my-1">{error}</p>
+              )}
+              {message && (
+                <p className="text-green-600 font-bold text-sm my-1 transition-all">
+                  {message}
+                </p>
+              )}
+            </>
+          )}
         </div>
       </div>
     </Layout>
