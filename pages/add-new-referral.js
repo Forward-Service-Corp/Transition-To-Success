@@ -56,7 +56,6 @@ export default function AddNewReferral({ pageDataJson }) {
         needs: "",
       };
     });
-    refScrollUp.current.scrollIntoView({ behavior: "smooth" });
   };
 
   const saveReferral = async () => {
@@ -78,6 +77,7 @@ export default function AddNewReferral({ pageDataJson }) {
       setSaving(false);
       setTimeout(() => {
         setMessage("");
+        refScrollUp.current.scrollIntoView({ behavior: "smooth" });
       }, 1000);
     }
   };
