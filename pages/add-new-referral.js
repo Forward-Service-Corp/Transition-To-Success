@@ -306,15 +306,19 @@ export default function AddNewReferral({ pageDataJson }) {
             >
               {saving ? "Please Wait..." : "Reset Form"}
             </button>
-            {error && (
-              <p className="text-red-600 font-bold text-sm my-1">{error}</p>
-            )}
-            {message && (
-              <p className="text-green-600 font-bold text-sm my-1 transition-all">
-                {message}
-              </p>
-            )}
           </div>
+          {(error || saving) && (
+            <>
+              {error && (
+                <p className="text-red-600 font-bold text-sm my-1">{error}</p>
+              )}
+              {message && (
+                <p className="text-green-600 font-bold text-sm my-1 transition-all">
+                  {message}
+                </p>
+              )}
+            </>
+          )}
         </div>
       </div>
     </Layout>
