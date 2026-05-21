@@ -285,10 +285,10 @@ export default function AddNewReferral({ pageDataJson }) {
             />
           </div>
 
-          <div className="text-center">
+          <div className="flex justify-around">
             <button
               className={
-                "py-[6px] px-6 mr-2 text-white  text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 rounded-lg"
+                "py-[6px] px-6 mx-2 text-white  text-xs bg-green-500 hover:bg-green-600 disabled:bg-gray-400 rounded-lg"
               }
               onClick={() => {
                 saveReferral().then();
