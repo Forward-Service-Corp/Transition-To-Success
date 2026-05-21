@@ -74,7 +74,6 @@ export default function AddNewReferral({ pageDataJson }) {
       setSaving(false);
     });
     if (response.ok) {
-      resetReferral();
       setMessage("Success!");
       setSaving(false);
       setTimeout(() => {
