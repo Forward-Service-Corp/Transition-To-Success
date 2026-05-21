@@ -3,9 +3,8 @@ import { ObjectId } from "mongodb";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req, res) => {
-  // Handle CORS preflight
   if (req.method === "OPTIONS") {
-    res.setHeader("Access-Control-Allow-Origin", "*"); // Or your specific origin
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
     res.setHeader(
       "Access-Control-Allow-Headers",
@@ -13,7 +12,6 @@ export default async (req, res) => {
     );
     return res.status(200).end();
   }
-
   if (req.method === "POST") {
     const today = new Date();
     const record = {

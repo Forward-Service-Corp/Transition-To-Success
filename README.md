@@ -8,7 +8,6 @@ The FSC-Corp-TTS platform serves as the digital backbone for Forward Service Cor
 
 Forward Service Corporation, a Wisconsin non-profit employment and training organization, adopted the TTS framework in 2018 to enhance service delivery and better track client outcomes. This platform digitizes the TTS approach, providing a streamlined interface for FSC's programs including FoodShare Employment and Training (FSET), Wisconsin Works (W-2), WIOA, and other employment services.
 
-
 ## User Roles
 
 The platform supports multiple user roles with appropriate permissions:
