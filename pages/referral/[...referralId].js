@@ -12,7 +12,7 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
   const { user, referrals } = pageDataJson;
   const [userReferrals, setUserReferrals] = useState(referrals);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  
+
   const canManage = user ? canUserManageServices(user) : false;
 
   async function saveReferral() {
@@ -48,7 +48,11 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
   }
 
   const handleDelete = async () => {
-    if (!confirm(`Are you sure you want to delete "${referralDataJson.name}"? This action cannot be undone.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete "${referralDataJson.name}"? This action cannot be undone.`,
+      )
+    ) {
       return;
     }
 
@@ -59,20 +63,20 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          serviceId: referralDataJson._id
-        })
+          serviceId: referralDataJson._id,
+        }),
       });
 
       if (response.ok) {
         // Redirect to directory page after successful deletion
-        router.push('/directory');
+        router.push("/directory");
       } else {
         const error = await response.json();
-        alert(error.error || 'Failed to delete service');
+        alert(error.error || "Failed to delete service");
       }
     } catch (err) {
-      console.error('Error deleting service:', err);
-      alert('Failed to delete service');
+      console.error("Error deleting service:", err);
+      alert("Failed to delete service");
     }
   };
 
@@ -139,6 +143,10 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
 
   const textWebsiteJSX = (data, label) => {
     if (data) {
+      let finalUrl = data;
+      if (!data.startsWith("http")) {
+        finalUrl = "http://" + data;
+      }
       return (
         <div>
           <p className={"text-xs text-gray-500 dark:text-gray-300"}>Website</p>
@@ -148,7 +156,7 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
                 target={"_blank"}
                 rel={"noreferrer"}
                 className={"text-orange-500 underline"}
-                href={data}
+                href={finalUrl}
               >
                 Visit website
               </a>
@@ -179,21 +187,23 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
       </Head>
       <div className={"flex justify-between items-center print:hidden"}>
         <div className="flex items-center gap-2">
-          {user && <button
-            disabled={
-              userReferrals?.filter(
-                (referral) => referral.name === referralDataJson.name
-              ).length > 0
-            }
-            onClick={() => {
-              saveReferral().then(getReferrals);
-            }}
-            className={
-              "flex items-center my-3 py-2 px-6 text-white text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-800 rounded-lg shadow-xl dark:font-extralight dark:text-white dark:hover:bg-indigo-600"
-            }
-          >
-            Add to my CARE Plan
-          </button>}
+          {user && (
+            <button
+              disabled={
+                userReferrals?.filter(
+                  (referral) => referral.name === referralDataJson.name,
+                ).length > 0
+              }
+              onClick={() => {
+                saveReferral().then(getReferrals);
+              }}
+              className={
+                "flex items-center my-3 py-2 px-6 text-white text-xs bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-800 rounded-lg shadow-xl dark:font-extralight dark:text-white dark:hover:bg-indigo-600"
+              }
+            >
+              Add to my CARE Plan
+            </button>
+          )}
           {canManage && (
             <>
               <button
@@ -236,12 +246,12 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
         </div>
         <div className={"text-xs text-red-600 dark:accent-red-500"}>
           {userReferrals?.filter(
-            (referral) => referral.name === referralDataJson.name
+            (referral) => referral.name === referralDataJson.name,
           ).length > 0
             ? "This referral has been added to your CARE Plan."
             : null}
         </div>
-        
+
         <div>
           <button
             onClick={() => window.print()}
@@ -306,7 +316,9 @@ export async function getServerSideProps(context) {
 
   // page data
   const pageDataUrl =
-    baseUrl + "/api/pages/indexPageData" + (session ? "?userId=" + session.user._id : "");
+    baseUrl +
+    "/api/pages/indexPageData" +
+    (session ? "?userId=" + session.user._id : "");
   const getPageData = await fetch(pageDataUrl);
   const pageDataJson = await getPageData.json();
 
