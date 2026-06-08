@@ -85,6 +85,11 @@ export default function ServiceEditModal({ isOpen, onClose, service, onSave }) {
       setSaving(false);
     }
   };
+  const isFormValid = (referral) => {
+    return (
+      referral.county !== "" && referral.name !== "" && referral.service !== ""
+    );
+  };
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -124,10 +129,13 @@ export default function ServiceEditModal({ isOpen, onClose, service, onSave }) {
                   <div className="space-y-4">
                     <div>
                       <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
-                        Name:
+                        Name: <span className="text-red-600">*</span>
                       </label>
                       <input
-                        className="w-full text-xs border-gray-300 rounded dark:bg-black dark:text-white dark:border-0"
+                        className={
+                          "w-full text-xs border-gray-300 rounded dark:bg-black dark:text-white dark:border-0" +
+                          (formData.name == "" ? " border-red-600" : "")
+                        }
                         type="text"
                         name="name"
                         value={formData.name}
@@ -190,10 +198,13 @@ export default function ServiceEditModal({ isOpen, onClose, service, onSave }) {
                       </div>
                       <div>
                         <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
-                          County:
+                          County: <span className="text-red-600">*</span>
                         </label>
                         <select
-                          className="w-full text-xs border-gray-300 rounded dark:bg-black dark:text-white dark:border-0"
+                          className={
+                            "w-full text-xs border-gray-300 rounded dark:bg-black dark:text-white dark:border-0" +
+                            (formData.county == "" ? " border-red-600" : "")
+                          }
                           name="county"
                           value={formData.county}
                           onChange={handleInputChange}
@@ -210,10 +221,13 @@ export default function ServiceEditModal({ isOpen, onClose, service, onSave }) {
 
                     <div>
                       <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
-                        Domain:
+                        Domain: <span className="text-red-600">*</span>
                       </label>
                       <select
-                        className="w-full text-xs border-gray-300 rounded dark:bg-black dark:text-white dark:border-0"
+                        className={
+                          "w-full text-xs border-gray-300 rounded dark:bg-black dark:text-white dark:border-0" +
+                          (formData.service == "" ? " border-red-600" : "")
+                        }
                         name="service"
                         value={formData.service}
                         onChange={handleInputChange}
@@ -347,9 +361,13 @@ export default function ServiceEditModal({ isOpen, onClose, service, onSave }) {
                     type="button"
                     className="py-2 px-4 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded-lg disabled:bg-gray-400"
                     onClick={handleSave}
-                    disabled={saving}
+                    disabled={saving || !isFormValid(formData)}
                   >
-                    {saving ? "Saving..." : "Save Changes"}
+                    {saving
+                      ? "Saving..."
+                      : isFormValid(formData)
+                        ? "Save Changes"
+                        : "Fix Required Fields"}
                   </button>
                 </div>
               </Dialog.Panel>
