@@ -83,6 +83,12 @@ export default function AddNewReferral({ pageDataJson }) {
   };
   const refScrollUp = useRef();
 
+  const isFormValid = (referral) => {
+    return (
+      referral.county !== "" && referral.name !== "" && referral.service !== ""
+    );
+  };
+
   return (
     <Layout title={"Add New Referral to CARE Network"} session={user}>
       <Head>
@@ -94,9 +100,14 @@ export default function AddNewReferral({ pageDataJson }) {
             New referral details
           </div>
           <div className={"mb-5"}>
-            <div className={"text-xs mb-2 text-left"}>Name:</div>
+            <div className={"text-xs mb-2 text-left"}>
+              Name: <span className="text-red-600">*</span>
+            </div>
             <input
-              className={"w-full text-xs rounded-lg"}
+              className={
+                "w-full text-xs rounded-lg" +
+                (referral.name == "" ? " border-red-600" : "")
+              }
               type="text"
               placeholder={`Please enter name...`}
               value={referral.name}
@@ -154,9 +165,14 @@ export default function AddNewReferral({ pageDataJson }) {
           </div>
 
           <div className={"mb-5"}>
-            <div className={"text-xs mb-2"}>County:</div>
+            <div className={"text-xs mb-2"}>
+              County: <span className="text-red-600">*</span>
+            </div>
             <select
-              className={"text-xs w-full rounded-lg"}
+              className={
+                "text-xs w-full rounded-lg" +
+                (referral.county == "" ? " border-red-600" : "")
+              }
               name="county"
               id="county"
               onChange={handleInputChange}
@@ -172,9 +188,14 @@ export default function AddNewReferral({ pageDataJson }) {
           </div>
 
           <div className={"mb-5"}>
-            <div className={"text-xs mb-2"}>Domain:</div>
+            <div className={"text-xs mb-2"}>
+              Domain: <span className="text-red-600">*</span>
+            </div>
             <select
-              className={"text-xs w-full rounded-lg"}
+              className={
+                "text-xs w-full rounded-lg" +
+                (referral.service == "" ? " border-red-600" : "")
+              }
               name="service"
               id="service"
               onChange={handleInputChange}
@@ -285,16 +306,21 @@ export default function AddNewReferral({ pageDataJson }) {
             />
           </div>
 
-          <div className="flex justify-around">
+          <div className="flex justify-between">
             <button
               className={
-                "py-[6px] px-6 mx-2 text-white  text-xs bg-green-500 hover:bg-green-600 disabled:bg-gray-400 rounded-lg"
+                "py-[6px] px-6 mx-2 text-white  text-xs bg-green-500 hover:bg-green-600 disabled:bg-gray-400 rounded-lg "
               }
+              disabled={!isFormValid(referral)}
               onClick={() => {
                 saveReferral().then();
               }}
             >
-              {saving ? "Saving..." : "Save new referral"}
+              {saving
+                ? "Saving..."
+                : isFormValid(referral)
+                  ? "Save New Referral"
+                  : "Fix Required Fields"}
             </button>
             <button
               className={
@@ -307,7 +333,7 @@ export default function AddNewReferral({ pageDataJson }) {
               {saving ? "Please Wait..." : "Reset Form"}
             </button>
           </div>
-          {(error || saving) && (
+          {(error || saving || message) && (
             <>
               {error && (
                 <p className="text-red-600 font-bold text-sm my-1">{error}</p>

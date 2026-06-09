@@ -3,7 +3,12 @@ import { Dialog, Transition } from "@headlessui/react";
 import { WICountiesList } from "../lib/WI_Counties";
 import { labelMap } from "../lib/serviceLabelsMap";
 
-export default function ServiceEditModal({ isOpen, onClose, service, onSave }) {
+export default function ServiceDuplicateModal({
+  isOpen,
+  onClose,
+  service,
+  onSave,
+}) {
   const serviceLabels = Object.keys(labelMap);
   const [formData, setFormData] = useState({
     name: "",
@@ -23,6 +28,8 @@ export default function ServiceEditModal({ isOpen, onClose, service, onSave }) {
     needs: "",
   });
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (service) {
@@ -54,35 +61,29 @@ export default function ServiceEditModal({ isOpen, onClose, service, onSave }) {
     }));
   };
 
-  const handleSave = async () => {
+  const handleSave = async (behavior) => {
+    setError("");
     setSaving(true);
-    try {
-      const response = await fetch("/api/update-service", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          serviceId: service._id,
-          ...formData,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (onSave) {
-          onSave(data.service);
-        }
-        onClose();
-      } else {
-        const error = await response.json();
-        alert(error.error || "Failed to update service");
-      }
-    } catch (err) {
-      console.error("Error updating service:", err);
-      alert("Failed to update service");
-    } finally {
+    const response = await fetch("/api/save-new-referral", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    }).catch((err) => {
+      console.error(err);
+      setError("Something went wrong. Try again.");
       setSaving(false);
+    });
+    if (response.ok) {
+      setMessage("Success!");
+      setSaving(false);
+      setTimeout(() => {
+        setMessage("");
+      }, 1000);
+      if (behavior == "close") {
+        onClose();
+      }
     }
   };
   const isFormValid = (referral) => {
@@ -348,7 +349,47 @@ export default function ServiceEditModal({ isOpen, onClose, service, onSave }) {
                     </div>
                   </div>
                 </div>
-                <div className="mt-5 sm:mt-6 flex justify-end gap-2">
+                {(error || saving) && (
+                  <>
+                    {error && (
+                      <p className="text-red-600 font-bold text-sm my-1">
+                        {error}
+                      </p>
+                    )}
+                  </>
+                )}
+                <div className="mt-5 sm:mt-6 flex justify-between gap-2">
+                  <button
+                    type="button"
+                    className="py-2 px-4 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded-lg disabled:bg-gray-400"
+                    onClick={() => handleSave("close")}
+                    disabled={saving || !isFormValid(formData)}
+                  >
+                    {saving
+                      ? "Saving..."
+                      : isFormValid(formData)
+                        ? "Save and Close"
+                        : "Fix Required Fields"}
+                  </button>
+                  <button
+                    type="button"
+                    className={
+                      "py-2 px-4 text-xs  text-white rounded-lg disabled:bg-gray-400 " +
+                      (message
+                        ? "bg-green-500 hover:bg-green-600"
+                        : "bg-blue-500 hover:bg-blue-600")
+                    }
+                    onClick={() => handleSave("open")}
+                    disabled={saving || !isFormValid(formData)}
+                  >
+                    {saving
+                      ? "Saving..."
+                      : !isFormValid(formData)
+                        ? "Fix Required Fields"
+                        : message
+                          ? message
+                          : "Save and Add Another"}
+                  </button>
                   <button
                     type="button"
                     className="py-2 px-4 text-xs bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg"
@@ -356,18 +397,6 @@ export default function ServiceEditModal({ isOpen, onClose, service, onSave }) {
                     disabled={saving}
                   >
                     Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className="py-2 px-4 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded-lg disabled:bg-gray-400"
-                    onClick={handleSave}
-                    disabled={saving || !isFormValid(formData)}
-                  >
-                    {saving
-                      ? "Saving..."
-                      : isFormValid(formData)
-                        ? "Save Changes"
-                        : "Fix Required Fields"}
                   </button>
                 </div>
               </Dialog.Panel>
