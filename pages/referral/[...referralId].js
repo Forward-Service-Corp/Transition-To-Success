@@ -2,16 +2,26 @@ import Layout from "../../components/layout";
 import { getSession } from "next-auth/react";
 import { useState } from "react";
 import Head from "next/head";
-import { Printer, Pencil, Trash, Clock } from "phosphor-react";
+import {
+  Printer,
+  Pencil,
+  Trash,
+  Clock,
+  Copyright,
+  Copyleft,
+  Copy,
+} from "phosphor-react";
 import ServiceEditModal from "../../components/serviceEditModal";
 import { canUserManageServices } from "../../lib/servicePermissions";
 import { useRouter } from "next/router";
+import ServiceDuplicateModal from "../../components/duplicateServiceModal";
 
 export default function ReferralId({ pageDataJson, referralDataJson }) {
   const router = useRouter();
   const { user, referrals } = pageDataJson;
   const [userReferrals, setUserReferrals] = useState(referrals);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDupeModalOpen, setIsDupeModalOpen] = useState(false);
 
   const canManage = user ? canUserManageServices(user) : false;
 
@@ -217,6 +227,17 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
                 </span>
                 <span className={"inline-block"}>Edit Service</span>
               </button>
+              <button
+                onClick={() => setIsDupeModalOpen(true)}
+                className={
+                  "flex items-center my-3 py-2 px-6 text-white text-xs bg-orange-500 hover:bg-orange-600 rounded-lg shadow-xl dark:font-extralight dark:text-white dark:hover:bg-green-700"
+                }
+              >
+                <span className={"inline-block mr-2"}>
+                  <Copy size={18} />
+                </span>
+                <span className={"inline-block"}>Duplicate Service</span>
+              </button>
               <a
                 href={`/service/${referralDataJson._id}/history`}
                 target="_blank"
@@ -270,6 +291,14 @@ export default function ReferralId({ pageDataJson, referralDataJson }) {
         <ServiceEditModal
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
+          service={referralDataJson}
+          onSave={handleSave}
+        />
+      )}
+      {canManage && (
+        <ServiceDuplicateModal
+          isOpen={isDupeModalOpen}
+          onClose={() => setIsDupeModalOpen(false)}
           service={referralDataJson}
           onSave={handleSave}
         />

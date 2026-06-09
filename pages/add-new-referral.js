@@ -306,7 +306,7 @@ export default function AddNewReferral({ pageDataJson }) {
             />
           </div>
 
-          <div className="flex justify-around">
+          <div className="flex justify-between">
             <button
               className={
                 "py-[6px] px-6 mx-2 text-white  text-xs bg-green-500 hover:bg-green-600 disabled:bg-gray-400 rounded-lg "
@@ -333,7 +333,7 @@ export default function AddNewReferral({ pageDataJson }) {
               {saving ? "Please Wait..." : "Reset Form"}
             </button>
           </div>
-          {(error || saving) && (
+          {(error || saving || message) && (
             <>
               {error && (
                 <p className="text-red-600 font-bold text-sm my-1">{error}</p>
