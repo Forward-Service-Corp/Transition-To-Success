@@ -223,7 +223,7 @@ export default function AddNewReferral({ pageDataJson }) {
           </div>
 
           <div className={"mb-5"}>
-            <div className={"text-xs mb-2"}>Eligibility Requirements:</div>
+            <div className={"text-xs mb-2"}>Description / Requirements:</div>
             <input
               className={"w-full text-xs rounded-lg"}
               type="text"

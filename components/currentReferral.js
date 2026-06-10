@@ -97,7 +97,10 @@ function CurrentReferral({ currentReferral }) {
 
         {currentReferral.requirements !== undefined ? (
           <div>
-            <p className={"text-xs text-gray-500 mt-3"}>Requirements</p>
+            <p className={"text-xs text-gray-500 mt-3"}>
+              {" "}
+              Description / Requirements
+            </p>
             <p className={"text-sm"}>{currentReferral.requirements}</p>
           </div>
         ) : null}

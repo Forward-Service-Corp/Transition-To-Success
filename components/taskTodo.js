@@ -140,14 +140,14 @@ function TaskTodo({
             </div>
           </div>
         </div>
-        <div className={"flex align-center"}>
+        <div className={"flex"}>
           <div
-            className={"cursor-pointer mr-3 ml-4"}
+            className={"cursor-pointer mr-3 ml-4 flex"}
             onClick={() => {
               setNoteOpen(!noteOpen);
             }}
           >
-            <FilePlus size={16} weight="thin" className="inline" />
+            <FilePlus size={16} weight="thin" />
             <span className="text-gray-600 text-[11px]">Notes</span>
           </div>
           <div
