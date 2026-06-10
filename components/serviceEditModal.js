@@ -256,7 +256,7 @@ export default function ServiceEditModal({ isOpen, onClose, service, onSave }) {
 
                     <div>
                       <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
-                        Requirements (separate by comma):
+                        Description / Requirements:
                       </label>
                       <input
                         className="w-full text-xs border-gray-300 rounded dark:bg-black dark:text-white dark:border-0"
