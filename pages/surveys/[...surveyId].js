@@ -133,7 +133,7 @@ export default function SurveyId({ pageDataJson }) {
   ];
 
   return (
-    <Layout title={"Review Life Area Survey"} session={user}>
+    <Layout title={"Review Life Area Survey"} user={user}>
       {surveys
         .filter((survey) => survey._id.toString() === surveyId.toString())
         .map((survey) => {

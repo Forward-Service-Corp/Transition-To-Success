@@ -50,3 +50,10 @@ p {
   visibility: visible;
   background-color: deeppink;
 }
+
+.count-select input[type="text"]:focus {
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-ring-color: transparent;
+  border-color: transparent;
+  outline: none;
+}

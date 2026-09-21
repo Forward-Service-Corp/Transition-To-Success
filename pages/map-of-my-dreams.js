@@ -24,7 +24,7 @@ export default function MapOfMyDreams({
   );
   const [saving, setSaving] = useState(false);
   return (
-    <Layout title={"Map of My Dreams"} session={user}>
+    <Layout title={"Map of My Dreams"} user={user}>
       <Head>
         <title>TTS / Map of My Dreams</title>
       </Head>

@@ -90,7 +90,7 @@ export default function AddNewReferral({ pageDataJson }) {
   };
 
   return (
-    <Layout title={"Add New Referral to CARE Network"} session={user}>
+    <Layout title={"Add New Referral to CARE Network"} user={user}>
       <Head>
         <title>TTS / Add New Referral</title>
       </Head>

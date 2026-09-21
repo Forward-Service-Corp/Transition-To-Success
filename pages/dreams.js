@@ -71,7 +71,7 @@ export default function Dreams() {
   return (
     <Layout
       title={"Dreams"}
-      session={user}
+      user={user}
       simpleModal={simpleModal}
       simpleModalTitle={`Great Work!`}
       simpleModalMessage={`You just created a new dream.`}

@@ -21,7 +21,7 @@ export default function ServiceHistory({ pageDataJson, serviceId, serviceName, m
   };
 
   return (
-    <Layout title="Service Modification History" session={user}>
+    <Layout title="Service Modification History" user={user}>
       <Head>
         <title>TTS / Service History - {serviceName}</title>
       </Head>

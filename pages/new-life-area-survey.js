@@ -228,7 +228,7 @@ export default function NewLifeAreaSurvey({ user, client }) {
   return (
     <Layout
       title={"Life Area Survey"}
-      session={user}
+      user={user}
       version={router.query.clientId ? client.isYouth : user.isYouth}
     >
       <Head>

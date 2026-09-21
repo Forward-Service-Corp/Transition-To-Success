@@ -61,7 +61,7 @@ export default function SurveyId({ pageDataJson, surveyJson }) {
   ];
 
   const [currentArray] = useState(
-    isYouthSurvey === "true" ? youthDomains : domains
+    isYouthSurvey === "true" ? youthDomains : domains,
   );
 
   const questions = [
@@ -88,7 +88,7 @@ export default function SurveyId({ pageDataJson, surveyJson }) {
   ];
 
   return (
-    <Layout title={"Review Life Area Survey"} session={user}>
+    <Layout title={"Review Life Area Survey"} user={user}>
       {surveyJson
         .filter((survey) => survey._id.toString() === surveyId.toString())
         .map((survey) => {
