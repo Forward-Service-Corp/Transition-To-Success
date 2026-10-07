@@ -403,7 +403,12 @@ export default function ReferralId({
       <div>
         <div>{domainListJSX(service.domains)}</div>
         <div>{countiesListJSX(service.counties)}</div>
-        <div>{textInfoJSX(service.lastModified, "Last Modified")}</div>
+        <div>
+          {textInfoJSX(
+            service.lastModified || service.createdAt,
+            "Last Reviewed or Modified",
+          )}
+        </div>
       </div>
     </Layout>
   );

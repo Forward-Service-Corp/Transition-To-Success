@@ -121,6 +121,7 @@ export default function Directory({
             </p>
             <Select
               className="count-select"
+              instanceId={"directory-domain-select"}
               options={domains.map((domain) => ({
                 value: domain,
                 label: domain,
@@ -159,6 +160,7 @@ export default function Directory({
             </p>
             <Select
               className="count-select"
+              instanceId={"directory-county-select"}
               options={WICountiesList.map((county) => ({
                 value: county,
                 label: county,
