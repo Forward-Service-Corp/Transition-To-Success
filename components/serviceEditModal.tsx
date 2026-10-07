@@ -17,7 +17,6 @@ import {
   stringToOption,
   type OptionType,
 } from "../lib/formatHelpers";
-import { TrashIcon } from "@heroicons/react/24/outline";
 import { Trash } from "phosphor-react";
 
 type ServiceEditModalProps = {
@@ -290,7 +289,7 @@ export default function ServiceEditModal({
                       </label>
                       <textarea
                         className="w-full text-xs border-gray-300 rounded dark:bg-black dark:text-white dark:border-0"
-                        name="requirements"
+                        name="description"
                         value={formData.description}
                         onChange={handleInputChange}
                         rows={4}
