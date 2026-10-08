@@ -245,7 +245,9 @@ export default function ServiceEditModal({
                         }
                         name="domains"
                         options={domainOptions}
+                        instanceId={"edit-modal-domains"}
                         isMulti
+                        closeMenuOnSelect={false}
                         onChange={(
                           newValue: MultiValue<OptionType>,
                           _actionMeta: ActionMeta<OptionType>,
@@ -271,6 +273,8 @@ export default function ServiceEditModal({
                         }
                         name="counties"
                         options={countyOptions}
+                        instanceId={"edit-modal-counties"}
+                        closeMenuOnSelect={false}
                         isMulti
                         onChange={(
                           newValue: MultiValue<OptionType>,
