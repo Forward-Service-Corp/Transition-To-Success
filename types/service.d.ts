@@ -22,6 +22,7 @@ export type SingleServiceDocument = {
   need_to_bring?: string;
   description?: string;
   lastModified?: string;
+  createdAt?: string;
 };
 
 export type SingleServiceResponse = Omit<SingleServiceDocument, "_id"> & {
