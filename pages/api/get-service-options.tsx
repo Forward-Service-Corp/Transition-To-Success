@@ -17,11 +17,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<getReferralOptionsResponse>,
 ) {
-  console.log("Made it to the API Route");
+  // console.log("Made it to the API Route");
   const counties = asArray(req.query.county);
   const domains = asArray(req.query.domain);
   const mappedDomains = domains.map((d) => labelMap[d] ?? d);
-  console.log(mappedDomains);
+  // console.log(mappedDomains);
 
   const q = {
     name: { $exists: true },
@@ -38,7 +38,7 @@ export default async function handler(
     .collection<SingleServiceDocument>("services")
     .find(q);
   const records = await cursor.toArray();
-  console.log(records);
+  // console.log(records);
 
   const flatRecords = records.map((rec) => ({
     ...rec,

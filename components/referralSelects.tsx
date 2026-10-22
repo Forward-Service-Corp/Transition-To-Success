@@ -15,16 +15,9 @@ type ReferralSelectsProps = {
 
 function ServiceSelectors({ domains, services }: ReferralSelectsProps) {
   const router = useRouter();
-  const { setUserReferrals, userReferrals, saving, user } = useMOMD();
+  const { getUserReferrals, setUserReferrals, userReferrals, saving, user } =
+    useMOMD();
   const clientId = asString(router.query.clientId);
-  async function getUserReferrals() {
-    const id = clientId === undefined ? user._id : clientId;
-    await fetch("/api/get-referrals?userId=" + id)
-      .then((res) => res.json())
-      .then((res) => {
-        setUserReferrals(res);
-      });
-  }
 
   return (
     <div className={"flex-1"}>

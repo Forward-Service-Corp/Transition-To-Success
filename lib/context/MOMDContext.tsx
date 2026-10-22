@@ -14,7 +14,7 @@ export type MOMDContextType = {
   saving: string | false;
   setSaving: (value: string | false) => void;
   user: UserResponse;
-  getUserReferrals: (userId: string) => ReferralResponse[];
+  getUserReferrals: () => Promise<void>;
   addReferral: () => Promise<NewReferralResponse>;
   updateRefData: (data: Partial<AddReferralInput>) => void;
   refData: AddReferralInput;
@@ -100,7 +100,14 @@ export const MOMDProvider = ({
     return result;
   };
 
-  const getUserReferrals = (userId: string) => [];
+  const getUserReferrals = async (): Promise<void> => {
+    await fetch("/api/get-referrals?userId=" + survey.userId)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        setUserReferrals(res);
+      });
+  };
 
   const updateRefData = (data: Partial<AddReferralInput>) => {
     const newData = { ...refData, ...data };

@@ -5,15 +5,12 @@ import { useRouter } from "next/router";
 import CurrentReferral from "../components/currentReferral";
 import Head from "next/head";
 import moment from "moment";
-import ReferralSelects from "../components/referralSelects";
 import { WarningCircle } from "phosphor-react";
 import type { NextPageContext } from "next";
-import { asArray } from "../utils/AsArray";
 import { SingleServiceResponse } from "../types/service";
 import { getMOMDPageData } from "../lib/serverfunctions/MOMDdata";
 import { MOMDProvider } from "../lib/context/MOMDContext";
 import type { IndexDataResponse } from "../types";
-import type { ReferralResponse } from "../types/referral";
 import type { SurveyResponse } from "../types/survey";
 import ServiceSelectors from "../components/referralSelects";
 
