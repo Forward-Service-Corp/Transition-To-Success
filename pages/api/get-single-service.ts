@@ -15,20 +15,20 @@ export default async function handler(
   const { carenetwork } = await connectToDatabase();
   const services = carenetwork.collection<SingleServiceDocument>("services");
 
-  const { referralId } = req.query;
-  if (referralId) {
-    if (typeof referralId !== "string") {
+  const { serviceId } = req.query;
+  if (serviceId) {
+    if (typeof serviceId !== "string") {
       return res.status(400).json({
-        error: "referralId must be a string",
+        error: "serviceId must be a string",
       });
     }
-    if (referralId) {
-      if (!ObjectId.isValid(referralId)) {
-        return res.status(400).json({ error: "Invalid referralId format" });
+    if (serviceId) {
+      if (!ObjectId.isValid(serviceId)) {
+        return res.status(400).json({ error: "Invalid serviceId format" });
       }
 
       const referral = await services.findOne({
-        _id: new ObjectId(referralId),
+        _id: new ObjectId(serviceId),
       });
 
       if (!referral) {
@@ -51,6 +51,6 @@ export default async function handler(
       return res.json(response);
     }
   }
-  console.error("Didn't receive referralID");
-  return res.status(400).json({ error: "No referralId provided" });
+  console.error("Didn't receive serviceID");
+  return res.status(400).json({ error: "No serviceID provided" });
 }

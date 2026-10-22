@@ -42,7 +42,7 @@ export default function ServiceDuplicateModal({
   const handleSave = async (behavior) => {
     setError("");
     setSaving(true);
-    const response = await fetch("/api/save-new-referral", {
+    const response = await fetch("/api/save-new-service", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

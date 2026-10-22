@@ -2,20 +2,11 @@ import Layout from "../../components/layout";
 import { getSession } from "next-auth/react";
 import { useState } from "react";
 import Head from "next/head";
-import {
-  Printer,
-  Pencil,
-  Trash,
-  Clock,
-  Copyright,
-  Copyleft,
-  Copy,
-} from "phosphor-react";
+import { Printer, Pencil, Trash, Clock, Copy } from "phosphor-react";
 import ServiceEditModal from "../../components/serviceEditModal";
 import { canUserManageServices } from "../../lib/servicePermissions";
 import { useRouter } from "next/router";
-import ServiceDuplicateModal from "../../components/duplicateServiceModal";
-import type { GetServerSidePropsContext, NextPageContext } from "next";
+import type { GetServerSidePropsContext } from "next";
 import type { SingleServiceResponse } from "../../types/service";
 import type { IndexDataResponse } from "../../types";
 import { blankLocation } from "../../lib/serverSideHelpers";
@@ -41,7 +32,6 @@ export default function ReferralId({
   const [location, setLocation] = useState(
     service.primary_location || blankLocation(),
   );
-  const [locationIndex, setLocationIndex] = useState<number | null>(null);
 
   const canManage = user ? canUserManageServices(user) : false;
   const hasLocations = service.locations.length > 1;
@@ -440,7 +430,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   // single referral
   const referralDataUrl =
-    baseUrl + "/api/get-single-referral?referralId=" + context.query.referralId;
+    baseUrl + "/api/get-single-service?serviceId=" + context.query.serviceId;
   const getReferralData = await fetch(referralDataUrl);
   const referralDataJson: SingleServiceResponse = await getReferralData.json();
 

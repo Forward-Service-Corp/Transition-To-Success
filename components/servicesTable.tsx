@@ -123,7 +123,7 @@ export default function ServicesTable({
                       >
                         <td className="py-1 px-1 text-sm font-medium text-gray-900 sm:pl-6 truncate sm:max-w-prose">
                           <a
-                            href={`/referral/${service._id}`}
+                            href={`/service/${service._id}`}
                             rel={`noreferrer`}
                             className="text-orange-600 hover:text-orange-900 underline dark:text-white"
                           >
@@ -181,7 +181,7 @@ export default function ServicesTable({
                         {!canManageServices && <td></td>}
                         <td className="py-1 px-1 text-sm font-medium text-gray-900 sm:pl-6 truncate max-w-[50px] sm:max-w-full">
                           <a
-                            href={`/referral/${service._id}`}
+                            href={`/service/${service._id}`}
                             target={`_blank`}
                             rel={`noreferrer`}
                             className="text-orange-600 hover:text-orange-900 underline dark:text-blue-600 dark:hover:text-blue-400"

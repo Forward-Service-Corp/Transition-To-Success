@@ -142,7 +142,7 @@ export default function ServiceEditModal({
               counties: optionToString(formData.counties),
             }),
           })
-        : await fetch("/api/save-new-referral", {
+        : await fetch("/api/save-new-service", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

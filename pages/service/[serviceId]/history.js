@@ -3,20 +3,25 @@ import { getSession } from "next-auth/react";
 import Head from "next/head";
 import moment from "moment";
 
-export default function ServiceHistory({ pageDataJson, serviceId, serviceName, modifications }) {
+export default function ServiceHistory({
+  pageDataJson,
+  serviceId,
+  serviceName,
+  modifications,
+}) {
   const { user } = pageDataJson;
   const loading = false;
 
   const getActionColor = (action) => {
     switch (action) {
-      case 'created':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'updated':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-      case 'deleted':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      case "created":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+      case "updated":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+      case "deleted":
+        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
     }
   };
 
@@ -35,11 +40,15 @@ export default function ServiceHistory({ pageDataJson, serviceId, serviceName, m
 
         {loading ? (
           <div className="text-center py-12">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Loading history...</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Loading history...
+            </p>
           </div>
         ) : modifications.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-sm text-gray-500 dark:text-gray-400">No modification history found.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              No modification history found.
+            </p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -56,19 +65,20 @@ export default function ServiceHistory({ pageDataJson, serviceId, serviceName, m
                       {mod.action.charAt(0).toUpperCase() + mod.action.slice(1)}
                     </span>
                     <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {moment(mod.timestamp).format('MMM D, YYYY [at] h:mm A')}
+                      {moment(mod.timestamp).format("MMM D, YYYY [at] h:mm A")}
                     </span>
                   </div>
                 </div>
 
                 <div className="mt-3">
                   <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
-                    <strong>Modified by:</strong> {mod.modifiedBy?.name || 'Unknown'} (
+                    <strong>Modified by:</strong>{" "}
+                    {mod.modifiedBy?.name || "Unknown"} (
                     <a
-                      href={`mailto:${mod.modifiedBy?.email || ''}`}
+                      href={`mailto:${mod.modifiedBy?.email || ""}`}
                       className="text-orange-600 hover:text-orange-800 dark:text-orange-400 underline"
                     >
-                      {mod.modifiedBy?.email || 'unknown@email.com'}
+                      {mod.modifiedBy?.email || "unknown@email.com"}
                     </a>
                     )
                   </p>
@@ -83,16 +93,22 @@ export default function ServiceHistory({ pageDataJson, serviceId, serviceName, m
                       </p>
                       <ul className="space-y-2">
                         {mod.changes.map((change, idx) => (
-                          <li key={idx} className="text-sm text-gray-600 dark:text-gray-400">
-                            <strong className="capitalize">{change.field}:</strong> "
+                          <li
+                            key={idx}
+                            className="text-sm text-gray-600 dark:text-gray-400"
+                          >
+                            <strong className="capitalize">
+                              {change.field}:
+                            </strong>{" "}
+                            &quot;
                             <span className="line-through text-red-600 dark:text-red-400">
-                              {change.oldValue || '(empty)'}
+                              {change.oldValue || "(empty)"}
                             </span>
-                            " → "
+                            &quot; → &quot;
                             <span className="text-green-600 dark:text-green-400">
-                              {change.newValue || '(empty)'}
+                              {change.newValue || "(empty)"}
                             </span>
-                            "
+                            &quot;
                           </li>
                         ))}
                       </ul>
@@ -117,7 +133,9 @@ export async function getServerSideProps(context) {
 
   // Page data
   const pageDataUrl =
-    baseUrl + "/api/pages/indexPageData" + (session ? "?userId=" + session.user._id : "");
+    baseUrl +
+    "/api/pages/indexPageData" +
+    (session ? "?userId=" + session.user._id : "");
   const getPageData = await fetch(pageDataUrl);
   const pageDataJson = await getPageData.json();
 
@@ -132,9 +150,10 @@ export async function getServerSideProps(context) {
   // Get service name for display
   let serviceName = "Service";
   let modifications = [];
-  
+
   try {
-    const serviceUrl = baseUrl + "/api/get-single-referral?referralId=" + serviceId;
+    const serviceUrl =
+      baseUrl + "/api/get-single-service?serviceId=" + serviceId;
     const getServiceData = await fetch(serviceUrl);
     const serviceData = await getServiceData.json();
     if (serviceData && serviceData.name) {
@@ -142,7 +161,8 @@ export async function getServerSideProps(context) {
     }
 
     // Fetch modifications
-    const modificationsUrl = baseUrl + "/api/get-service-modifications?serviceId=" + serviceId;
+    const modificationsUrl =
+      baseUrl + "/api/get-service-modifications?serviceId=" + serviceId;
     const getModifications = await fetch(modificationsUrl);
     const modificationsData = await getModifications.json();
     if (modificationsData && modificationsData.modifications) {

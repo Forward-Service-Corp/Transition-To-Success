@@ -1,8 +1,9 @@
 import { useRouter } from "next/router";
 import { labelMap } from "../lib/serviceLabelsMap";
 import moment from "moment";
-import { ListNumbers, Link, NotePencil } from "phosphor-react";
+import { ListNumbers, Link as LinkIcon, NotePencil } from "phosphor-react";
 import React from "react";
+import Link from "next/link";
 
 function LasCurrent({ surveys, user, isClientSurvey, clientId }) {
   const router = useRouter();
@@ -136,7 +137,7 @@ function LasCurrent({ surveys, user, isClientSurvey, clientId }) {
                     }}
                   >
                     <div>
-                      <Link size={15} />
+                      <LinkIcon size={15} />
                     </div>
                   </div>
                 </div>
@@ -147,12 +148,16 @@ function LasCurrent({ surveys, user, isClientSurvey, clientId }) {
       <div className="bg-gray-100 p-9 mr-3 dark:p-8 dark:bg-[#111111] dark:text-white dark:text-center dark:rounded-2xl dark:bg-opacity-40 dark:shadow-2xl flex flex-col justify-center">
         <h2 className="uppercase">
           <span className="text-orange-500">
-            If you'd like to create a new Life Area Survey
+            If you&apos;d like to create a new Life Area Survey
           </span>
         </h2>
         <p className="text-sm">
-          Go to your <a className="text-blue-500" href="/dreams">Dreams</a> page, scroll to the bottom, choose a dream, and
-          click on the Create Life Area Survey button.
+          Go to your{" "}
+          <Link className="text-blue-500" href="/dreams">
+            Dreams
+          </Link>{" "}
+          page, scroll to the bottom, choose a dream, and click on the Create
+          Life Area Survey button.
         </p>
       </div>
     </div>

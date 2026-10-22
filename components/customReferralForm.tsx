@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useMOMD } from "../lib/context/MOMDContext";
+import { useRouter } from "next/router";
 
-function CustomReferralForm({
-  domain,
-  clientId,
-  user,
-  router,
-  getUserReferrals,
-  i,
-}) {
+type CustomReferralFormProps = {
+  domain: string;
+  clientId?: string;
+  i: number;
+};
+
+function CustomReferralForm({ domain, clientId, i }: CustomReferralFormProps) {
+  const { user, getUserReferrals } = useMOMD();
+  const router = useRouter();
+
   const [referralOpen, setReferralOpen] = useState(false);
   const [referralName, setReferralName] = useState("");
   const [referralPhone, setReferralPhone] = useState("");
@@ -221,7 +225,7 @@ function CustomReferralForm({
           <button
             onClick={() => {
               saveCustomReferral().then(() => {
-                getUserReferrals();
+                getUserReferrals(clientId || user._id);
               });
               setReferralOpen(false);
               setReferralName("");

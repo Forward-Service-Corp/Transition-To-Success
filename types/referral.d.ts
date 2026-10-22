@@ -26,3 +26,8 @@ export type ReferralDocument = {
 export type ReferralResponse = Omit<ReferralDocument, "_id"> & {
   _id: string;
 };
+
+export type AddReferralInput = Omit<
+  ReferralResponse,
+  "_id" | "createdDate" | "updatedDate"
+>;
