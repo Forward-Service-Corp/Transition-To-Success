@@ -1,7 +1,6 @@
 import { labelMap } from "../lib/serviceLabelsMap";
 import UserReferralItem from "./userReferralItem";
 import CustomReferralForm from "./customReferralForm";
-import type { UserResponse } from "../types/user";
 import { useRouter } from "next/router";
 import { useMOMD } from "../lib/context/MOMDContext";
 import ServiceSelectorByDomain from "./referralSelectsSelect";

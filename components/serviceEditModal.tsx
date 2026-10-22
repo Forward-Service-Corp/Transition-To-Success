@@ -438,7 +438,7 @@ export default function ServiceEditModal({
                               onChange={(e) =>
                                 handleLocationDataChange(
                                   index,
-                                  "url",
+                                  "hours",
                                   e.target.value,
                                 )
                               }
