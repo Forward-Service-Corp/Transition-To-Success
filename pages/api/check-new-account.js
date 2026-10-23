@@ -1,4 +1,4 @@
-import {connectToDatabase} from "../../lib/dbConnect";
+import { connectToDatabase } from "../../lib/dbConnect";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 /**
@@ -22,27 +22,58 @@ import {connectToDatabase} from "../../lib/dbConnect";
  * Logs the outcome of the database query for debugging purposes.
  * Sends a default JSON response if no return condition is explicitly met (e.g., duplicate accounting handling or errors).
  */
-const handler = async(req, res) => {
 
-    const {loginType, loginValue, loginFrom} = req.body;
-    const term = loginType === 'email' ? { email: loginValue } : { phone: loginValue };
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
 
-    const {db} = await connectToDatabase();
-    const user = await db.collection("users").findOne(term);
+const handler = async (req, res) => {
+  const { loginType, loginValue, loginFrom } = req.body;
 
-    if (loginFrom === 'existing-account') {
-        if (user) {
-            return res.json({code: 666, message: "SCENARIO 0: Success."})
-        }
-        return res.json({code: 777, message: "SCENARIO 1: No account found with this login.  Please try again or create a new account.", loginValue, user})
-    } else {
-        if (user) {
-            return res.json({code: 666, message: "SCENARIO 2: There is already an account with that email address."})
-        }
-        return res.json({code: 777, message: "SCENARIO 3: No account found with this login.  Please try again or create a new account.", loginValue, user})
+  const emailIsValid = validateEmail(loginValue);
+
+  if (!emailIsValid && loginType === "email")
+    return res.json({
+      code: 400,
+      message: "Invalid email passed to sign-in flow.",
+    });
+
+  const term =
+    loginType === "email" ? { email: loginValue } : { phone: loginValue };
+
+  const { db } = await connectToDatabase();
+  const user = await db.collection("users").findOne(term);
+
+  if (loginFrom === "existing-account") {
+    if (user) {
+      return res.json({ code: 666, message: "SCENARIO 0: Success." });
     }
+    return res.json({
+      code: 777,
+      message:
+        "SCENARIO 1: No account found with this login.  Please try again or create a new account.",
+      loginValue,
+      user,
+    });
+  } else {
+    if (user) {
+      return res.json({
+        code: 666,
+        message:
+          "SCENARIO 2: There is already an account with that email address.",
+      });
+    }
+    return res.json({
+      code: 777,
+      message:
+        "SCENARIO 3: No account found with this login.  Please try again or create a new account.",
+      loginValue,
+      user,
+    });
+  }
 
-    //return res.json(user);
-}
+  //return res.json(user);
+};
 
 export default handler;
