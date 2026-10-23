@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
-import MaintenanceMessage from "@/components/maintenanceMessage.tsx";
+import MaintenanceMessage from "../../components/maintenanceMessage";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
