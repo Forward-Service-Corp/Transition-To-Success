@@ -225,7 +225,7 @@ function CustomReferralForm({ domain, clientId, i }: CustomReferralFormProps) {
           <button
             onClick={() => {
               saveCustomReferral().then(() => {
-                getUserReferrals(clientId || user._id);
+                getUserReferrals();
               });
               setReferralOpen(false);
               setReferralName("");
