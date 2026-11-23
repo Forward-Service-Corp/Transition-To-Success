@@ -74,7 +74,7 @@ function LasCurrent({ surveys, user, isClientSurvey, clientId }) {
                               dreamId: survey.dreamId,
                               dream: survey.dream,
                               surveyId: survey._id,
-                              county: user.county,
+                              county: [...user.county, user.homeCounty],
                               domain: survey.priority,
                               clientId: clientId,
                             },
@@ -88,7 +88,7 @@ function LasCurrent({ surveys, user, isClientSurvey, clientId }) {
                               dreamId: survey.dreamId,
                               dream: survey.dream,
                               surveyId: survey._id,
-                              county: user.county,
+                              county: [...user.county, user.homeCounty],
                               domain: survey.priority,
                             },
                           })

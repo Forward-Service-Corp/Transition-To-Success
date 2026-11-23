@@ -25,10 +25,12 @@ function ServiceSelectorByDomain({
     (service) => service.domains.indexOf(labelMap[domain]) !== -1,
   );
 
-  const options = filteredServices.map((service) => ({
-    label: service.name,
-    value: service,
-  }));
+  const options = filteredServices
+    .map((service) => ({
+      label: service.name,
+      value: service,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   return (
     <>
