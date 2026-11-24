@@ -70,7 +70,7 @@ function CurrentReferral({}: {}) {
       </div>
 
       <div className={"p-8"}>
-        {currentService.name !== undefined ? (
+        {currentService.name ? (
           <div>
             <p className={"text-xs text-gray-500 mt-3"}>Name</p>
             <p className={"text-sm"}>{currentService.name}</p>
@@ -86,14 +86,16 @@ function CurrentReferral({}: {}) {
           </div>
         ) : null}
 
-        {currentService.need_to_bring !== undefined ? (
+        {currentService.need_to_bring ? (
           <div>
             <p className={"text-xs text-gray-500 mt-3"}>Need to bring</p>
             <p className={"text-sm"}>{currentService.need_to_bring}</p>
           </div>
         ) : null}
         {hasLocations && (
-          <div className={"flex justify-start items-center print:hidden"}>
+          <div
+            className={"flex flex-wrap justify-start items-center print:hidden"}
+          >
             {currentService.locations.map((loc, index) => (
               <button
                 key={index}
@@ -112,21 +114,21 @@ function CurrentReferral({}: {}) {
           </div>
         )}
 
-        {location.contactEmail !== undefined ? (
+        {location.contactEmail ? (
           <div>
             <p className={"text-xs text-gray-500 mt-3"}>Email</p>
             <p className={"text-sm"}>{location.contactEmail}</p>
           </div>
         ) : null}
 
-        {location.hours !== undefined ? (
+        {location.hours ? (
           <div>
             <p className={"text-xs text-gray-500 mt-3"}>Hours</p>
             <p className={"text-sm"}>{location.hours}</p>
           </div>
         ) : null}
 
-        {location.url !== undefined ? (
+        {location.url ? (
           <div>
             <p className={"text-xs text-gray-500 mt-3"}>Website</p>
             <p className={"text-sm truncate text-blue-600 underline"}>
@@ -137,24 +139,32 @@ function CurrentReferral({}: {}) {
           </div>
         ) : null}
 
-        {location.contactName !== undefined ? (
+        {location.contactName && location.contactName !== "-" ? (
           <div>
             <p className={"text-xs text-gray-500 mt-3"}>Contact person</p>
             <p className={"text-sm"}>{location.contactName}</p>
           </div>
         ) : null}
 
-        {location.contactPhone !== undefined ? (
+        {location.contactPhone ? (
           <div>
             <p className={"text-xs text-gray-500 mt-3"}>Contact person phone</p>
             <p className={"text-sm"}>{location.contactPhone}</p>
           </div>
         ) : null}
 
-        {location.contactEmail !== undefined ? (
+        {location.contactEmail ? (
           <div>
             <p className={"text-xs text-gray-500 mt-3"}>Contact person email</p>
             <p className={"text-sm"}>{location.contactEmail}</p>
+          </div>
+        ) : null}
+        {location.notes ? (
+          <div>
+            <p className={"text-xs text-gray-500 mt-3"}>
+              Location-Specific Notes
+            </p>
+            <p className={"text-sm"}>{location.notes}</p>
           </div>
         ) : null}
       </div>
