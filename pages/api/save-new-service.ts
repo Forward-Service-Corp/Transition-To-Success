@@ -5,6 +5,7 @@ import { authOptions } from "./auth/[...nextauth]";
 import { canUserManageServices } from "../../lib/servicePermissions";
 import {
   SingleServiceDocument,
+  type LocationType,
   type SingleServiceResponse,
 } from "../../types/service";
 import type { ApiErrorResponse } from "../../types/apiresponses";
@@ -53,6 +54,15 @@ export default async function handler(
     const record = { ...req.body, createdAt: new Date() };
     if (!record.name) {
       return { error: "New Records Must include a name" };
+    }
+    if (!record.locations.some((r: LocationType) => r.primary_location)) {
+      record.locations[0].primary_location = true;
+      record.primary_location = record.locations[0];
+    } else {
+      const index = record.locations.indexOf(
+        (r: LocationType) => r.primary_location,
+      );
+      record.primary_location = record.locations[index];
     }
 
     const result = await carenetwork.collection("services").insertOne(record);

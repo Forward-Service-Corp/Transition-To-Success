@@ -23,15 +23,18 @@ export default function ReferralId({
 }) {
   const router = useRouter();
 
+  const startingLocation =
+    referralDataJson.locations.find((l) => l.primary_location) ||
+    referralDataJson.locations[0] ||
+    blankLocation();
+
   const { user, referrals } = pageDataJson;
-  //console.log(pageDataJson);
+  console.log(referralDataJson);
   const [userReferrals, setUserReferrals] = useState(referrals);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDupeModalOpen, setIsDupeModalOpen] = useState(false);
   const [service, setService] = useState(referralDataJson);
-  const [location, setLocation] = useState(
-    service.primary_location || blankLocation(),
-  );
+  const [location, setLocation] = useState(startingLocation);
 
   const canManage = user ? canUserManageServices(user) : false;
   const hasLocations = service.locations.length > 1;
