@@ -8,19 +8,9 @@ import {
 } from "@headlessui/react";
 import { WICountiesList } from "../lib/WI_Counties";
 import { labelMap } from "../lib/serviceLabelsMap";
-import type { LocationType, SingleServiceResponse } from "../types/service";
-import { blankLocation } from "../lib/serverSideHelpers";
-import Select, {
-  type ActionMeta,
-  type MultiValue,
-  type SingleValue,
-} from "react-select";
-import {
-  optionToString,
-  stringToOption,
-  type OptionType,
-} from "../lib/formatHelpers";
-import { ArrowRight, Trash } from "phosphor-react";
+import type { SingleServiceResponse } from "../types/service";
+import Select, { type ActionMeta, type SingleValue } from "react-select";
+import { stringToOption } from "../lib/formatHelpers";
 import AsyncSelect from "react-select/async";
 import ServiceSummary from "./serviceSummary";
 import { useRouter } from "next/router";
@@ -37,10 +27,6 @@ export type ActionType = "add" | "merge" | "delete" | "promote" | null;
 export type ActionOption = {
   label: string;
   value: ActionType;
-};
-
-type DupeFormData = {
-  actionToTake: ActionType;
 };
 
 export default function MarkDuplicateModal({
@@ -79,7 +65,11 @@ export default function MarkDuplicateModal({
           keyword: inputValue,
         }),
       }).then((res) => res.json());
-      return fetchSearch.records || [];
+      return (
+        fetchSearch.records.filter(
+          (s: SingleServiceResponse) => s._id !== service._id,
+        ) || []
+      );
     } catch (error) {
       console.log(error);
       return [];
