@@ -130,7 +130,7 @@ const ServiceSummary = ({
         <p className={"text-xs text-gray-500 dark:text-gray-300"}>
           Counties Served:
         </p>
-        <div className="flex flex-wrap">
+        <div className="flex justify-start">
           {list.map((county, index) => (
             <span className="text-xs rounded-md py-0 px-2" key={index}>
               {county}
