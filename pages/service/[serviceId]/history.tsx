@@ -2,17 +2,28 @@ import Layout from "../../../components/layout";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import moment from "moment";
+import type { IndexDataResponse } from "../../../types";
+import type { ServiceModificationType } from "../../../types/serviceModification";
+import type { GetServerSidePropsContext } from "next";
+import { asString } from "../../../utils/AsArray";
+
+type ServiceHistoryProps = {
+  pageDataJson: IndexDataResponse;
+  serviceId: string;
+  serviceName: string;
+  modifications: ServiceModificationType[];
+};
 
 export default function ServiceHistory({
   pageDataJson,
   serviceId,
   serviceName,
   modifications,
-}) {
+}: ServiceHistoryProps) {
   const { user } = pageDataJson;
   const loading = false;
 
-  const getActionColor = (action) => {
+  const getActionColor = (action: string) => {
     switch (action) {
       case "created":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
@@ -102,11 +113,11 @@ export default function ServiceHistory({
                             </strong>{" "}
                             &quot;
                             <span className="line-through text-red-600 dark:text-red-400">
-                              {change.oldValue || "(empty)"}
+                              {String(change.oldValue) || "(empty)"}
                             </span>
                             &quot; → &quot;
                             <span className="text-green-600 dark:text-green-400">
-                              {change.newValue || "(empty)"}
+                              {String(change.newValue) || "(empty)"}
                             </span>
                             &quot;
                           </li>
@@ -124,7 +135,7 @@ export default function ServiceHistory({
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context);
   const { req } = context;
 
@@ -149,7 +160,7 @@ export async function getServerSideProps(context) {
 
   // Get service name for display
   let serviceName = "Service";
-  let modifications = [];
+  let modifications: ServiceModificationType[] = [];
 
   try {
     const serviceUrl =
@@ -167,6 +178,23 @@ export async function getServerSideProps(context) {
     const modificationsData = await getModifications.json();
     if (modificationsData && modificationsData.modifications) {
       modifications = modificationsData.modifications;
+    }
+
+    if (modifications.length == 0) {
+      modifications.push({
+        _id: "temp",
+        serviceId: asString(serviceId),
+        modifiedBy: {
+          userId: "temp",
+          name: "Unknown",
+          email: "Unknown",
+        },
+        action: "created",
+        changes: [],
+        serviceName: serviceName,
+        summary: `${serviceName} was created or imported from prior care network`,
+        timestamp: serviceData && (serviceData.timeStamp || null),
+      });
     }
   } catch (err) {
     console.error("Error fetching service data:", err);
